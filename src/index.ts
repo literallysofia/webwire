@@ -16,6 +16,10 @@ export class Browser {
 
   public async navigate(url: string): Promise<void> {
     await this.driver.get(url);
+    (await this.driver)
+      .manage()
+      .window()
+      .maximize();
     //navigate().to(url);
   }
 
@@ -23,8 +27,9 @@ export class Browser {
     return this.driver.findElement(By.css(selector));
   }
 
-  public findElements(selector: string): Promise<WebElement[]> {
-    return this.driver.findElements(By.css(selector));
+  public async findElements(selector: string): Promise<WebElement[]> {
+    var elems = await this.driver.findElements(By.css(selector));
+    return elems;
   }
 
   public async clearCookies(url?: string): Promise<void> {
@@ -47,10 +52,15 @@ var link1 = "https://getbootstrap.com/docs/4.4/examples/floating-labels/";
 var link2 = "https://v4-alpha.getbootstrap.com/examples/album/";
 
 let browser = new Browser("chrome");
-browser.navigate(link1);
-var elems = browser.findElements("img");
-
-promise.filter(elems, function(elem) {
-  console.log(elem);
-  return elem.isDisplayed();
+browser.navigate(link2);
+browser.findElements("img").then(elems => {
+  promise.filter(elems, async function(elem) {
+    var type = await elem.getTagName().then(value => {
+      return value;
+    });
+    var coords = await elem.getRect().then(value => {
+      return value;
+    });
+    console.log(type, ": ", coords);
+  });
 });
