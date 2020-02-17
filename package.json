@@ -1,0 +1,28 @@
+{
+  "name": "wireframe-generator",
+  "version": "1.0.0",
+  "description": "A tool for automatic wireframe generation from websites.",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/literallysofia/feup-diss.git"
+  },
+  "author": "Sofia Silva",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/literallysofia/feup-diss/issues"
+  },
+  "homepage": "https://github.com/literallysofia/feup-diss#readme",
+  "devDependencies": {
+    "typescript": "^3.7.5",
+    "@types/node": "^13.7.1",
+    "@types/selenium-webdriver": "^4.0.8",
+    "chromedriver": "^80.0.1",
+    "selenium-webdriver": "^4.0.0-alpha.5"
+  }
+}
