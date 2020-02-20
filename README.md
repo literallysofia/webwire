@@ -9,3 +9,15 @@ Thesis project for the Master in Informatics and Computer Engineering (MIEIC).
 **Supervisor:** André Restivo
 
 **Second Supervisor:** Hugo Sereno Ferreira
+
+## Instructions
+
+Requirements: node, npm and typescript.
+
+```bash
+$ npm install
+$ npm run build
+$ npm start <url> [types]
+```
+
+**Types:** array of html elements.

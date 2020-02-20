@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "node dist/index.js -u",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,10 +19,11 @@
   },
   "homepage": "https://github.com/literallysofia/feup-diss#readme",
   "devDependencies": {
-    "typescript": "^3.7.5",
     "@types/node": "^13.7.1",
     "@types/selenium-webdriver": "^4.0.8",
     "chromedriver": "^80.0.1",
-    "selenium-webdriver": "^4.0.0-alpha.5"
+    "command-line-args": "^5.1.1",
+    "selenium-webdriver": "^4.0.0-alpha.5",
+    "typescript": "^3.7.5"
   }
 }
