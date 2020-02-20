@@ -15,7 +15,7 @@ const link2 = "https://v4-alpha.getbootstrap.com/examples/album/";
 const website = commandLineArgs([
   { name: "url", alias: "u", type: String },
   {
-    name: "types",
+    name: "tags",
     alias: "t",
     type: String,
     multiple: true,
@@ -66,13 +66,13 @@ class Browser {
 const browser = new Browser("chrome");
 browser.navigate(website.url);
 
-for (let type of website.types) {
-  browser.findElements(type).then(elems => {
+for (let tag of website.tags) {
+  browser.findElements(tag).then(elems => {
     promise.filter(elems, async function(elem) {
       var info = await elem.getRect().then(value => {
         return value;
       });
-      console.log(type, ":", info);
+      console.log(tag, ":", info);
     });
   });
 }

@@ -2,7 +2,7 @@
 
 Thesis project for the Master in Informatics and Computer Engineering (MIEIC).
 
-**Author:** Bárbara Sofia Lopez de Carvalho Ferreira da Silva
+**Author:** Sofia Silva
 
 **Institution:** Faculty of Engineering of the University of Porto (FEUP)
 
@@ -12,12 +12,17 @@ Thesis project for the Master in Informatics and Computer Engineering (MIEIC).
 
 ## Instructions
 
-Requirements: node, npm and typescript.
+Please, make sure you have node, npm, and typescript installed.
 
 ```bash
 $ npm install
 $ npm run build
-$ npm start <url> [types]
+$ npm start <url> [html tags]
 ```
 
-**Types:** array of html elements.
+**Examples**
+
+```bash
+$ npm start https://v4-alpha.getbootstrap.com/examples/album/ img
+$ npm start https://v4-alpha.getbootstrap.com/examples/album/ img a button
+```
