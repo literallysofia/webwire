@@ -1,16 +1,15 @@
 import "chromedriver";
+import fs from "fs";
 import {
   Builder,
   ThenableWebDriver,
   WebElement,
   By,
   WebElementPromise,
-  promise
+  IRectangle
 } from "selenium-webdriver";
 
 const commandLineArgs = require("command-line-args");
-const link1 = "https://getbootstrap.com/docs/4.4/examples/floating-labels/";
-const link2 = "https://v4-alpha.getbootstrap.com/examples/album/";
 
 const website = commandLineArgs([
   { name: "url", alias: "u", type: String },
@@ -43,8 +42,7 @@ class Browser {
   }
 
   public async findElements(selector: string): Promise<WebElement[]> {
-    var elems = await this.driver.findElements(By.css(selector));
-    return elems;
+    return this.driver.findElements(By.css(selector));
   }
 
   public async clearCookies(url?: string): Promise<void> {
@@ -63,16 +61,54 @@ class Browser {
   }
 }
 
-const browser = new Browser("chrome");
-browser.navigate(website.url);
+interface Element {
+  tag: string;
+  height: number;
+  width: number;
+  x: number;
+  y: number;
+}
 
-for (let tag of website.tags) {
-  browser.findElements(tag).then(elems => {
-    promise.filter(elems, async function(elem) {
-      var info = await elem.getRect().then(value => {
-        return value;
-      });
-      console.log(tag, ":", info);
-    });
+const browser = new Browser("chrome");
+let data = {
+  elements: [] as Element[]
+};
+
+async function getElementList(): Promise<Element[]> {
+  var elements: Element[] = [];
+
+  for (let tag of website.tags) {
+    let elems = await browser.findElements(tag);
+
+    for (let elem of elems) {
+      let rec = await elem.getRect();
+      let tag = await elem.getTagName();
+
+      let e: Element = {
+        tag: tag,
+        height: rec.height,
+        width: rec.width,
+        x: rec.x,
+        y: rec.y
+      };
+      elements.push(e);
+    }
+  }
+  return elements;
+}
+
+async function saveData() {
+  let elems = await getElementList();
+  console.log(elems);
+  data.elements = elems;
+
+  var json = JSON.stringify(data);
+  fs.writeFile("data.json", json, function(err) {
+    if (err) {
+      console.log(err);
+    }
   });
 }
+
+browser.navigate(website.url);
+saveData();

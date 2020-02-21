@@ -25,4 +25,5 @@ $ npm start <url> [html tags]
 ```bash
 $ npm start https://v4-alpha.getbootstrap.com/examples/album/ img
 $ npm start https://v4-alpha.getbootstrap.com/examples/album/ img a button
+$ npm start https://getbootstrap.com/docs/4.4/examples/floating-labels/ input
 ```
