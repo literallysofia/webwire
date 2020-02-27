@@ -3,6 +3,11 @@ var data = require("../data.json");
 
 console.log(data.elements);
 
+const options = {
+  roughness: 1.5,
+  strokeWidth: 1.5
+};
+
 class Render {
   data: any;
   canvas: HTMLElement;
@@ -26,8 +31,13 @@ class Render {
           this.drawImage(e);
           break;
         }
-        case "a": {
+        case "button": {
           this.drawButton(e);
+          break;
+        }
+        //case "li":
+        case "p": {
+          this.drawText(e);
           break;
         }
         default: {
@@ -43,20 +53,41 @@ class Render {
   }
 
   drawDefault(e: any) {
-    let shapeNode = this.roughCanvas.rectangle(e.x, e.y, e.width, e.height, {
-      bowing: 2,
-      roughness: 1.5,
-      strokeWidth: 1.5
-    });
+    let shapeNode = this.roughCanvas.rectangle(
+      e.x,
+      e.y,
+      e.width,
+      e.height,
+      options
+    );
     this.canvas.appendChild(shapeNode);
   }
 
+  drawText(e: any) {
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+    for (let i = 0; i < e.lines; i++) {
+      // height + lineHeight * i + half of lineHeight to vertical center
+      let y = e.y + (e.height / e.lines) * i + e.height / e.lines / 2;
+
+      let line = this.roughCanvas
+        .line(e.x, y, e.x + e.width, y, options)
+        .getElementsByTagName("path")[0];
+
+      g.appendChild(line);
+    }
+
+    this.canvas.appendChild(g);
+  }
+
   drawImage(e: any) {
-    let shapeNode = this.roughCanvas.rectangle(e.x, e.y, e.width, e.height, {
-      bowing: 2,
-      roughness: 1.5,
-      strokeWidth: 1.5
-    });
+    let shapeNode = this.roughCanvas.rectangle(
+      e.x,
+      e.y,
+      e.width,
+      e.height,
+      options
+    );
     let firstLine = this.roughCanvas
       .line(e.x, e.y, e.x + e.width, e.y + e.height)
       .getElementsByTagName("path")[0];
@@ -72,11 +103,13 @@ class Render {
   drawButton(e: any) {
     if (e.x <= 0 || e.y <= 0) return;
 
-    let shapeNode = this.roughCanvas.rectangle(e.x, e.y, e.width, e.height, {
-      bowing: 1.5,
-      roughness: 1.5,
-      strokeWidth: 1.5
-    });
+    let shapeNode = this.roughCanvas.rectangle(
+      e.x,
+      e.y,
+      e.width,
+      e.height,
+      options
+    );
 
     let points = [];
 
@@ -90,10 +123,7 @@ class Render {
         e.height / 2;
       points.push([x, y]);
     }
-    let curve = this.roughCanvas.curve(points, {
-      roughness: 1.5,
-      strokeWidth: 1.5
-    });
+    let curve = this.roughCanvas.curve(points, options);
 
     shapeNode.appendChild(curve);
     this.canvas.appendChild(shapeNode);

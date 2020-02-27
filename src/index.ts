@@ -5,8 +5,7 @@ import {
   ThenableWebDriver,
   WebElement,
   By,
-  WebElementPromise,
-  IRectangle
+  WebElementPromise
 } from "selenium-webdriver";
 
 const commandLineArgs = require("command-line-args");
@@ -25,7 +24,7 @@ const website = commandLineArgs([
 class Browser {
   private driver: ThenableWebDriver;
 
-  public constructor(private browserName: string) {
+  public constructor(browserName: string) {
     this.driver = new Builder().forBrowser(browserName).build();
   }
 
@@ -67,6 +66,7 @@ interface Element {
   width: number;
   x: number;
   y: number;
+  lines?: number;
 }
 
 const browser = new Browser("chrome");
@@ -81,6 +81,9 @@ async function getElementList(): Promise<Element[]> {
     let elems = await browser.findElements(tag);
 
     for (let elem of elems) {
+      let displayed = await elem.isDisplayed();
+      if (!displayed) break;
+
       let rec = await elem.getRect();
       let tag = await elem.getTagName();
 
@@ -91,6 +94,15 @@ async function getElementList(): Promise<Element[]> {
         x: rec.x,
         y: rec.y
       };
+
+      if (tag === "p") {
+        let content = await elem.getText();
+        //console.log(content);
+        if (content === "") break;
+        let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
+        e.lines = e.height / lineHeight;
+      }
+
       elements.push(e);
     }
   }

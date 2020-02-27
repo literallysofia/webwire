@@ -25,5 +25,9 @@ $ npm start <url> [html tags]
 ```bash
 $ npm start https://v4-alpha.getbootstrap.com/examples/album/ img
 $ npm start https://v4-alpha.getbootstrap.com/examples/album/ img a button
-$ npm start https://getbootstrap.com/docs/4.4/examples/floating-labels/ input
+$ npm start https://getbootstrap.com/docs/4.4/examples/floating-labels/ input img p button
+$ npm start https://getbootstrap.com/docs/4.4/examples/checkout/ input
+$ npm start https://getbootstrap.com/docs/4.4/examples/pricing/ a button h1 h4 h5 p
 ```
+
+--config config.yml
