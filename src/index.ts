@@ -83,11 +83,11 @@ async function getElementList(): Promise<Element[]> {
 
     for (let elem of elems) {
       let displayed = await elem.isDisplayed();
-      if (!displayed) break;
 
       let rec = await elem.getRect();
       let tag = await elem.getTagName();
-      elem.getAttribute("type");
+
+      console.log(tag, " : ", displayed);
 
       let e: Element = {
         tag: tag,
@@ -108,8 +108,7 @@ async function getElementList(): Promise<Element[]> {
         let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
         e.lines = e.height / lineHeight;
       }
-
-      elements.push(e);
+      if (displayed) elements.push(e);
     }
   }
   return elements;
