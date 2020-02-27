@@ -36,8 +36,13 @@ class Render {
           break;
         }
         //case "li":
+        case "h1":
         case "p": {
           this.drawText(e);
+          break;
+        }
+        case "input": {
+          this.drawInput(e);
           break;
         }
         default: {
@@ -127,6 +132,45 @@ class Render {
 
     shapeNode.appendChild(curve);
     this.canvas.appendChild(shapeNode);
+  }
+
+  drawInput(e: any) {
+    if (e.type !== "checkbox") this.drawDefault(e);
+    else {
+      let shapeNode = this.roughCanvas.rectangle(
+        e.x,
+        e.y,
+        e.width,
+        e.height,
+        options
+      );
+
+      let d =
+        "M" +
+        (e.x + e.width / 4) +
+        " " +
+        (e.y + e.height / 4) +
+        "l7.1 7.2 10.7-16.8";
+      let checkmark = this.roughCanvas
+        .path(d, {
+          strokeWidth: 2
+        })
+        .getElementsByTagName("path")[0];
+
+      let line = this.roughCanvas
+        .line(
+          e.x + e.width + 10,
+          e.y + e.height / 2,
+          e.x + e.width + 80,
+          e.y + e.height / 2,
+          options
+        )
+        .getElementsByTagName("path")[0];
+
+      shapeNode.appendChild(line);
+      shapeNode.appendChild(checkmark);
+      this.canvas.appendChild(shapeNode);
+    }
   }
 }
 

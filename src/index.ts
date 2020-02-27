@@ -67,6 +67,7 @@ interface Element {
   x: number;
   y: number;
   lines?: number;
+  type?: string;
 }
 
 const browser = new Browser("chrome");
@@ -86,6 +87,7 @@ async function getElementList(): Promise<Element[]> {
 
       let rec = await elem.getRect();
       let tag = await elem.getTagName();
+      elem.getAttribute("type");
 
       let e: Element = {
         tag: tag,
@@ -95,10 +97,14 @@ async function getElementList(): Promise<Element[]> {
         y: rec.y
       };
 
-      if (tag === "p") {
+      if (tag === "input") {
+        e.type = await elem.getAttribute("type");
+      }
+
+      if (tag === "p" || tag === "h1" || tag === "h2") {
         let content = await elem.getText();
         //console.log(content);
-        if (content === "") break;
+        //if (content === "") break;
         let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
         e.lines = e.height / lineHeight;
       }
