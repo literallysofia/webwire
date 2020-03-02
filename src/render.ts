@@ -26,8 +26,8 @@ class Render {
 
   draw() {
     for (let e of this.data.elements) {
-      switch (e.tag) {
-        case "img": {
+      switch (this.getType(e.tag)) {
+        case "image": {
           this.drawImage(e);
           break;
         }
@@ -35,9 +35,7 @@ class Render {
           this.drawButton(e);
           break;
         }
-        //case "li":
-        case "h1":
-        case "p": {
+        case "text": {
           this.drawText(e);
           break;
         }
@@ -55,6 +53,25 @@ class Render {
         this.canvasHeight = e.height + e.y;
     }
     this.setCanvasHeight();
+  }
+
+  getType(tag: string): string {
+    if (tag === "img") return "image";
+    if (tag === "button") return "button";
+    if (
+      tag === "h1" ||
+      tag === "h2" ||
+      tag === "h3" ||
+      tag === "h4" ||
+      tag === "h5" ||
+      tag === "h6" ||
+      tag === "p"
+    )
+      return "text";
+
+    if (tag === "input") return "input";
+
+    return "";
   }
 
   drawDefault(e: any) {

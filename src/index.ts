@@ -62,12 +62,12 @@ class Browser {
 
 interface Element {
   tag: string;
+  type?: string;
   height: number;
   width: number;
   x: number;
   y: number;
   lines?: number;
-  type?: string;
 }
 
 const browser = new Browser("chrome");
