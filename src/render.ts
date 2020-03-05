@@ -47,6 +47,10 @@ class Render {
           this.drawInput(e);
           break;
         }
+        case "dropdown": {
+          this.drawDropdown(e);
+          break;
+        }
         default: {
           this.drawDefault(e);
           break;
@@ -134,7 +138,27 @@ class Render {
       shapeNode.appendChild(line);
       shapeNode.appendChild(checkmark);
       this.canvas.appendChild(shapeNode);
+    } else if (e.variant === "radio") {
+      let x = e.x + e.width / 2;
+      let y = e.y + e.height / 2;
+      let shapeNode = this.roughCanvas.ellipse(x, y, e.width, e.height, options);
+      let point = this.roughCanvas
+        .ellipse(x, y, e.width / 2, e.height / 2, { fill: "black", fillStyle: "solid" })
+        .getElementsByTagName("path")[0];
+
+      shapeNode.appendChild(point);
+      this.canvas.appendChild(shapeNode);
     }
+  }
+
+  drawDropdown(e: any) {
+    let shapeNode = this.roughCanvas.rectangle(e.x, e.y, e.width, e.height, options);
+    let line = this.roughCanvas
+      .line(e.x + e.width - 20, e.y, e.x + e.width - 20, e.y + e.height)
+      .getElementsByTagName("path")[0];
+
+    shapeNode.appendChild(line);
+    this.canvas.appendChild(shapeNode);
   }
 }
 

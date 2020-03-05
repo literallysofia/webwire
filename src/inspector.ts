@@ -41,6 +41,9 @@ export class Inspector {
     } else if (tag === "button") {
       let group = await this.getGroup("button", tag);
       groups.push(group);
+    } else if (tag === "select") {
+      let group = await this.getGroup("dropdown", tag);
+      groups.push(group);
     }
 
     return groups;
@@ -82,6 +85,8 @@ export class Inspector {
           await this.addImage(group.type, elem);
         } else if (group.type === "button") {
           await this.addButton(group.type, elem);
+        } else if (group.type === "dropdown") {
+          await this.addDropdown(group.type, elem);
         }
       }
     }
@@ -128,8 +133,23 @@ export class Inspector {
     this.data.push(new Button(type, rect.height, rect.width, rect.x, rect.y));
   }
 
+  async addDropdown(type: string, elem: WebElement): Promise<void> {
+    let rect = await elem.getRect();
+    this.data.push(new Button(type, rect.height, rect.width, rect.x, rect.y));
+  }
+
   isText(tag: string): boolean {
-    if (tag === "p" || tag === "h1" || tag === "h2" || tag === "h3" || tag === "h4" || tag === "h5" || tag === "h6") {
+    if (
+      tag === "p" ||
+      tag === "h1" ||
+      tag === "h2" ||
+      tag === "h3" ||
+      tag === "h4" ||
+      tag === "h5" ||
+      tag === "h6" ||
+      tag === "small" ||
+      tag === "label"
+    ) {
       return true;
     } else return false;
   }

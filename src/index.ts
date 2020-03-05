@@ -22,8 +22,6 @@ async function test() {
   for (let tag of website.tags) {
     let groups = await inspector.fetchElements(tag);
     await inspector.addGroups(groups);
-    //let obj = await inspector.getElements(tag);
-    //await inspector.addElements(obj);
   }
   inspector.export();
 }
