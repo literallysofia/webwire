@@ -72,21 +72,29 @@ export class Inspector {
   async addElements(group: GroupElement): Promise<void> {
     for (let elem of group.elements) {
       var displayed = await elem.isDisplayed();
-      if (!displayed) break;
-      // TODO: problema no display
 
-      var rec = await elem.getRect();
+      if (displayed) {
+        var rec = await elem.getRect();
 
-      if (group.type === "text") {
-        let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
-        this.data.push(new Text(group.type, rec.height, rec.width, rec.x, rec.y, rec.height / lineHeight));
-      } else if (group.type === "image") {
-        this.data.push(new Image(group.type, rec.height, rec.width, rec.x, rec.y));
-      } else if (group.type === "input") {
-        let type = await elem.getAttribute("type");
-        this.data.push(new Input(group.type, rec.height, rec.width, rec.x, rec.y, type));
-      } else if (group.type === "button") {
-        this.data.push(new Button(group.type, rec.height, rec.width, rec.x, rec.y));
+        if (group.type === "text") {
+          let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
+          let paddingTop = parseInt(await elem.getCssValue("padding-top"), 10);
+          let paddingBottom = parseInt(await elem.getCssValue("padding-bottom"), 10);
+          let paddingLeft = parseInt(await elem.getCssValue("padding-left"), 10);
+          let paddingRight = parseInt(await elem.getCssValue("padding-right"), 10);
+          let width = rec.width - paddingLeft - paddingRight;
+          let height = rec.height - paddingTop - paddingBottom;
+          let numLines = height / lineHeight;
+
+          this.data.push(new Text(group.type, height, width, rec.x, rec.y, numLines));
+        } else if (group.type === "image") {
+          this.data.push(new Image(group.type, rec.height, rec.width, rec.x, rec.y));
+        } else if (group.type === "input") {
+          let type = await elem.getAttribute("type");
+          this.data.push(new Input(group.type, rec.height, rec.width, rec.x, rec.y, type));
+        } else if (group.type === "button") {
+          this.data.push(new Button(group.type, rec.height, rec.width, rec.x, rec.y));
+        }
       }
     }
   }
