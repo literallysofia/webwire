@@ -109,8 +109,15 @@ class Render {
   }
 
   drawInput(e: any) {
-    if (e.type !== "checkbox") this.drawDefault(e);
-    else {
+    if (
+      e.variant === "text" ||
+      e.variant === "password" ||
+      e.variant === "email" ||
+      e.variant === "search" ||
+      e.variant === "url"
+    )
+      this.drawDefault(e);
+    else if (e.variant === "checkbox") {
       let shapeNode = this.roughCanvas.rectangle(e.x, e.y, e.width, e.height, options);
 
       let d = "M" + (e.x + e.width / 4) + " " + (e.y + e.height / 4) + "l7.1 7.2 10.7-16.8";

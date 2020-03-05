@@ -1,7 +1,7 @@
 import fs from "fs";
 import { Browser } from "./browser";
 import { Element, Text, Image, Input, Button } from "./element";
-import { WebElement } from "selenium-webdriver";
+import { WebElement, IRectangle } from "selenium-webdriver";
 
 interface GroupElement {
   type: string;
@@ -21,11 +21,11 @@ export class Inspector {
     var groups: GroupElement[] = [];
 
     if (this.isText(tag)) {
-      let xpath = "//" + tag + "[text()]";
+      let xpath = "//" + tag + "[text() and not(a[contains(@class, 'btn')])]";
       let group = await this.getGroup("text", tag, xpath);
       groups.push(group);
     } else if (tag === "a") {
-      let linkPath = "//" + tag + "[not(contains(@class, 'btn'))]";
+      let linkPath = "//" + tag + "[not(contains(@class, 'btn')) and not(ancestor::p)]";
       let buttonPath = "//" + tag + "[contains(@class, 'btn')]";
 
       let group = await this.getGroup("text", tag, linkPath);
@@ -73,30 +73,59 @@ export class Inspector {
     for (let elem of group.elements) {
       var displayed = await elem.isDisplayed();
 
-      if (displayed) {
-        var rec = await elem.getRect();
-
+      if (group.type === "input") {
+        await this.addInput(group.type, elem);
+      } else if (displayed) {
         if (group.type === "text") {
-          let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
-          let paddingTop = parseInt(await elem.getCssValue("padding-top"), 10);
-          let paddingBottom = parseInt(await elem.getCssValue("padding-bottom"), 10);
-          let paddingLeft = parseInt(await elem.getCssValue("padding-left"), 10);
-          let paddingRight = parseInt(await elem.getCssValue("padding-right"), 10);
-          let width = rec.width - paddingLeft - paddingRight;
-          let height = rec.height - paddingTop - paddingBottom;
-          let numLines = height / lineHeight;
-
-          this.data.push(new Text(group.type, height, width, rec.x, rec.y, numLines));
+          await this.addText(group.type, elem);
         } else if (group.type === "image") {
-          this.data.push(new Image(group.type, rec.height, rec.width, rec.x, rec.y));
-        } else if (group.type === "input") {
-          let type = await elem.getAttribute("type");
-          this.data.push(new Input(group.type, rec.height, rec.width, rec.x, rec.y, type));
+          await this.addImage(group.type, elem);
         } else if (group.type === "button") {
-          this.data.push(new Button(group.type, rec.height, rec.width, rec.x, rec.y));
+          await this.addButton(group.type, elem);
         }
       }
     }
+  }
+
+  async getRectangle(elem: WebElement): Promise<IRectangle> {
+    var rec = await elem.getRect();
+
+    let paddingTop = parseInt(await elem.getCssValue("padding-top"), 10);
+    let paddingBottom = parseInt(await elem.getCssValue("padding-bottom"), 10);
+    let paddingLeft = parseInt(await elem.getCssValue("padding-left"), 10);
+    let paddingRight = parseInt(await elem.getCssValue("padding-right"), 10);
+
+    let rect: IRectangle = {
+      x: rec.x,
+      y: rec.y,
+      width: rec.width - paddingLeft - paddingRight,
+      height: rec.height - paddingTop - paddingBottom
+    };
+
+    return rect;
+  }
+
+  async addText(type: string, elem: WebElement): Promise<void> {
+    let rect = await this.getRectangle(elem);
+    let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
+    let numLines = Math.round(rect.height / lineHeight);
+    this.data.push(new Text(type, rect.height, rect.width, rect.x, rect.y, numLines));
+  }
+
+  async addImage(type: string, elem: WebElement): Promise<void> {
+    let rect = await elem.getRect();
+    this.data.push(new Image(type, rect.height, rect.width, rect.x, rect.y));
+  }
+
+  async addInput(type: string, elem: WebElement): Promise<void> {
+    let rect = await elem.getRect();
+    let variant = await elem.getAttribute("type");
+    this.data.push(new Input(type, rect.height, rect.width, rect.x, rect.y, variant));
+  }
+
+  async addButton(type: string, elem: WebElement): Promise<void> {
+    let rect = await elem.getRect();
+    this.data.push(new Button(type, rect.height, rect.width, rect.x, rect.y));
   }
 
   isText(tag: string): boolean {
@@ -115,7 +144,7 @@ export class Inspector {
     var content = {
       elements: this.data
     };
-    console.log(this.data);
+    //console.log(this.data);
 
     var json = JSON.stringify(content);
     fs.writeFile("data.json", json, function(err) {
