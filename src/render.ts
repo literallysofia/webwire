@@ -12,7 +12,10 @@ class Render {
   data: any;
   canvas: HTMLElement;
   roughCanvas: any;
-  canvasHeight: number = 0;
+  size = {
+    height: 0,
+    width: 0
+  };
 
   constructor(data: any) {
     this.data = data;
@@ -20,8 +23,9 @@ class Render {
     this.roughCanvas = rough.svg(this.canvas);
   }
 
-  setCanvasHeight() {
-    this.canvas.setAttribute("height", (this.canvasHeight + 30).toString());
+  setCanvasSize() {
+    this.canvas.setAttribute("height", (this.size.height + 30).toString());
+    this.canvas.setAttribute("width", (this.size.width + 30).toString());
   }
 
   draw() {
@@ -49,9 +53,10 @@ class Render {
         }
       }
 
-      if (this.canvasHeight < e.height + e.y) this.canvasHeight = e.height + e.y;
+      if (this.size.height < e.height + e.y) this.size.height = e.height + e.y;
+      if (this.size.width < e.width + e.x) this.size.width = e.width + e.x;
     }
-    this.setCanvasHeight();
+    this.setCanvasSize();
   }
 
   drawDefault(e: any) {
