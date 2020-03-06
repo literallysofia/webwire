@@ -20,8 +20,7 @@ const inspector = new Inspector(browser);
 
 async function test() {
   for (let tag of website.tags) {
-    let groups = await inspector.fetchElements(tag);
-    await inspector.addGroups(groups);
+    await inspector.fetchData(tag);
   }
   inspector.export();
 }

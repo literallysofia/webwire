@@ -1,15 +1,25 @@
 import fs from "fs";
 import { Browser } from "./browser";
-import { Element, Text, Image, Input, Button } from "./element";
+import { Drawable, Text, Image, Input, Button, Dropdown } from "./drawable";
 import { WebElement, IRectangle } from "selenium-webdriver";
 
-interface GroupElement {
-  type: string;
-  elements: WebElement[];
+enum Name {
+  Text = "text",
+  Image = "image",
+  Input = "input",
+  Button = "button",
+  Dropdown = "dropdown"
 }
 
+var textAlternatives = ["p", "h1", "h2", "h3", "h4", "h5", "h6", "small", "label"];
+var imageAlternatives = ["img", "svg", "canvas"];
+var inputAlternatives = ["input"];
+var buttonAlternatives = ["button"];
+var dropdownAlternatives = ["select"];
+var linkAlternatives = ["a"];
+
 export class Inspector {
-  data: Element[];
+  data: Drawable[];
   browser: Browser;
 
   constructor(b: Browser) {
@@ -17,39 +27,36 @@ export class Inspector {
     this.data = [];
   }
 
-  async fetchElements(tag: string): Promise<GroupElement[]> {
-    var groups: GroupElement[] = [];
+  async fetchData(tag: string): Promise<void> {
+    var foundElements;
 
-    if (this.isText(tag)) {
+    if (textAlternatives.includes(tag)) {
       let xpath = "//" + tag + "[text() and not(a[contains(@class, 'btn')])]";
-      let group = await this.getGroup("text", tag, xpath);
-      groups.push(group);
-    } else if (tag === "a") {
+      foundElements = await this.findElements(tag, xpath);
+      await this.addElements(Name.Text, foundElements);
+    } else if (imageAlternatives.includes(tag)) {
+      foundElements = await this.findElements(tag);
+      await this.addElements(Name.Image, foundElements);
+    } else if (inputAlternatives.includes(tag)) {
+      foundElements = await this.findElements(tag);
+      await this.addElements(Name.Input, foundElements);
+    } else if (buttonAlternatives.includes(tag)) {
+      foundElements = await this.findElements(tag);
+      await this.addElements(Name.Button, foundElements);
+    } else if (dropdownAlternatives.includes(tag)) {
+      foundElements = await this.findElements(tag);
+      await this.addElements(Name.Dropdown, foundElements);
+    } else if (linkAlternatives.includes(tag)) {
       let linkPath = "//" + tag + "[not(contains(@class, 'btn')) and not(ancestor::p)]";
       let buttonPath = "//" + tag + "[contains(@class, 'btn')]";
-
-      let group = await this.getGroup("text", tag, linkPath);
-      groups.push(group);
-      let group2 = await this.getGroup("button", tag, buttonPath);
-      groups.push(group2);
-    } else if (this.isImage(tag)) {
-      let group = await this.getGroup("image", tag);
-      groups.push(group);
-    } else if (tag === "input") {
-      let group = await this.getGroup("input", tag);
-      groups.push(group);
-    } else if (tag === "button") {
-      let group = await this.getGroup("button", tag);
-      groups.push(group);
-    } else if (tag === "select") {
-      let group = await this.getGroup("dropdown", tag);
-      groups.push(group);
+      foundElements = await this.findElements(tag, linkPath);
+      await this.addElements(Name.Text, foundElements);
+      foundElements = await this.findElements(tag, buttonPath);
+      await this.addElements(Name.Button, foundElements);
     }
-
-    return groups;
   }
 
-  async getGroup(type: string, tag: string, xpath?: string): Promise<GroupElement> {
+  async findElements(tag: string, xpath?: string): Promise<WebElement[]> {
     var elems: WebElement[];
 
     if (xpath) {
@@ -58,36 +65,34 @@ export class Inspector {
       elems = await this.browser.findElements(tag, false);
     }
 
-    var group: GroupElement = {
-      type: type,
-      elements: elems
-    };
-
-    return group;
+    return elems;
   }
 
-  async addGroups(groups: GroupElement[]): Promise<void> {
-    for (let group of groups) {
-      await this.addElements(group);
-    }
-  }
-
-  async addElements(group: GroupElement): Promise<void> {
-    for (let elem of group.elements) {
+  async addElements(name: Name, elems: WebElement[]): Promise<void> {
+    for (let elem of elems) {
       var displayed = await elem.isDisplayed();
+      var rect = await elem.getRect();
 
-      if (group.type === "input") {
-        await this.addInput(group.type, elem);
-      } else if (displayed) {
-        if (group.type === "text") {
-          await this.addText(group.type, elem);
-        } else if (group.type === "image") {
-          await this.addImage(group.type, elem);
-        } else if (group.type === "button") {
-          await this.addButton(group.type, elem);
-        } else if (group.type === "dropdown") {
-          await this.addDropdown(group.type, elem);
-        }
+      switch (name) {
+        case Name.Text:
+          rect = await this.getRectangle(elem);
+          let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
+          let numLines = Math.round(rect.height / lineHeight);
+          this.data.push(this.createText(rect.height, rect.width, rect.x, rect.y, numLines));
+          break;
+        case Name.Image:
+          this.data.push(this.createImage(rect.height, rect.width, rect.x, rect.y));
+          break;
+        case Name.Input:
+          let type = await elem.getAttribute("type");
+          this.data.push(this.createInput(rect.height, rect.width, rect.x, rect.y, type));
+          break;
+        case Name.Button:
+          this.data.push(this.createButton(rect.height, rect.width, rect.x, rect.y));
+          break;
+        case Name.Dropdown:
+          this.data.push(this.createDropdown(rect.height, rect.width, rect.x, rect.y));
+          break;
       }
     }
   }
@@ -110,63 +115,29 @@ export class Inspector {
     return rect;
   }
 
-  async addText(type: string, elem: WebElement): Promise<void> {
-    let rect = await this.getRectangle(elem);
-    let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
-    let numLines = Math.round(rect.height / lineHeight);
-    this.data.push(new Text(type, rect.height, rect.width, rect.x, rect.y, numLines));
+  createText(h: number, w: number, x: number, y: number, lines: number): Drawable {
+    return new Text(h, w, x, y, lines);
   }
 
-  async addImage(type: string, elem: WebElement): Promise<void> {
-    let rect = await elem.getRect();
-    this.data.push(new Image(type, rect.height, rect.width, rect.x, rect.y));
+  createImage(h: number, w: number, x: number, y: number): Drawable {
+    return new Image(h, w, x, y);
   }
 
-  async addInput(type: string, elem: WebElement): Promise<void> {
-    let rect = await elem.getRect();
-    let variant = await elem.getAttribute("type");
-    this.data.push(new Input(type, rect.height, rect.width, rect.x, rect.y, variant));
+  createInput(h: number, w: number, x: number, y: number, type: string): Drawable {
+    return new Input(h, w, x, y, type);
   }
 
-  async addButton(type: string, elem: WebElement): Promise<void> {
-    let rect = await elem.getRect();
-    this.data.push(new Button(type, rect.height, rect.width, rect.x, rect.y));
+  createButton(h: number, w: number, x: number, y: number): Drawable {
+    return new Button(h, w, x, y);
   }
 
-  async addDropdown(type: string, elem: WebElement): Promise<void> {
-    let rect = await elem.getRect();
-    this.data.push(new Button(type, rect.height, rect.width, rect.x, rect.y));
-  }
-
-  isText(tag: string): boolean {
-    if (
-      tag === "p" ||
-      tag === "h1" ||
-      tag === "h2" ||
-      tag === "h3" ||
-      tag === "h4" ||
-      tag === "h5" ||
-      tag === "h6" ||
-      tag === "small" ||
-      tag === "label"
-    ) {
-      return true;
-    } else return false;
-  }
-
-  isImage(tag: string): boolean {
-    if (tag === "img" || tag === "svg" || tag === "canvas") {
-      return true;
-    } else return false;
+  createDropdown(h: number, w: number, x: number, y: number): Drawable {
+    return new Dropdown(h, w, x, y);
   }
 
   export() {
-    var content = {
-      elements: this.data
-    };
     //console.log(this.data);
-
-    var json = JSON.stringify(content);
+    var json = JSON.stringify(this.data);
     fs.writeFile("data.json", json, function(err) {
       if (err) {
         console.log(err);

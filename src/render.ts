@@ -1,7 +1,7 @@
 const rough = require("roughjs/bundled/rough.cjs.js");
 var data = require("../data.json");
 
-console.log(data.elements);
+console.log(data);
 
 const options = {
   roughness: 1.5,
@@ -29,8 +29,8 @@ class Render {
   }
 
   draw() {
-    for (let e of this.data.elements) {
-      switch (e.type) {
+    for (let e of this.data) {
+      switch (e.name) {
         case "image": {
           this.drawImage(e);
           break;
@@ -114,14 +114,14 @@ class Render {
 
   drawInput(e: any) {
     if (
-      e.variant === "text" ||
-      e.variant === "password" ||
-      e.variant === "email" ||
-      e.variant === "search" ||
-      e.variant === "url"
+      e.type === "text" ||
+      e.type === "password" ||
+      e.type === "email" ||
+      e.type === "search" ||
+      e.type === "url"
     )
       this.drawDefault(e);
-    else if (e.variant === "checkbox") {
+    else if (e.type === "checkbox") {
       let shapeNode = this.roughCanvas.rectangle(e.x, e.y, e.width, e.height, options);
 
       let d = "M" + (e.x + e.width / 4) + " " + (e.y + e.height / 4) + "l7.1 7.2 10.7-16.8";
@@ -131,14 +131,14 @@ class Render {
         })
         .getElementsByTagName("path")[0];
 
-      let line = this.roughCanvas
+/*       let line = this.roughCanvas
         .line(e.x + e.width + 10, e.y + e.height / 2, e.x + e.width + 80, e.y + e.height / 2, options)
         .getElementsByTagName("path")[0];
 
-      shapeNode.appendChild(line);
+      shapeNode.appendChild(line); */
       shapeNode.appendChild(checkmark);
       this.canvas.appendChild(shapeNode);
-    } else if (e.variant === "radio") {
+    } else if (e.type === "radio") {
       let x = e.x + e.width / 2;
       let y = e.y + e.height / 2;
       let shapeNode = this.roughCanvas.ellipse(x, y, e.width, e.height, options);
