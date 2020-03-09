@@ -1,11 +1,16 @@
+import { Name } from "./variables";
+import { Drawable, Text, Image, Input, Button, Dropdown } from "./drawable";
 const rough = require("roughjs/bundled/rough.cjs.js");
 var data = require("../data.json");
 
 console.log(data);
 
 const options = {
-  roughness: 1.5,
-  strokeWidth: 1.5
+  roughness: Math.random() * 0.5,
+  bowing: Math.random() * 10,
+  //strokeWidth: Math.random() * 4 + 1,
+  strokeWidth: 1.5,
+  hachureGap: Math.random() * 4
 };
 
 class Render {
@@ -31,16 +36,19 @@ class Render {
   draw() {
     for (let e of this.data) {
       switch (e.name) {
-        case "image": {
+        case Name.Text: {
+          let cena = new Text(e.height, e.width, e.x, e.y, e.nLines);
+          cena.generate();
+          console.log();
+          this.drawText(cena);
+          break;
+        }
+        case Name.Image: {
           this.drawImage(e);
           break;
         }
         case "button": {
           this.drawButton(e);
-          break;
-        }
-        case "text": {
-          this.drawText(e);
           break;
         }
         case "input": {
@@ -68,8 +76,14 @@ class Render {
     this.canvas.appendChild(shapeNode);
   }
 
-  drawText(e: any) {
+  drawText(e: Text) {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+    for (let points of e.lines) {
+      let line = this.roughCanvas.curve(points, options).getElementsByTagName("path")[0];
+      g.appendChild(line);
+    }
+    /* const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
     for (let i = 0; i < e.lines; i++) {
       // height + lineHeight * i + half of lineHeight to vertical center
@@ -78,7 +92,7 @@ class Render {
       let line = this.roughCanvas.line(e.x, y, e.x + e.width, y, options).getElementsByTagName("path")[0];
 
       g.appendChild(line);
-    }
+    } */
 
     this.canvas.appendChild(g);
   }
@@ -102,8 +116,8 @@ class Render {
 
     for (let i = 0; i * 10 < e.width - 30; i++) {
       let x = 10 * i + e.x + 20;
-      let xdeg = (Math.PI / 30) * x;
-      let y = e.y + e.height - Math.round((Math.sin(xdeg) * e.height) / 10) - e.height / 2;
+      let xdeg = (Math.PI / 8) * x;
+      let y = (Math.sin(xdeg) * e.height) / 10 + (e.y + e.height / 2);
       points.push([x, y]);
     }
     let curve = this.roughCanvas.curve(points, options);
@@ -113,13 +127,7 @@ class Render {
   }
 
   drawInput(e: any) {
-    if (
-      e.type === "text" ||
-      e.type === "password" ||
-      e.type === "email" ||
-      e.type === "search" ||
-      e.type === "url"
-    )
+    if (e.type === "text" || e.type === "password" || e.type === "email" || e.type === "search" || e.type === "url")
       this.drawDefault(e);
     else if (e.type === "checkbox") {
       let shapeNode = this.roughCanvas.rectangle(e.x, e.y, e.width, e.height, options);
@@ -131,7 +139,7 @@ class Render {
         })
         .getElementsByTagName("path")[0];
 
-/*       let line = this.roughCanvas
+      /*       let line = this.roughCanvas
         .line(e.x + e.width + 10, e.y + e.height / 2, e.x + e.width + 80, e.y + e.height / 2, options)
         .getElementsByTagName("path")[0];
 

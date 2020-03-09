@@ -1,3 +1,5 @@
+import * as Utils from "./utils";
+
 var randomize = true;
 var randomOffset = 10;
 
@@ -27,7 +29,7 @@ export abstract class Drawable {
     return [p1, p2, p3, p4];
   }
 
-  mutate(points: number[][], value: number) {
+  mutate(points: number[][], value?: number) {
     var offset = randomOffset;
     if (value !== undefined) offset *= value;
 
@@ -44,6 +46,7 @@ export abstract class Drawable {
       this.set_min_max(this.min, this.max, point);
     }
   }
+
   set_min_max(min: any, max: any, value: any) {
     min[0] = Math.min(value[0], min[0]);
     min[1] = Math.min(value[1], min[1]);
@@ -56,15 +59,33 @@ export abstract class Drawable {
 
 export class Text extends Drawable {
   name: string;
-  lines: number;
+  nLines: number;
+  lines: number[][][];
 
   constructor(h: number, w: number, x: number, y: number, l: number) {
     super(h, w, x, y);
     this.name = "text";
-    this.lines = l;
+    this.nLines = l;
+    this.lines = [];
   }
 
-  generate(): void {}
+  generate(): void {
+    var lineHeight = this.height / this.nLines;
+
+    for (let i = 0; i < this.nLines; i++) {
+      var nPoints = Math.floor(Utils.random(10, this.width / 40)); //TODO: melhorar
+      var points = [];
+
+      for (let j = 0; j < nPoints; j++) {
+        let frac = j / (nPoints - 1);
+        let x = this.x + this.width * frac;
+        let xdeg = Math.PI * x;
+        let y = Utils.random(2, lineHeight / 2) * Math.sin(xdeg) + (this.y + lineHeight * i + lineHeight / 2);
+        points.push([x, y]);
+      }
+      this.lines.push(points);
+    }
+  }
 }
 
 export class Image extends Drawable {

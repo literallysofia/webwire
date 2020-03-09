@@ -1,15 +1,8 @@
 import fs from "fs";
 import { Browser } from "./browser";
 import { Drawable, Text, Image, Input, Button, Dropdown } from "./drawable";
+import { Name } from "./variables";
 import { WebElement, IRectangle } from "selenium-webdriver";
-
-enum Name {
-  Text = "text",
-  Image = "image",
-  Input = "input",
-  Button = "button",
-  Dropdown = "dropdown"
-}
 
 var textAlternatives = ["p", "h1", "h2", "h3", "h4", "h5", "h6", "small", "label"];
 var imageAlternatives = ["img", "svg", "canvas"];
@@ -70,7 +63,8 @@ export class Inspector {
 
   async addElements(name: Name, elems: WebElement[]): Promise<void> {
     for (let elem of elems) {
-      var displayed = await elem.isDisplayed();
+      //var displayed = await elem.isDisplayed();
+      //TODO: ter display em conta
       var rect = await elem.getRect();
 
       switch (name) {
