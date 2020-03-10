@@ -27,7 +27,10 @@ export abstract class Drawable {
 
   mutate(points: number[][], value?: number) {
     var offset = randomOffset;
-    if (value !== undefined) offset *= value;
+    if (value) {
+      offset *= value;
+      console.log("oi");
+    }
 
     for (var i in points) {
       var point = points[i];
@@ -42,16 +45,16 @@ export abstract class Drawable {
 export class Text extends Drawable {
   name: string;
   nLines: number;
-  lines: number[][][];
+  lines?: number[][][];
 
   constructor(h: number, w: number, x: number, y: number, l: number) {
     super(h, w, x, y);
     this.name = "text";
     this.nLines = l;
-    this.lines = [];
   }
 
   generate(): void {
+    this.lines = [];
     var lineHeight = this.height / this.nLines;
 
     for (let i = 0; i < this.nLines; i++) {
@@ -86,7 +89,7 @@ export class Image extends Drawable {
 export class Input extends Drawable {
   name: string;
   type: string;
-  lines: any;
+  lines?: number[][][];
 
   constructor(h: number, w: number, x: number, y: number, t: string) {
     super(h, w, x, y);
@@ -95,10 +98,10 @@ export class Input extends Drawable {
   }
 
   generate(): void {
-    var points = this.rectPoints(this.height, this.width, this.x, this.y);
     this.lines = [];
+    var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
-    if (randomize) this.mutate(points, 0.6);
+    if (randomize) this.mutate(points, 0.5);
 
     this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
   }

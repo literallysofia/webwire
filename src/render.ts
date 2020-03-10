@@ -6,8 +6,8 @@ var data = require("../data.json");
 console.log(data);
 
 const options = {
-  roughness: Math.random() * 0.5,
-  bowing: Math.random() * 10,
+  roughness: Math.random() + 0.5,
+  bowing: Math.random() * 5,
   //strokeWidth: Math.random() * 4 + 1,
   strokeWidth: 1.5,
   hachureGap: Math.random() * 4
@@ -51,7 +51,9 @@ class Render {
           break;
         }
         case "input": {
-          this.drawInput(e);
+          let elem = new Input(e.height, e.width, e.x, e.y, e.type);
+          elem.generate();
+          this.drawInput(elem);
           break;
         }
         case "dropdown": {
@@ -70,32 +72,31 @@ class Render {
     this.setCanvasSize();
   }
 
-  drawDefault(e: any) {
-    let shapeNode = this.roughCanvas.rectangle(e.x, e.y, e.width, e.height, options);
-    this.canvas.appendChild(shapeNode);
-  }
-
-  drawText(e: Text) {
+  drawDefault(e: Input) {
+    if (!e.lines) return;
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
     for (let points of e.lines) {
       let line = this.roughCanvas.curve(points, options).getElementsByTagName("path")[0];
       g.appendChild(line);
     }
-    /* const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-
-    for (let i = 0; i < e.lines; i++) {
-      // height + lineHeight * i + half of lineHeight to vertical center
-      let y = e.y + (e.height / e.lines) * i + e.height / e.lines / 2;
-
-      let line = this.roughCanvas.line(e.x, y, e.x + e.width, y, options).getElementsByTagName("path")[0];
-
-      g.appendChild(line);
-    } */
 
     this.canvas.appendChild(g);
   }
 
+  drawText(e: Text) {
+    if (!e.lines) return;
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+    for (let points of e.lines) {
+      let line = this.roughCanvas.curve(points, options).getElementsByTagName("path")[0];
+      g.appendChild(line);
+    }
+
+    this.canvas.appendChild(g);
+  }
+
+  //TODO
   drawImage(e: any) {
     let shapeNode = this.roughCanvas.rectangle(e.x, e.y, e.width, e.height, options);
     let firstLine = this.roughCanvas.line(e.x, e.y, e.x + e.width, e.y + e.height).getElementsByTagName("path")[0];
@@ -106,6 +107,7 @@ class Render {
     this.canvas.appendChild(shapeNode);
   }
 
+  //TODO
   drawButton(e: any) {
     if (e.x <= 0 || e.y <= 0) return;
 
@@ -125,7 +127,8 @@ class Render {
     this.canvas.appendChild(shapeNode);
   }
 
-  drawInput(e: any) {
+  //TODO
+  drawInput(e: Input) {
     if (e.type === "text" || e.type === "password" || e.type === "email" || e.type === "search" || e.type === "url")
       this.drawDefault(e);
     else if (e.type === "checkbox") {
@@ -138,11 +141,6 @@ class Render {
         })
         .getElementsByTagName("path")[0];
 
-      /*       let line = this.roughCanvas
-        .line(e.x + e.width + 10, e.y + e.height / 2, e.x + e.width + 80, e.y + e.height / 2, options)
-        .getElementsByTagName("path")[0];
-
-      shapeNode.appendChild(line); */
       shapeNode.appendChild(checkmark);
       this.canvas.appendChild(shapeNode);
     } else if (e.type === "radio") {
@@ -158,6 +156,7 @@ class Render {
     }
   }
 
+  //TODO
   drawDropdown(e: any) {
     let shapeNode = this.roughCanvas.rectangle(e.x, e.y, e.width, e.height, options);
     let line = this.roughCanvas
