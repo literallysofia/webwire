@@ -8,16 +8,12 @@ export abstract class Drawable {
   width: number;
   x: number;
   y: number;
-  min: number[];
-  max: number[];
 
   constructor(h: number, w: number, x: number, y: number) {
     this.height = h;
     this.width = w;
     this.x = x;
     this.y = y;
-    this.min = [x, y];
-    this.max = [x + w, y + h];
   }
 
   rectPoints(h: number, w: number, x: number, y: number): number[][] {
@@ -40,20 +36,6 @@ export abstract class Drawable {
     }
   }
 
-  update_min_max(points: any) {
-    for (var p in points) {
-      var point = points[p];
-      this.set_min_max(this.min, this.max, point);
-    }
-  }
-
-  set_min_max(min: any, max: any, value: any) {
-    min[0] = Math.min(value[0], min[0]);
-    min[1] = Math.min(value[1], min[1]);
-    max[0] = Math.max(value[0], max[0]);
-    max[1] = Math.max(value[1], max[1]);
-  }
-
   abstract generate(): void;
 }
 
@@ -73,14 +55,16 @@ export class Text extends Drawable {
     var lineHeight = this.height / this.nLines;
 
     for (let i = 0; i < this.nLines; i++) {
-      var nPoints = Math.floor(Utils.random(10, this.width / 40)); //TODO: melhorar
+      var nPoints = Math.floor((Math.random() * this.width) / 30 + 4);
       var points = [];
 
       for (let j = 0; j < nPoints; j++) {
         let frac = j / (nPoints - 1);
-        let x = this.x + this.width * frac;
-        let xdeg = Math.PI * x;
+        let x = this.x + this.width * frac; // x position
+        let xdeg = (Math.PI / 2) * x; // frequency
+        // amplitude * sin(frequency) + offset
         let y = Utils.random(2, lineHeight / 2) * Math.sin(xdeg) + (this.y + lineHeight * i + lineHeight / 2);
+
         points.push([x, y]);
       }
       this.lines.push(points);
@@ -117,8 +101,6 @@ export class Input extends Drawable {
     if (randomize) this.mutate(points, 0.6);
 
     this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
-
-    this.update_min_max(points);
   }
 }
 

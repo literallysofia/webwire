@@ -37,10 +37,9 @@ class Render {
     for (let e of this.data) {
       switch (e.name) {
         case Name.Text: {
-          let cena = new Text(e.height, e.width, e.x, e.y, e.nLines);
-          cena.generate();
-          console.log();
-          this.drawText(cena);
+          let elem = new Text(e.height, e.width, e.x, e.y, e.nLines);
+          elem.generate();
+          this.drawText(elem);
           break;
         }
         case Name.Image: {
