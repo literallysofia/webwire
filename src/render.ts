@@ -54,10 +54,10 @@ class Render {
           elem = new Input(e.height, e.width, e.x, e.y, e.type);
           break;
         }
-        /*         case "dropdown": {
-          this.drawDropdown(e);
+        case Name.Dropdown: {
+          elem = new Dropdown(e.height, e.width, e.x, e.y);
           break;
-        } */
+        }
         default: {
           elem = new Input(e.height, e.width, e.x, e.y, e.type);
           break;
@@ -133,17 +133,6 @@ class Render {
       shapeNode.appendChild(point);
       this.canvas.appendChild(shapeNode);
     }
-  }
-
-  //TODO
-  drawDropdown(e: any) {
-    let shapeNode = this.roughCanvas.rectangle(e.x, e.y, e.width, e.height, options);
-    let line = this.roughCanvas
-      .line(e.x + e.width - 20, e.y, e.x + e.width - 20, e.y + e.height)
-      .getElementsByTagName("path")[0];
-
-    shapeNode.appendChild(line);
-    this.canvas.appendChild(shapeNode);
   }
 }
 

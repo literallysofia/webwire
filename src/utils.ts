@@ -27,3 +27,7 @@ export function p_sub(a: number[], b: number[]) {
 export function p_lerp(a: number[], b: number[], t: number) {
   return p_sum(a, p_mult(p_sub(b, a), t));
 }
+
+export function p_trans(a: number[], xd: number, yd: number) {
+  return [a[0] + xd, a[1] + yd];
+}

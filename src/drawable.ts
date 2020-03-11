@@ -30,7 +30,6 @@ export abstract class Drawable {
     var offset = randomOffset;
     if (value) {
       offset *= value;
-      console.log("oi");
     }
 
     for (var i in points) {
@@ -147,5 +146,24 @@ export class Dropdown extends Drawable {
     this.name = "dropdown";
   }
 
-  generate(): void {}
+  generate(): void {
+    this.lines = [];
+    var points = this.rectPoints(this.height, this.width, this.x, this.y);
+
+    if (randomize) this.mutate(points, 0.5);
+
+    var divider = [];
+    divider.push(
+      Utils.p_trans(points[1], -Utils.random(20, 40), 0),
+      Utils.p_trans(points[2], -Utils.random(20, 40), 0)
+    );
+
+    if (randomize) this.mutate(divider, 0.6);
+
+    this.lines.push([points[0], points[1]]);
+    this.lines.push([points[1], points[2]]);
+    this.lines.push([points[2], points[3]]);
+    this.lines.push([points[3], points[0]]);
+    this.lines.push([divider[0], divider[1]]);
+  }
 }
