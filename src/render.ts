@@ -48,10 +48,10 @@ class Render {
           elem = new Image(e.height, e.width, e.x, e.y);
           break;
         }
-        /*         case "button": {
-          this.drawButton(e);
+        case Name.Button: {
+          elem = new Button(e.height, e.width, e.x, e.y);
           break;
-        } */
+        }
         case Name.Input: {
           elem = new Input(e.height, e.width, e.x, e.y, e.type);
           break;
@@ -108,26 +108,6 @@ class Render {
       .getElementsByTagName("path")[0];
 
     shapeNode.appendChild(checkmark);
-    this.canvas.appendChild(shapeNode);
-  }
-
-  //TODO
-  drawButton(e: any) {
-    if (e.x <= 0 || e.y <= 0) return;
-
-    let shapeNode = this.roughCanvas.rectangle(e.x, e.y, e.width, e.height, options);
-
-    let points = [];
-
-    for (let i = 0; i * 10 < e.width - 30; i++) {
-      let x = 10 * i + e.x + 20;
-      let xdeg = (Math.PI / 8) * x;
-      let y = (Math.sin(xdeg) * e.height) / 10 + (e.y + e.height / 2);
-      points.push([x, y]);
-    }
-    let curve = this.roughCanvas.curve(points, options);
-
-    shapeNode.appendChild(curve);
     this.canvas.appendChild(shapeNode);
   }
 }

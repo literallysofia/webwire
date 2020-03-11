@@ -115,7 +115,33 @@ export class Button extends Drawable {
     this.name = "button";
   }
 
-  generate(): void {}
+  generate(): void {
+    this.lines = [];
+    var points = this.rectPoints(this.height, this.width, this.x, this.y);
+
+    if (randomize) this.mutate(points, 0.5);
+
+    var nPoints = Math.floor((Math.random() * this.width) / 30 + 4);
+    var text = [];
+    var paddingLeft = Utils.random(10, 30);
+    var paddingRight = Utils.random(10, 30) + paddingLeft;
+
+    for (let j = 0; j < nPoints; j++) {
+      let frac = j / (nPoints - 1);
+      let x = this.x + paddingLeft + (this.width - paddingRight) * frac; // x position
+      let xdeg = (Math.PI / 4) * x; // frequency
+      // amplitude * sin(frequency) + offset
+      let y = Utils.random(this.height / 5, this.height / 3) * Math.sin(xdeg) + (this.y + this.height / 2);
+
+      text.push([x, y]);
+    }
+
+    this.lines.push([points[0], points[1]]);
+    this.lines.push([points[1], points[2]]);
+    this.lines.push([points[2], points[3]]);
+    this.lines.push([points[3], points[0]]);
+    this.lines.push(text);
+  }
 }
 
 export class Dropdown extends Drawable {
