@@ -13,6 +13,8 @@ const options = {
   hachureGap: Math.random() * 4
 };
 
+var textField = ["text", "password", "email", "search", "url"];
+
 class Render {
   data: any;
   canvas: HTMLElement;
@@ -84,6 +86,31 @@ class Render {
     this.canvas.appendChild(g);
   }
 
+  drawRadio(height: number, width: number, x: number, y: number) {
+    let cx = x + width / 2;
+    let cy = y + height / 2;
+    let shapeNode = this.roughCanvas.ellipse(cx, cy, width, height, options);
+    let point = this.roughCanvas
+      .ellipse(cx, cy, width / 2, height / 2, { fill: "black", fillStyle: "solid" })
+      .getElementsByTagName("path")[0];
+
+    shapeNode.appendChild(point);
+    this.canvas.appendChild(shapeNode);
+  }
+
+  drawCheckbox(height: number, width: number, x: number, y: number) {
+    let shapeNode = this.roughCanvas.rectangle(x, y, width, height, options);
+    let d = "M" + (x + width / 4) + " " + (y + height / 4) + "l7.1 7.2 10.7-16.8";
+    let checkmark = this.roughCanvas
+      .path(d, {
+        strokeWidth: 2
+      })
+      .getElementsByTagName("path")[0];
+
+    shapeNode.appendChild(checkmark);
+    this.canvas.appendChild(shapeNode);
+  }
+
   //TODO
   drawButton(e: any) {
     if (e.x <= 0 || e.y <= 0) return;
@@ -102,37 +129,6 @@ class Render {
 
     shapeNode.appendChild(curve);
     this.canvas.appendChild(shapeNode);
-  }
-
-  //TODO
-  drawInput(e: Input) {
-    /* if (e.type === "text" || e.type === "password" || e.type === "email" || e.type === "search" || e.type === "url")
-      this.drawDefault(e);
-    else */ if (
-      e.type === "checkbox"
-    ) {
-      let shapeNode = this.roughCanvas.rectangle(e.x, e.y, e.width, e.height, options);
-
-      let d = "M" + (e.x + e.width / 4) + " " + (e.y + e.height / 4) + "l7.1 7.2 10.7-16.8";
-      let checkmark = this.roughCanvas
-        .path(d, {
-          strokeWidth: 2
-        })
-        .getElementsByTagName("path")[0];
-
-      shapeNode.appendChild(checkmark);
-      this.canvas.appendChild(shapeNode);
-    } else if (e.type === "radio") {
-      let x = e.x + e.width / 2;
-      let y = e.y + e.height / 2;
-      let shapeNode = this.roughCanvas.ellipse(x, y, e.width, e.height, options);
-      let point = this.roughCanvas
-        .ellipse(x, y, e.width / 2, e.height / 2, { fill: "black", fillStyle: "solid" })
-        .getElementsByTagName("path")[0];
-
-      shapeNode.appendChild(point);
-      this.canvas.appendChild(shapeNode);
-    }
   }
 }
 

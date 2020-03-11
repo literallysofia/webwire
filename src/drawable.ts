@@ -107,26 +107,6 @@ export class Image extends Drawable {
   }
 }
 
-export class Input extends Drawable {
-  name: string;
-  type: string;
-
-  constructor(h: number, w: number, x: number, y: number, t: string) {
-    super(h, w, x, y);
-    this.name = "input";
-    this.type = t;
-  }
-
-  generate(): void {
-    this.lines = [];
-    var points = this.rectPoints(this.height, this.width, this.x, this.y);
-
-    if (randomize) this.mutate(points, 0.5);
-
-    this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
-  }
-}
-
 export class Button extends Drawable {
   name: string;
 
@@ -165,5 +145,25 @@ export class Dropdown extends Drawable {
     this.lines.push([points[2], points[3]]);
     this.lines.push([points[3], points[0]]);
     this.lines.push([divider[0], divider[1]]);
+  }
+}
+
+export class Input extends Drawable {
+  name: string;
+  type: string;
+
+  constructor(h: number, w: number, x: number, y: number, t: string) {
+    super(h, w, x, y);
+    this.name = "input";
+    this.type = t;
+  }
+
+  generate(): void {
+    this.lines = [];
+    var points = this.rectPoints(this.height, this.width, this.x, this.y);
+
+    if (randomize) this.mutate(points, 0.5);
+
+    this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
   }
 }
