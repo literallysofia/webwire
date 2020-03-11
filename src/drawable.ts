@@ -8,6 +8,7 @@ export abstract class Drawable {
   width: number;
   x: number;
   y: number;
+  lines?: number[][][];
 
   constructor(h: number, w: number, x: number, y: number) {
     this.height = h;
@@ -45,7 +46,6 @@ export abstract class Drawable {
 export class Text extends Drawable {
   name: string;
   nLines: number;
-  lines?: number[][][];
 
   constructor(h: number, w: number, x: number, y: number, l: number) {
     super(h, w, x, y);
@@ -83,13 +83,34 @@ export class Image extends Drawable {
     this.name = "image";
   }
 
-  generate(): void {}
+  generate(): void {
+    this.lines = [];
+    var points = this.rectPoints(this.height, this.width, this.x, this.y);
+
+    if (randomize) this.mutate(points);
+
+    var cross = [];
+    cross.push(
+      Utils.p_lerp(points[0], points[2], Utils.random(0.0, 0.2)),
+      Utils.p_lerp(points[2], points[0], Utils.random(0.0, 0.2)),
+      Utils.p_lerp(points[1], points[3], Utils.random(0.0, 0.2)),
+      Utils.p_lerp(points[3], points[1], Utils.random(0.0, 0.2))
+    );
+
+    if (randomize) this.mutate(cross);
+
+    this.lines.push([points[0], points[1]]);
+    this.lines.push([points[1], points[2]]);
+    this.lines.push([points[2], points[3]]);
+    this.lines.push([points[3], points[0]]);
+    this.lines.push([cross[0], cross[1]]);
+    this.lines.push([cross[3], cross[2]]);
+  }
 }
 
 export class Input extends Drawable {
   name: string;
   type: string;
-  lines?: number[][][];
 
   constructor(h: number, w: number, x: number, y: number, t: string) {
     super(h, w, x, y);

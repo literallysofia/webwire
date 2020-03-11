@@ -1,4 +1,4 @@
-import { Name } from "./variables";
+import { Name } from "./utils";
 import { Drawable, Text, Image, Input, Button, Dropdown } from "./drawable";
 const rough = require("roughjs/bundled/rough.cjs.js");
 var data = require("../data.json");
@@ -35,36 +35,37 @@ class Render {
 
   draw() {
     for (let e of this.data) {
+      var elem: Drawable;
+
       switch (e.name) {
         case Name.Text: {
-          let elem = new Text(e.height, e.width, e.x, e.y, e.nLines);
-          elem.generate();
-          this.drawText(elem);
+          elem = new Text(e.height, e.width, e.x, e.y, e.nLines);
           break;
         }
         case Name.Image: {
-          this.drawImage(e);
+          elem = new Image(e.height, e.width, e.x, e.y);
           break;
         }
-        case "button": {
+        /*         case "button": {
           this.drawButton(e);
           break;
-        }
-        case "input": {
-          let elem = new Input(e.height, e.width, e.x, e.y, e.type);
-          elem.generate();
-          this.drawInput(elem);
+        } */
+        case Name.Input: {
+          elem = new Input(e.height, e.width, e.x, e.y, e.type);
           break;
         }
-        case "dropdown": {
+        /*         case "dropdown": {
           this.drawDropdown(e);
           break;
-        }
+        } */
         default: {
-          this.drawDefault(e);
+          elem = new Input(e.height, e.width, e.x, e.y, e.type);
           break;
         }
       }
+
+      elem.generate();
+      if (elem.lines) this.drawLines(elem.lines);
 
       if (this.size.height < e.height + e.y) this.size.height = e.height + e.y;
       if (this.size.width < e.width + e.x) this.size.width = e.width + e.x;
@@ -72,39 +73,15 @@ class Render {
     this.setCanvasSize();
   }
 
-  drawDefault(e: Input) {
-    if (!e.lines) return;
+  drawLines(lines: number[][][]) {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
-    for (let points of e.lines) {
+    for (let points of lines) {
       let line = this.roughCanvas.curve(points, options).getElementsByTagName("path")[0];
       g.appendChild(line);
     }
 
     this.canvas.appendChild(g);
-  }
-
-  drawText(e: Text) {
-    if (!e.lines) return;
-    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-
-    for (let points of e.lines) {
-      let line = this.roughCanvas.curve(points, options).getElementsByTagName("path")[0];
-      g.appendChild(line);
-    }
-
-    this.canvas.appendChild(g);
-  }
-
-  //TODO
-  drawImage(e: any) {
-    let shapeNode = this.roughCanvas.rectangle(e.x, e.y, e.width, e.height, options);
-    let firstLine = this.roughCanvas.line(e.x, e.y, e.x + e.width, e.y + e.height).getElementsByTagName("path")[0];
-    let lastLine = this.roughCanvas.line(e.x + e.width, e.y, e.x, e.y + e.height).getElementsByTagName("path")[0];
-
-    shapeNode.appendChild(firstLine);
-    shapeNode.appendChild(lastLine);
-    this.canvas.appendChild(shapeNode);
   }
 
   //TODO
@@ -129,9 +106,11 @@ class Render {
 
   //TODO
   drawInput(e: Input) {
-    if (e.type === "text" || e.type === "password" || e.type === "email" || e.type === "search" || e.type === "url")
+    /* if (e.type === "text" || e.type === "password" || e.type === "email" || e.type === "search" || e.type === "url")
       this.drawDefault(e);
-    else if (e.type === "checkbox") {
+    else */ if (
+      e.type === "checkbox"
+    ) {
       let shapeNode = this.roughCanvas.rectangle(e.x, e.y, e.width, e.height, options);
 
       let d = "M" + (e.x + e.width / 4) + " " + (e.y + e.height / 4) + "l7.1 7.2 10.7-16.8";

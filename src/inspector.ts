@@ -1,7 +1,7 @@
 import fs from "fs";
 import { Browser } from "./browser";
 import { Drawable, Text, Image, Input, Button, Dropdown } from "./drawable";
-import { Name } from "./variables";
+import { Name } from "./utils";
 import { WebElement, IRectangle } from "selenium-webdriver";
 
 var textAlternatives = ["p", "h1", "h2", "h3", "h4", "h5", "h6", "small", "label"];
