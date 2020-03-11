@@ -13,8 +13,6 @@ const options = {
   hachureGap: Math.random() * 4
 };
 
-var textField = ["text", "password", "email", "search", "url"];
-
 class Render {
   data: any;
   canvas: HTMLElement;
@@ -68,6 +66,8 @@ class Render {
 
       elem.generate();
       if (elem.lines) this.drawLines(elem.lines);
+      else if (e.type === "radio") this.drawRadio(e.height, e.width, e.x, e.y);
+      else if (e.type === "checkbox") this.drawCheckbox(e.height, e.width, e.x, e.y);
 
       if (this.size.height < e.height + e.y) this.size.height = e.height + e.y;
       if (this.size.width < e.width + e.x) this.size.width = e.width + e.x;

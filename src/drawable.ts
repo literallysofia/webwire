@@ -1,5 +1,6 @@
 import * as Utils from "./utils";
 
+var textField = ["text", "password", "email", "search", "url"];
 var randomize = true;
 var randomOffset = 10;
 
@@ -131,7 +132,7 @@ export class Button extends Drawable {
       let x = this.x + paddingLeft + (this.width - paddingRight) * frac; // x position
       let xdeg = (Math.PI / 4) * x; // frequency
       // amplitude * sin(frequency) + offset
-      let y = Utils.random(this.height / 5, this.height / 3) * Math.sin(xdeg) + (this.y + this.height / 2);
+      let y = Utils.random(this.height / 6, this.height / 4) * Math.sin(xdeg) + (this.y + this.height / 2);
 
       text.push([x, y]);
     }
@@ -185,11 +186,13 @@ export class Input extends Drawable {
   }
 
   generate(): void {
-    this.lines = [];
-    var points = this.rectPoints(this.height, this.width, this.x, this.y);
+    if (textField.includes(this.type)) {
+      this.lines = [];
+      var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
-    if (randomize) this.mutate(points, 0.5);
+      if (randomize) this.mutate(points, 0.5);
 
-    this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
+      this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
+    }
   }
 }
