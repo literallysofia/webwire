@@ -1,7 +1,8 @@
 import { Name } from "./utils";
-import { Drawable, Text, Image, Input, Button, Dropdown } from "./drawable";
+import { Drawable, Text, Image, Button, Dropdown, Input, Radio, Checkbox } from "./drawable";
 const rough = require("roughjs/bundled/rough.cjs.js");
 var data = require("../data.json");
+var textField = ["text", "password", "email", "search", "url"];
 
 console.log(data);
 
@@ -51,7 +52,9 @@ class Render {
           break;
         }
         case Name.Input: {
-          elem = new Input(e.height, e.width, e.x, e.y, e.type);
+          if (e.type === "radio") elem = new Radio(e.height, e.width, e.x, e.y, e.type);
+          else if (e.type === "checkbox") elem = new Checkbox(e.height, e.width, e.x, e.y, e.type);
+          else elem = new Input(e.height, e.width, e.x, e.y, e.type);
           break;
         }
         case Name.Dropdown: {
@@ -59,15 +62,14 @@ class Render {
           break;
         }
         default: {
-          elem = new Input(e.height, e.width, e.x, e.y, e.type);
+          elem = new Input(e.height, e.width, e.x, e.y, "none");
           break;
         }
       }
 
       elem.generate();
       if (elem.lines) this.drawLines(elem.lines);
-      else if (e.type === "radio") this.drawRadio(e.height, e.width, e.x, e.y);
-      else if (e.type === "checkbox") this.drawCheckbox(e.height, e.width, e.x, e.y);
+      if (elem.ellipse) this.drawEllipse(elem.ellipse);
 
       if (this.size.height < e.height + e.y) this.size.height = e.height + e.y;
       if (this.size.width < e.width + e.x) this.size.width = e.width + e.x;
@@ -86,28 +88,13 @@ class Render {
     this.canvas.appendChild(g);
   }
 
-  drawRadio(height: number, width: number, x: number, y: number) {
-    let cx = x + width / 2;
-    let cy = y + height / 2;
-    let shapeNode = this.roughCanvas.ellipse(cx, cy, width, height, options);
-    let point = this.roughCanvas
-      .ellipse(cx, cy, width / 2, height / 2, { fill: "black", fillStyle: "solid" })
+  drawEllipse(ellipse: number[]) {
+    let shapeNode = this.roughCanvas.ellipse(ellipse[0], ellipse[1], ellipse[2], ellipse[3], options);
+    let center = this.roughCanvas
+      .ellipse(ellipse[0], ellipse[1], ellipse[2] / 2, ellipse[3] / 2, { fill: "black", fillStyle: "solid" })
       .getElementsByTagName("path")[0];
 
-    shapeNode.appendChild(point);
-    this.canvas.appendChild(shapeNode);
-  }
-
-  drawCheckbox(height: number, width: number, x: number, y: number) {
-    let shapeNode = this.roughCanvas.rectangle(x, y, width, height, options);
-    let d = "M" + (x + width / 4) + " " + (y + height / 4) + "l7.1 7.2 10.7-16.8";
-    let checkmark = this.roughCanvas
-      .path(d, {
-        strokeWidth: 2
-      })
-      .getElementsByTagName("path")[0];
-
-    shapeNode.appendChild(checkmark);
+    shapeNode.appendChild(center);
     this.canvas.appendChild(shapeNode);
   }
 }

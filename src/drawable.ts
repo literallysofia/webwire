@@ -1,6 +1,5 @@
 import * as Utils from "./utils";
 
-var textField = ["text", "password", "email", "search", "url"];
 var randomize = true;
 var randomOffset = 10;
 
@@ -10,6 +9,7 @@ export abstract class Drawable {
   x: number;
   y: number;
   lines?: number[][][];
+  ellipse?: number[];
 
   constructor(h: number, w: number, x: number, y: number) {
     this.height = h;
@@ -44,12 +44,11 @@ export abstract class Drawable {
 }
 
 export class Text extends Drawable {
-  name: string;
+  name: string = "text";
   nLines: number;
 
   constructor(h: number, w: number, x: number, y: number, l: number) {
     super(h, w, x, y);
-    this.name = "text";
     this.nLines = l;
   }
 
@@ -76,11 +75,10 @@ export class Text extends Drawable {
 }
 
 export class Image extends Drawable {
-  name: string;
+  name: string = "image";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
-    this.name = "image";
   }
 
   generate(): void {
@@ -109,11 +107,10 @@ export class Image extends Drawable {
 }
 
 export class Button extends Drawable {
-  name: string;
+  name: string = "button";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
-    this.name = "button";
   }
 
   generate(): void {
@@ -146,11 +143,10 @@ export class Button extends Drawable {
 }
 
 export class Dropdown extends Drawable {
-  name: string;
+  name: string = "dropdown";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
-    this.name = "dropdown";
   }
 
   generate(): void {
@@ -176,23 +172,67 @@ export class Dropdown extends Drawable {
 }
 
 export class Input extends Drawable {
-  name: string;
+  name: string = "input";
   type: string;
 
   constructor(h: number, w: number, x: number, y: number, t: string) {
     super(h, w, x, y);
-    this.name = "input";
     this.type = t;
   }
 
   generate(): void {
-    if (textField.includes(this.type)) {
-      this.lines = [];
-      var points = this.rectPoints(this.height, this.width, this.x, this.y);
+    this.lines = [];
+    var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
-      if (randomize) this.mutate(points, 0.5);
+    if (randomize) this.mutate(points, 0.5);
 
-      this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
-    }
+    this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
+  }
+}
+
+export class Radio extends Input {
+  constructor(h: number, w: number, x: number, y: number, t: string) {
+    super(h, w, x, y, t);
+  }
+
+  generate(): void {
+    this.ellipse = [];
+    var cx = this.x + this.width / 2;
+    var cy = this.y + this.height / 2;
+    this.ellipse.push(cx, cy, this.width, this.height);
+  }
+}
+
+export class Checkbox extends Input {
+  constructor(h: number, w: number, x: number, y: number, t: string) {
+    super(h, w, x, y, t);
+  }
+
+  generate(): void {
+    this.lines = [];
+    var points = this.rectPoints(this.height, this.width, this.x, this.y);
+
+    if (randomize) this.mutate(points, 0.05);
+
+    var checkmark = [];
+    var point1 = Utils.p_trans(points[0], Utils.random(-this.width / 2, 0), Utils.random(0, this.height / 2));
+    var point2 = Utils.p_trans(points[2], -this.width / 2, Utils.random(0, -this.height / 4));
+    var point3 = Utils.p_trans(
+      points[1],
+      Utils.random(-this.width / 4, this.width / 4),
+      Utils.random(0, -this.height / 4)
+    );
+    checkmark.push(
+      Utils.p_lerp(point1, point2, 0),
+      Utils.p_lerp(point2, point1, 0),
+      Utils.p_lerp(point2, point3, 0),
+      Utils.p_lerp(point3, point2, 0)
+    );
+
+    //if (randomize) this.mutate(checkmark);
+
+    this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
+    this.lines.push([checkmark[0], checkmark[1]]);
+    this.lines.push([checkmark[2], checkmark[3]]);
   }
 }
