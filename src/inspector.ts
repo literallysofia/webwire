@@ -63,30 +63,33 @@ export class Inspector {
 
   async addElements(name: Name, elems: WebElement[]): Promise<void> {
     for (let elem of elems) {
-      //var displayed = await elem.isDisplayed();
-      //TODO: ter display em conta
-      var rect = await elem.getRect();
+      var displayed = await elem.isDisplayed();
 
-      switch (name) {
-        case Name.Text:
-          rect = await this.getRectangle(elem);
-          let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
-          let numLines = Math.round(rect.height / lineHeight);
-          this.data.push(this.createText(rect.height, rect.width, rect.x, rect.y, numLines));
-          break;
-        case Name.Image:
-          this.data.push(this.createImage(rect.height, rect.width, rect.x, rect.y));
-          break;
-        case Name.Input:
-          let type = await elem.getAttribute("type");
-          this.data.push(this.createInput(rect.height, rect.width, rect.x, rect.y, type));
-          break;
-        case Name.Button:
-          this.data.push(this.createButton(rect.height, rect.width, rect.x, rect.y));
-          break;
-        case Name.Dropdown:
-          this.data.push(this.createDropdown(rect.height, rect.width, rect.x, rect.y));
-          break;
+      // inputs happen to be hidden most times for customization purposes
+      if (displayed || name === Name.Input) {
+        var rect = await elem.getRect();
+
+        switch (name) {
+          case Name.Text:
+            rect = await this.getRectangle(elem);
+            let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
+            let numLines = Math.round(rect.height / lineHeight);
+            this.data.push(this.createText(rect.height, rect.width, rect.x, rect.y, numLines));
+            break;
+          case Name.Image:
+            this.data.push(this.createImage(rect.height, rect.width, rect.x, rect.y));
+            break;
+          case Name.Input:
+            let type = await elem.getAttribute("type");
+            this.data.push(this.createInput(rect.height, rect.width, rect.x, rect.y, type));
+            break;
+          case Name.Button:
+            this.data.push(this.createButton(rect.height, rect.width, rect.x, rect.y));
+            break;
+          case Name.Dropdown:
+            this.data.push(this.createDropdown(rect.height, rect.width, rect.x, rect.y));
+            break;
+        }
       }
     }
   }

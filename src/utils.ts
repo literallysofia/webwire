@@ -6,6 +6,13 @@ export enum Name {
   Dropdown = "dropdown"
 }
 
+export interface Ellipse {
+  cx: number;
+  cy: number;
+  height: number;
+  width: number;
+}
+
 export function random(min: number, max: number) {
   return Math.random() * (max - min) + min;
 }

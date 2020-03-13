@@ -1,4 +1,4 @@
-import { Name } from "./utils";
+import { Name, Ellipse } from "./utils";
 import { Drawable, Text, Image, Button, Dropdown, Input, Radio, Checkbox } from "./drawable";
 const rough = require("roughjs/bundled/rough.cjs.js");
 var data = require("../data.json");
@@ -88,10 +88,10 @@ class Render {
     this.canvas.appendChild(g);
   }
 
-  drawEllipse(ellipse: number[]) {
-    let shapeNode = this.roughCanvas.ellipse(ellipse[0], ellipse[1], ellipse[2], ellipse[3], options);
+  drawEllipse(ellipse: Ellipse) {
+    let shapeNode = this.roughCanvas.ellipse(ellipse.cx, ellipse.cy, ellipse.width, ellipse.height, options);
     let center = this.roughCanvas
-      .ellipse(ellipse[0], ellipse[1], ellipse[2] / 2, ellipse[3] / 2, { fill: "black", fillStyle: "solid" })
+      .ellipse(ellipse.cx, ellipse.cy, ellipse.width / 2, ellipse.height / 2, { fill: "black", fillStyle: "solid" })
       .getElementsByTagName("path")[0];
 
     shapeNode.appendChild(center);

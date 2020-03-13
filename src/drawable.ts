@@ -9,7 +9,7 @@ export abstract class Drawable {
   x: number;
   y: number;
   lines?: number[][][];
-  ellipse?: number[];
+  ellipse?: Utils.Ellipse;
 
   constructor(h: number, w: number, x: number, y: number) {
     this.height = h;
@@ -196,10 +196,9 @@ export class Radio extends Input {
   }
 
   generate(): void {
-    this.ellipse = [];
     var cx = this.x + this.width / 2;
     var cy = this.y + this.height / 2;
-    this.ellipse.push(cx, cy, this.width, this.height);
+    this.ellipse = { cx: cx, cy: cy, height: this.height, width: this.width };
   }
 }
 
