@@ -1,10 +1,11 @@
 import fs from "fs";
 import { Browser } from "./browser";
-import { Drawable, Text, Image, Input, Button, Dropdown } from "./drawable";
+import { Drawable, Title, Text, Image, Input, Button, Dropdown } from "./drawable";
 import { Name } from "./utils";
 import { WebElement, IRectangle } from "selenium-webdriver";
 
-var textAlternatives = ["p", "h1", "h2", "h3", "h4", "h5", "h6", "small", "label"];
+var titleAlternatives = ["h1", "h2", "h3", "h4", "h5", "h6"];
+var textAlternatives = ["p", "small", "label"];
 var imageAlternatives = ["img", "svg", "canvas"];
 var inputAlternatives = ["input"];
 var buttonAlternatives = ["button"];
@@ -23,7 +24,10 @@ export class Inspector {
   async fetchData(tag: string): Promise<void> {
     var foundElements;
 
-    if (textAlternatives.includes(tag)) {
+    if (titleAlternatives.includes(tag)) {
+      foundElements = await this.findElements(tag);
+      await this.addElements(Name.Title, foundElements);
+    } else if (textAlternatives.includes(tag)) {
       let xpath = "//" + tag + "[text() and not(a[contains(@class, 'btn')])]";
       foundElements = await this.findElements(tag, xpath);
       await this.addElements(Name.Text, foundElements);
@@ -70,6 +74,10 @@ export class Inspector {
         var rect = await elem.getRect();
 
         switch (name) {
+          case Name.Title:
+            rect = await this.getRectangle(elem);
+            this.data.push(this.createTitle(rect.height, rect.width, rect.x, rect.y));
+            break;
           case Name.Text:
             rect = await this.getRectangle(elem);
             let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
@@ -110,6 +118,10 @@ export class Inspector {
     };
 
     return rect;
+  }
+
+  createTitle(h: number, w: number, x: number, y: number): Drawable {
+    return new Title(h, w, x, y);
   }
 
   createText(h: number, w: number, x: number, y: number, lines: number): Drawable {

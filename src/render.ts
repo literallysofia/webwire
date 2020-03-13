@@ -1,8 +1,10 @@
 import { Name, Ellipse } from "./utils";
-import { Drawable, Text, Image, Button, Dropdown, Input, Radio, Checkbox } from "./drawable";
+import { Drawable, Title, Text, Image, Button, Dropdown, Input, Radio, Checkbox } from "./drawable";
 const rough = require("roughjs/bundled/rough.cjs.js");
+
 var data = require("../data.json");
 var textField = ["text", "password", "email", "search", "url"];
+var font = "'Kalam', cursive";
 
 console.log(data);
 
@@ -39,6 +41,10 @@ class Render {
       var elem: Drawable;
 
       switch (e.name) {
+        case Name.Title: {
+          elem = new Title(e.height, e.width, e.x, e.y);
+          break;
+        }
         case Name.Text: {
           elem = new Text(e.height, e.width, e.x, e.y, e.nLines);
           break;
@@ -70,6 +76,7 @@ class Render {
       elem.generate();
       if (elem.lines) this.drawLines(elem.lines);
       if (elem.ellipse) this.drawEllipse(elem.ellipse);
+      if (!elem.lines && !elem.ellipse) this.drawText(elem);
 
       if (this.size.height < e.height + e.y) this.size.height = e.height + e.y;
       if (this.size.width < e.width + e.x) this.size.width = e.width + e.x;
@@ -96,6 +103,20 @@ class Render {
 
     shapeNode.appendChild(center);
     this.canvas.appendChild(shapeNode);
+  }
+
+  drawText(elem: Drawable) {
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    var svgText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    svgText.setAttribute("x", elem.x.toString());
+    svgText.setAttribute("y", elem.y.toString());
+    svgText.setAttribute("font-size", elem.height.toString());
+    svgText.setAttribute("font-family", font);
+
+    var textnode = document.createTextNode("Title");
+    svgText.appendChild(textnode);
+    g.appendChild(svgText);
+    this.canvas.appendChild(g);
   }
 }
 

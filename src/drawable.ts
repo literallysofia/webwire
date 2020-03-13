@@ -43,6 +43,16 @@ export abstract class Drawable {
   abstract generate(): void;
 }
 
+export class Title extends Drawable {
+  name: string = "title";
+
+  constructor(h: number, w: number, x: number, y: number) {
+    super(h, w, x, y);
+  }
+
+  generate(): void {}
+}
+
 export class Text extends Drawable {
   name: string = "text";
   nLines: number;

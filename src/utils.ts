@@ -1,4 +1,5 @@
 export enum Name {
+  Title = "title",
   Text = "text",
   Image = "image",
   Input = "input",
