@@ -1,7 +1,7 @@
 import * as Utils from "./utils";
 
 var randomize = true;
-var randomOffset = 10;
+var randomOffset = 5;
 
 export abstract class Drawable {
   height: number;
@@ -69,6 +69,8 @@ export class Text extends Drawable {
 
         points.push([x, y]);
       }
+      if (randomize) this.mutate(points);
+
       this.lines.push(points);
     }
   }
@@ -117,28 +119,30 @@ export class Button extends Drawable {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
-    if (randomize) this.mutate(points, 0.5);
+    if (randomize) this.mutate(points);
 
     var nPoints = Math.floor((Math.random() * this.width) / 30 + 4);
-    var text = [];
-    var paddingLeft = Utils.random(10, 30);
-    var paddingRight = Utils.random(10, 30) + paddingLeft;
+    var line = [];
+    var paddingLeft = Utils.random(0, 30);
+    var paddingRight = Utils.random(0, 30) + paddingLeft;
 
     for (let j = 0; j < nPoints; j++) {
       let frac = j / (nPoints - 1);
       let x = this.x + paddingLeft + (this.width - paddingRight) * frac; // x position
       let xdeg = (Math.PI / 4) * x; // frequency
       // amplitude * sin(frequency) + offset
-      let y = Utils.random(this.height / 6, this.height / 4) * Math.sin(xdeg) + (this.y + this.height / 2);
+      let y = Utils.random(1, this.height / 4) * Math.sin(xdeg) + (this.y + this.height / 2);
 
-      text.push([x, y]);
+      line.push([x, y]);
     }
+
+    if (randomize) this.mutate(line);
 
     this.lines.push([points[0], points[1]]);
     this.lines.push([points[1], points[2]]);
     this.lines.push([points[2], points[3]]);
     this.lines.push([points[3], points[0]]);
-    this.lines.push(text);
+    this.lines.push(line);
   }
 }
 
@@ -153,7 +157,7 @@ export class Dropdown extends Drawable {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
-    if (randomize) this.mutate(points, 0.5);
+    if (randomize) this.mutate(points);
 
     var divider = [];
     divider.push(
@@ -161,7 +165,7 @@ export class Dropdown extends Drawable {
       Utils.p_trans(points[2], -Utils.random(20, 40), 0)
     );
 
-    if (randomize) this.mutate(divider, 0.6);
+    if (randomize) this.mutate(divider);
 
     this.lines.push([points[0], points[1]]);
     this.lines.push([points[1], points[2]]);
@@ -184,7 +188,7 @@ export class Input extends Drawable {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
-    if (randomize) this.mutate(points, 0.5);
+    if (randomize) this.mutate(points);
 
     this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
   }
@@ -198,6 +202,13 @@ export class Radio extends Input {
   generate(): void {
     var cx = this.x + this.width / 2;
     var cy = this.y + this.height / 2;
+
+    if (randomize) {
+      var offset = randomOffset * 0.5;
+      cx += Math.random() * offset * 2 - offset;
+      cy += Math.random() * offset * 2 - offset;
+    }
+
     this.ellipse = { cx: cx, cy: cy, height: this.height, width: this.width };
   }
 }
@@ -211,7 +222,7 @@ export class Checkbox extends Input {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
-    if (randomize) this.mutate(points, 0.05);
+    if (randomize) this.mutate(points, 0.2);
 
     var checkmark = [];
     var point1 = Utils.p_trans(points[0], Utils.random(-this.width / 2, 0), Utils.random(0, this.height / 2));
@@ -221,14 +232,13 @@ export class Checkbox extends Input {
       Utils.random(-this.width / 4, this.width / 4),
       Utils.random(0, -this.height / 4)
     );
+
     checkmark.push(
       Utils.p_lerp(point1, point2, 0),
       Utils.p_lerp(point2, point1, 0),
       Utils.p_lerp(point2, point3, 0),
       Utils.p_lerp(point3, point2, 0)
     );
-
-    //if (randomize) this.mutate(checkmark);
 
     this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
     this.lines.push([checkmark[0], checkmark[1]]);
