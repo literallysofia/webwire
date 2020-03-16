@@ -4,6 +4,8 @@ import { Drawable, Title, Text, Image, Input, Button, Dropdown } from "./drawabl
 import { Name } from "./utils";
 import { WebElement, IRectangle } from "selenium-webdriver";
 
+const config = require("config-yml");
+
 var titleAlternatives = ["h1", "h2", "h3", "h4", "h5", "h6"];
 var textAlternatives = ["p", "small", "label"];
 var imageAlternatives = ["img", "svg", "canvas"];
@@ -23,6 +25,8 @@ export class Inspector {
 
   async fetchData(tag: string): Promise<void> {
     var foundElements;
+
+    console.log(config.version);
 
     if (titleAlternatives.includes(tag)) {
       foundElements = await this.findElements(tag);

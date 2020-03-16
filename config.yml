@@ -1,0 +1,13 @@
+version: 2
+font:
+  [
+    "'Indie Flower', cursive",
+    "'Kalam', cursive",
+    "'Amatic SC', cursive",
+    "'Rock Salt', cursive",
+    "'Shadows Into Light', cursive",
+    "'Caveat', cursive",
+    "'Nothing You Could Do', cursive",
+  ]
+
+title: ["Title", "Heading", "Text"]

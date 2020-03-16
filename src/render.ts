@@ -1,12 +1,21 @@
 import { Name, Ellipse } from "./utils";
 import { Drawable, Title, Text, Image, Button, Dropdown, Input, Radio, Checkbox } from "./drawable";
 const rough = require("roughjs/bundled/rough.cjs.js");
+const config = require("config-yml");
+var xmlserializer = require("xmlserializer");
+import fs from "fs";
+
+//var fontt = config.font;
+
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+const { document } = new JSDOM(`...`).window;
 
 var data = require("../data.json");
 var textField = ["text", "password", "email", "search", "url"];
 var font = "'Kalam', cursive";
 
-console.log(data);
+//console.log(data);
 
 const options = {
   roughness: Math.random() + 0.5,
@@ -18,7 +27,7 @@ const options = {
 
 class Render {
   data: any;
-  canvas: HTMLElement;
+  canvas: SVGSVGElement;
   roughCanvas: any;
   size = {
     height: 0,
@@ -27,7 +36,17 @@ class Render {
 
   constructor(data: any) {
     this.data = data;
-    this.canvas = document.getElementById("canvas") as HTMLElement;
+    //this.canvas = document.getElementById("canvas") as HTMLElement;
+    this.canvas = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+    style.setAttribute("type", "text/css");
+    var textnode = document.createTextNode(
+      "@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap')"
+    );
+    style.appendChild(textnode);
+    defs.appendChild(style);
+    this.canvas.append(defs);
     this.roughCanvas = rough.svg(this.canvas);
   }
 
@@ -118,7 +137,17 @@ class Render {
     g.appendChild(svgText);
     this.canvas.appendChild(g);
   }
+
+  export() {
+    var svg = xmlserializer.serializeToString(this.canvas);
+    fs.writeFile("wireframe.svg", svg, function(err) {
+      if (err) {
+        console.log(err);
+      }
+    });
+  }
 }
 
 const render = new Render(data);
 render.draw();
+render.export();

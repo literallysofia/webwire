@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "npm run build; node dist/index.js -u",
+    "render": "npm run build; node dist/render.js; open wireframe.svg",
     "browserify": "browserify dist/render.js -o bundle.js",
     "draw": "npm run build; npm run browserify; open index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -30,6 +31,9 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
-    "roughjs": "^4.0.4"
+    "config-yml": "^0.10.3",
+    "jsdom": "^16.2.1",
+    "roughjs": "^4.0.4",
+    "xmlserializer": "^0.6.1"
   }
 }
