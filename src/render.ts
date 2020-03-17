@@ -1,6 +1,7 @@
 import { JSDOM } from "jsdom";
 import xmlserializer from "xmlserializer";
 import fs from "fs";
+import sharp from "sharp";
 import { Drawable, Title, Text, Image, Button, Dropdown, Input, Radio, Checkbox } from "./drawable";
 import { Name, Ellipse } from "./utils";
 
@@ -141,6 +142,18 @@ class Render {
         console.log(err);
       }
     });
+    /*     const buf = Buffer.from(svg);
+
+    sharp(buf)
+      .flatten({ background: { r: 255, g: 255, b: 255 } })
+      .png()
+      .toFile("test.png")
+      .then(function(info: any) {
+        console.log(info);
+      })
+      .catch(function(err: any) {
+        console.log(err);
+      }); */
   }
 }
 
