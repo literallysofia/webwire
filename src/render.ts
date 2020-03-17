@@ -1,21 +1,17 @@
-import { Name, Ellipse } from "./utils";
+import { JSDOM } from "jsdom";
+import xmlserializer from "xmlserializer";
+import fs from "fs";
 import { Drawable, Title, Text, Image, Button, Dropdown, Input, Radio, Checkbox } from "./drawable";
+import { Name, Ellipse } from "./utils";
+
+/* VARIABLES */
 const rough = require("roughjs/bundled/rough.cjs.js");
 const config = require("config-yml");
-var xmlserializer = require("xmlserializer");
-import fs from "fs";
-
-//var fontt = config.font;
-
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
 const { document } = new JSDOM(`...`).window;
 
 var data = require("../data.json");
 var textField = ["text", "password", "email", "search", "url"];
 var font = "'Kalam', cursive";
-
-//console.log(data);
 
 const options = {
   roughness: Math.random() + 0.5,

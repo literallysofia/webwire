@@ -1,7 +1,6 @@
+import commandLineArgs from "command-line-args";
 import { Browser } from "./browser";
 import { Inspector } from "./inspector";
-
-const commandLineArgs = require("command-line-args");
 
 const website = commandLineArgs([
   { name: "url", alias: "u", type: String },

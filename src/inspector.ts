@@ -1,11 +1,11 @@
 import fs from "fs";
+import { WebElement, IRectangle } from "selenium-webdriver";
 import { Browser } from "./browser";
 import { Drawable, Title, Text, Image, Input, Button, Dropdown } from "./drawable";
 import { Name } from "./utils";
-import { WebElement, IRectangle } from "selenium-webdriver";
 
+/* VARIABLES */
 const config = require("config-yml");
-
 var titleAlternatives = ["h1", "h2", "h3", "h4", "h5", "h6"];
 var textAlternatives = ["p", "small", "label"];
 var imageAlternatives = ["img", "svg", "canvas"];
@@ -25,8 +25,6 @@ export class Inspector {
 
   async fetchData(tag: string): Promise<void> {
     var foundElements;
-
-    console.log(config.version);
 
     if (titleAlternatives.includes(tag)) {
       foundElements = await this.findElements(tag);

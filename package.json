@@ -22,18 +22,26 @@
   },
   "homepage": "https://github.com/literallysofia/feup-diss#readme",
   "devDependencies": {
+    "@types/browserify": "^12.0.36",
     "@types/node": "^13.7.1",
-    "@types/selenium-webdriver": "^4.0.8",
     "browserify": "^16.5.0",
-    "chromedriver": "^80.0.1",
-    "command-line-args": "^5.1.1",
-    "selenium-webdriver": "^4.0.0-alpha.5",
+    "npm": "^6.14.2",
+    "prettier": "^1.19.1",
+    "ts-node": "^8.6.2",
     "typescript": "^3.7.5"
   },
   "dependencies": {
+    "@types/chromedriver": "^2.38.0",
+    "@types/command-line-args": "^5.0.0",
+    "@types/jsdom": "^16.1.0",
+    "@types/selenium-webdriver": "^4.0.9",
+    "@types/xmlserializer": "^0.6.0",
+    "chromedriver": "^80.0.1",
+    "command-line-args": "^5.1.1",
     "config-yml": "^0.10.3",
     "jsdom": "^16.2.1",
     "roughjs": "^4.0.4",
+    "selenium-webdriver": "^4.0.0-alpha.7",
     "xmlserializer": "^0.6.1"
   }
 }
