@@ -25,6 +25,20 @@ export class Browser {
     else return this.driver.findElements(By.css(selector));
   }
 
+  public setDataType(elems: WebElement[], type: string) {
+    for (let elem of elems) {
+      var script = "arguments[0].setAttribute('data-type', '" + type + "')";
+      this.driver.executeScript(script, elem);
+    }
+  }
+
+  public removeDataType(elems: WebElement[]) {
+    for (let elem of elems) {
+      var script = "arguments[0].removeAttribute('data-type')";
+      this.driver.executeScript(script, elem);
+    }
+  }
+
   public async clearCookies(url?: string): Promise<void> {
     if (url) {
       const currentUrl = await this.driver.getCurrentUrl();

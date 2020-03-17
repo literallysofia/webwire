@@ -33,6 +33,7 @@
   "dependencies": {
     "@types/chromedriver": "^2.38.0",
     "@types/command-line-args": "^5.0.0",
+    "@types/js-yaml": "^3.12.2",
     "@types/jsdom": "^16.1.0",
     "@types/selenium-webdriver": "^4.0.9",
     "@types/sharp": "^0.24.0",
@@ -40,6 +41,7 @@
     "chromedriver": "^80.0.1",
     "command-line-args": "^5.1.1",
     "config-yml": "^0.10.3",
+    "js-yaml": "^3.13.1",
     "jsdom": "^16.2.1",
     "roughjs": "^4.0.4",
     "selenium-webdriver": "^4.0.0-alpha.7",

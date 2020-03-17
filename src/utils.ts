@@ -39,3 +39,16 @@ export function p_lerp(a: number[], b: number[], t: number) {
 export function p_trans(a: number[], xd: number, yd: number) {
   return [a[0] + xd, a[1] + yd];
 }
+
+export class Tag {
+  name: string;
+  paths: string[];
+  ignore: string[];
+
+  constructor(n: string, p: string[], i?: string[]) {
+    this.name = n;
+    this.paths = p;
+    if (i) this.ignore = i;
+    else this.ignore = [];
+  }
+}

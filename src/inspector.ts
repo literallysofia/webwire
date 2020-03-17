@@ -1,11 +1,12 @@
 import fs from "fs";
+import yaml from "js-yaml";
 import { WebElement, IRectangle } from "selenium-webdriver";
 import { Browser } from "./browser";
 import { Drawable, Title, Text, Image, Input, Button, Dropdown } from "./drawable";
-import { Name } from "./utils";
+import { Name, Tag } from "./utils";
 
 /* VARIABLES */
-const config = require("config-yml");
+//const config = require("config-yml");
 var titleAlternatives = ["h1", "h2", "h3", "h4", "h5", "h6"];
 var textAlternatives = ["p", "small", "label"];
 var imageAlternatives = ["img", "svg", "canvas"];
@@ -17,10 +18,47 @@ var linkAlternatives = ["a"];
 export class Inspector {
   data: Drawable[];
   browser: Browser;
+  tags: Tag[];
 
   constructor(b: Browser) {
     this.browser = b;
     this.data = [];
+    this.tags = [];
+
+    var file = fs.readFileSync("./config.yml", "utf8");
+    var config = yaml.safeLoad(file);
+    for (let obj of config.tags) {
+      let tag = new Tag(obj.tag.name, obj.tag.paths, obj.tag.ignore ? obj.tag.ignore : null);
+      this.tags.push(tag);
+    }
+  }
+
+  async normalize() {
+    for (let tag of this.tags) {
+      var type = this.getType(tag.name);
+      for (let validPath of tag.paths) {
+        let elems = await this.findElements(tag.name, validPath);
+        this.browser.setDataType(elems, type);
+      }
+      for (let invalidPath of tag.ignore) {
+        let elems = await this.findElements(tag.name, invalidPath);
+        this.browser.removeDataType(elems);
+      }
+    }
+  }
+
+  getType(tag: string): string {
+    var type = "";
+
+    if (titleAlternatives.includes(tag)) type = Name.Title;
+    else if (textAlternatives.includes(tag)) type = Name.Text;
+    else if (imageAlternatives.includes(tag)) type = Name.Image;
+    else if (inputAlternatives.includes(tag)) type = Name.Input;
+    else if (buttonAlternatives.includes(tag)) type = Name.Button;
+    else if (dropdownAlternatives.includes(tag)) type = Name.Dropdown;
+    else if (linkAlternatives.includes(tag)) type = Name.Text;
+
+    return type;
   }
 
   async fetchData(tag: string): Promise<void> {
@@ -53,6 +91,10 @@ export class Inspector {
       foundElements = await this.findElements(tag, buttonPath);
       await this.addElements(Name.Button, foundElements);
     }
+  }
+
+  async findByXPath(path: string): Promise<WebElement[]> {
+    return await this.browser.findElements(path, true);
   }
 
   async findElements(tag: string, xpath?: string): Promise<WebElement[]> {

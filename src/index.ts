@@ -18,10 +18,11 @@ browser.navigate(website.url);
 const inspector = new Inspector(browser);
 
 async function test() {
-  for (let tag of website.tags) {
+  /*   for (let tag of website.tags) {
     await inspector.fetchData(tag);
   }
-  inspector.export();
+  inspector.export(); */
+  await inspector.normalize();
 }
 
 test();

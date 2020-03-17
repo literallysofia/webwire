@@ -1,4 +1,66 @@
-version: 2
+tags:
+  - tag:
+      name: h1
+      paths:
+        - //h1[text()]
+  - tag:
+      name: h2
+      paths:
+        - //h2[text()]
+  - tag:
+      name: h3
+      paths:
+        - //h3[text()]
+  - tag:
+      name: h4
+      paths:
+        - //h4[text()]
+  - tag:
+      name: h5
+      paths:
+        - //h5[text()]
+  - tag:
+      name: h6
+      paths:
+        - //h6[text()]
+  - tag:
+      name: p
+      paths:
+        - //p[text()]
+      ignore:
+        - //p[a[contains(@class, 'btn')]]
+  - tag:
+      name: small
+      paths:
+        - //small[text()]
+  - tag:
+      name: a
+      paths:
+        - //a[text()]
+      ignore:
+        - //a[contains(@class, 'btn')]
+        - //a[ancestor::p]
+  - tag:
+      name: img
+      paths:
+        - //img
+  - tag:
+      name: input
+      paths:
+        - //input
+  - tag:
+      name: label
+      paths:
+        - //label
+  - tag:
+      name: button
+      paths:
+        - //button
+        - //a[contains(@class, 'btn')]
+  - tag:
+      name: select
+      paths:
+        - //select
 font:
   [
     "'Indie Flower', cursive",
