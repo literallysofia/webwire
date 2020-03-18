@@ -16,17 +16,15 @@ Please, make sure you have node, npm, and typescript installed.
 
 ```bash
 $ npm install
-$ npm run build
-$ npm start <url> [html tags]
+$ npm start <url>
+$ npm run render
 ```
 
 **Examples**
 
 ```bash
-$ npm start https://v4-alpha.getbootstrap.com/examples/album/ a button h1 p img
-$ npm start https://getbootstrap.com/docs/4.4/examples/jumbotron/ h1 h2 p a input button
-$ npm start https://getbootstrap.com/docs/4.4/examples/pricing/ h1 h4 h5 a p button img
-$ npm start https://getbootstrap.com/docs/4.4/examples/checkout/ h2 h4 h6 img p a small input button select label
+$ npm start https://v4-alpha.getbootstrap.com/examples/album/
+$ npm start https://getbootstrap.com/docs/4.4/examples/jumbotron/
+$ npm start https://getbootstrap.com/docs/4.4/examples/pricing/
+$ npm start https://getbootstrap.com/docs/4.4/examples/checkout/
 ```
-
---config config.yml

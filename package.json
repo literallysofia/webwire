@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build; node dist/index.js -u",
+    "start": "npm run build; node dist/index.js",
     "render": "npm run build; node dist/render.js; open wireframe.svg",
     "browserify": "browserify dist/render.js -o bundle.js",
     "draw": "npm run build; npm run browserify; open index.html",
@@ -40,7 +40,6 @@
     "@types/xmlserializer": "^0.6.0",
     "chromedriver": "^80.0.1",
     "command-line-args": "^5.1.1",
-    "config-yml": "^0.10.3",
     "js-yaml": "^3.13.1",
     "jsdom": "^16.2.1",
     "roughjs": "^4.0.4",

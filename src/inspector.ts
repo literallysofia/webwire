@@ -6,7 +6,6 @@ import { Drawable, Title, Text, Image, Input, Button, Dropdown } from "./drawabl
 import { Name, Tag } from "./utils";
 
 /* VARIABLES */
-//const config = require("config-yml");
 var titleAlternatives = ["h1", "h2", "h3", "h4", "h5", "h6"];
 var textAlternatives = ["p", "small", "label"];
 var imageAlternatives = ["img", "svg", "canvas"];
