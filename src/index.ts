@@ -8,12 +8,10 @@ const browser = new Browser("chrome");
 browser.navigate(website.src);
 const inspector = new Inspector(browser);
 
-async function test() {
-  /*   for (let tag of website.tags) {
-    await inspector.fetchData(tag);
-  }
-  inspector.export(); */
+async function generate() {
   await inspector.normalize();
+  await inspector.fetchData();
+  inspector.export();
 }
 
-test();
+generate();

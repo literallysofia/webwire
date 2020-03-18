@@ -20,9 +20,8 @@ export class Browser {
     return this.driver.findElement(By.css(selector));
   }
 
-  public async findElements(selector: string, isXPath: boolean): Promise<WebElement[]> {
-    if (isXPath) return this.driver.findElements(By.xpath(selector));
-    else return this.driver.findElements(By.css(selector));
+  public async findElements(selector: string): Promise<WebElement[]> {
+    return this.driver.findElements(By.xpath(selector));
   }
 
   public setDataType(elems: WebElement[], type: string) {

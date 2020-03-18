@@ -7,7 +7,6 @@ import { Name, Ellipse } from "./utils";
 
 /* VARIABLES */
 const rough = require("roughjs/bundled/rough.cjs.js");
-const config = require("config-yml");
 const { document } = new JSDOM(`...`).window;
 
 var data = require("../data.json");

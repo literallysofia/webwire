@@ -18,6 +18,14 @@ export class Inspector {
   data: Drawable[];
   browser: Browser;
   tags: Tag[];
+  xpaths = [
+    "//*[@data-type='title']",
+    "//*[@data-type='text']",
+    "//*[@data-type='image']",
+    "//*[@data-type='input']",
+    "//*[@data-type='button']",
+    "//*[@data-type='dropdown']"
+  ];
 
   constructor(b: Browser) {
     this.browser = b;
@@ -32,15 +40,15 @@ export class Inspector {
     }
   }
 
-  async normalize() {
+  async normalize(): Promise<void> {
     for (let tag of this.tags) {
       var type = this.getType(tag.name);
       for (let validPath of tag.paths) {
-        let elems = await this.findElements(tag.name, validPath);
+        let elems = await this.browser.findElements(validPath);
         this.browser.setDataType(elems, type);
       }
       for (let invalidPath of tag.ignore) {
-        let elems = await this.findElements(tag.name, invalidPath);
+        let elems = await this.browser.findElements(invalidPath);
         this.browser.removeDataType(elems);
       }
     }
@@ -60,63 +68,25 @@ export class Inspector {
     return type;
   }
 
-  async fetchData(tag: string): Promise<void> {
+  async fetchData(): Promise<void> {
     var foundElements;
 
-    if (titleAlternatives.includes(tag)) {
-      foundElements = await this.findElements(tag);
-      await this.addElements(Name.Title, foundElements);
-    } else if (textAlternatives.includes(tag)) {
-      let xpath = "//" + tag + "[text() and not(a[contains(@class, 'btn')])]";
-      foundElements = await this.findElements(tag, xpath);
-      await this.addElements(Name.Text, foundElements);
-    } else if (imageAlternatives.includes(tag)) {
-      foundElements = await this.findElements(tag);
-      await this.addElements(Name.Image, foundElements);
-    } else if (inputAlternatives.includes(tag)) {
-      foundElements = await this.findElements(tag);
-      await this.addElements(Name.Input, foundElements);
-    } else if (buttonAlternatives.includes(tag)) {
-      foundElements = await this.findElements(tag);
-      await this.addElements(Name.Button, foundElements);
-    } else if (dropdownAlternatives.includes(tag)) {
-      foundElements = await this.findElements(tag);
-      await this.addElements(Name.Dropdown, foundElements);
-    } else if (linkAlternatives.includes(tag)) {
-      let linkPath = "//" + tag + "[not(contains(@class, 'btn')) and not(ancestor::p)]";
-      let buttonPath = "//" + tag + "[contains(@class, 'btn')]";
-      foundElements = await this.findElements(tag, linkPath);
-      await this.addElements(Name.Text, foundElements);
-      foundElements = await this.findElements(tag, buttonPath);
-      await this.addElements(Name.Button, foundElements);
+    for (let xpath of this.xpaths) {
+      foundElements = await this.browser.findElements(xpath);
+      await this.addElements(foundElements);
     }
   }
 
-  async findByXPath(path: string): Promise<WebElement[]> {
-    return await this.browser.findElements(path, true);
-  }
-
-  async findElements(tag: string, xpath?: string): Promise<WebElement[]> {
-    var elems: WebElement[];
-
-    if (xpath) {
-      elems = await this.browser.findElements(xpath, true);
-    } else {
-      elems = await this.browser.findElements(tag, false);
-    }
-
-    return elems;
-  }
-
-  async addElements(name: Name, elems: WebElement[]): Promise<void> {
+  async addElements(elems: WebElement[]): Promise<void> {
     for (let elem of elems) {
       var displayed = await elem.isDisplayed();
+      var type = await elem.getAttribute("data-type");
 
       // inputs happen to be hidden most times for customization purposes
-      if (displayed || name === Name.Input) {
+      if (displayed || type === Name.Input) {
         var rect = await elem.getRect();
 
-        switch (name) {
+        switch (type) {
           case Name.Title:
             rect = await this.getRectangle(elem);
             this.data.push(this.createTitle(rect.height, rect.width, rect.x, rect.y));
@@ -188,7 +158,6 @@ export class Inspector {
   }
 
   export() {
-    //console.log(this.data);
     var json = JSON.stringify(this.data);
     fs.writeFile("data.json", json, function(err) {
       if (err) {
