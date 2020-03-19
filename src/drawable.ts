@@ -1,4 +1,5 @@
-import * as Utils from "./utils";
+//import * as Utils from "./utils";
+import { ElementType, Ellipse, random, p_lerp, p_trans } from "./utils";
 
 var randomize = true;
 var randomOffset = 5;
@@ -9,7 +10,7 @@ export abstract class Drawable {
   x: number;
   y: number;
   lines?: number[][][];
-  ellipse?: Utils.Ellipse;
+  ellipse?: Ellipse;
 
   constructor(h: number, w: number, x: number, y: number) {
     this.height = h;
@@ -44,7 +45,7 @@ export abstract class Drawable {
 }
 
 export class Title extends Drawable {
-  name: string = "title";
+  name = ElementType.Title;
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -54,7 +55,7 @@ export class Title extends Drawable {
 }
 
 export class Text extends Drawable {
-  name: string = "text";
+  name = ElementType.Text;
   nLines: number;
 
   constructor(h: number, w: number, x: number, y: number, l: number) {
@@ -75,7 +76,7 @@ export class Text extends Drawable {
         let x = this.x + this.width * frac; // x position
         let xdeg = (Math.PI / 2) * x; // frequency
         // amplitude * sin(frequency) + offset
-        let y = Utils.random(2, lineHeight / 2) * Math.sin(xdeg) + (this.y + lineHeight * i + lineHeight / 2);
+        let y = random(2, lineHeight / 2) * Math.sin(xdeg) + (this.y + lineHeight * i + lineHeight / 2);
 
         points.push([x, y]);
       }
@@ -87,7 +88,7 @@ export class Text extends Drawable {
 }
 
 export class Image extends Drawable {
-  name: string = "image";
+  name = ElementType.Image;
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -101,10 +102,10 @@ export class Image extends Drawable {
 
     var cross = [];
     cross.push(
-      Utils.p_lerp(points[0], points[2], Utils.random(0.0, 0.2)),
-      Utils.p_lerp(points[2], points[0], Utils.random(0.0, 0.2)),
-      Utils.p_lerp(points[1], points[3], Utils.random(0.0, 0.2)),
-      Utils.p_lerp(points[3], points[1], Utils.random(0.0, 0.2))
+      p_lerp(points[0], points[2], random(0.0, 0.2)),
+      p_lerp(points[2], points[0], random(0.0, 0.2)),
+      p_lerp(points[1], points[3], random(0.0, 0.2)),
+      p_lerp(points[3], points[1], random(0.0, 0.2))
     );
 
     if (randomize) this.mutate(cross);
@@ -119,7 +120,7 @@ export class Image extends Drawable {
 }
 
 export class Button extends Drawable {
-  name: string = "button";
+  name = ElementType.Button;
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -133,15 +134,15 @@ export class Button extends Drawable {
 
     var nPoints = Math.floor((Math.random() * this.width) / 30 + 4);
     var line = [];
-    var paddingLeft = Utils.random(0, 30);
-    var paddingRight = Utils.random(0, 30) + paddingLeft;
+    var paddingLeft = random(0, 30);
+    var paddingRight = random(0, 30) + paddingLeft;
 
     for (let j = 0; j < nPoints; j++) {
       let frac = j / (nPoints - 1);
       let x = this.x + paddingLeft + (this.width - paddingRight) * frac; // x position
       let xdeg = (Math.PI / 4) * x; // frequency
       // amplitude * sin(frequency) + offset
-      let y = Utils.random(1, this.height / 4) * Math.sin(xdeg) + (this.y + this.height / 2);
+      let y = random(1, this.height / 4) * Math.sin(xdeg) + (this.y + this.height / 2);
 
       line.push([x, y]);
     }
@@ -157,7 +158,7 @@ export class Button extends Drawable {
 }
 
 export class Dropdown extends Drawable {
-  name: string = "dropdown";
+  name = ElementType.Dropdown;
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -170,10 +171,7 @@ export class Dropdown extends Drawable {
     if (randomize) this.mutate(points);
 
     var divider = [];
-    divider.push(
-      Utils.p_trans(points[1], -Utils.random(20, 40), 0),
-      Utils.p_trans(points[2], -Utils.random(20, 40), 0)
-    );
+    divider.push(p_trans(points[1], -random(20, 40), 0), p_trans(points[2], -random(20, 40), 0));
 
     if (randomize) this.mutate(divider);
 
@@ -185,13 +183,11 @@ export class Dropdown extends Drawable {
   }
 }
 
-export class Input extends Drawable {
-  name: string = "input";
-  type: string;
+export class TextField extends Drawable {
+  name = ElementType.TextField;
 
-  constructor(h: number, w: number, x: number, y: number, t: string) {
+  constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
-    this.type = t;
   }
 
   generate(): void {
@@ -204,9 +200,11 @@ export class Input extends Drawable {
   }
 }
 
-export class Radio extends Input {
-  constructor(h: number, w: number, x: number, y: number, t: string) {
-    super(h, w, x, y, t);
+export class Radio extends Drawable {
+  name = ElementType.Radio;
+
+  constructor(h: number, w: number, x: number, y: number) {
+    super(h, w, x, y);
   }
 
   generate(): void {
@@ -223,9 +221,11 @@ export class Radio extends Input {
   }
 }
 
-export class Checkbox extends Input {
-  constructor(h: number, w: number, x: number, y: number, t: string) {
-    super(h, w, x, y, t);
+export class Checkbox extends Drawable {
+  name = ElementType.Checkbox;
+
+  constructor(h: number, w: number, x: number, y: number) {
+    super(h, w, x, y);
   }
 
   generate(): void {
@@ -235,19 +235,15 @@ export class Checkbox extends Input {
     if (randomize) this.mutate(points, 0.2);
 
     var checkmark = [];
-    var point1 = Utils.p_trans(points[0], Utils.random(-this.width / 2, 0), Utils.random(0, this.height / 2));
-    var point2 = Utils.p_trans(points[2], -this.width / 2, Utils.random(0, -this.height / 4));
-    var point3 = Utils.p_trans(
-      points[1],
-      Utils.random(-this.width / 4, this.width / 4),
-      Utils.random(0, -this.height / 4)
-    );
+    var point1 = p_trans(points[0], random(-this.width / 2, 0), random(0, this.height / 2));
+    var point2 = p_trans(points[2], -this.width / 2, random(0, -this.height / 4));
+    var point3 = p_trans(points[1], random(-this.width / 4, this.width / 4), random(0, -this.height / 4));
 
     checkmark.push(
-      Utils.p_lerp(point1, point2, 0),
-      Utils.p_lerp(point2, point1, 0),
-      Utils.p_lerp(point2, point3, 0),
-      Utils.p_lerp(point3, point2, 0)
+      p_lerp(point1, point2, 0),
+      p_lerp(point2, point1, 0),
+      p_lerp(point2, point3, 0),
+      p_lerp(point3, point2, 0)
     );
 
     this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);

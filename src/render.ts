@@ -2,15 +2,14 @@ import { JSDOM } from "jsdom";
 import xmlserializer from "xmlserializer";
 import fs from "fs";
 import sharp from "sharp";
-import { Drawable, Title, Text, Image, Button, Dropdown, Input, Radio, Checkbox } from "./drawable";
-import { Name, Ellipse } from "./utils";
+import { Drawable, Title, Text, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
+import { ElementType, Ellipse } from "./utils";
 
 /* VARIABLES */
 const rough = require("roughjs/bundled/rough.cjs.js");
 const { document } = new JSDOM(`...`).window;
 
 var data = require("../data.json");
-var textField = ["text", "password", "email", "search", "url"];
 var font = "'Kalam', cursive";
 
 const options = {
@@ -56,34 +55,40 @@ class Render {
       var elem: Drawable;
 
       switch (e.name) {
-        case Name.Title: {
+        case ElementType.Title: {
           elem = new Title(e.height, e.width, e.x, e.y);
           break;
         }
-        case Name.Text: {
+        case ElementType.Text: {
           elem = new Text(e.height, e.width, e.x, e.y, e.nLines);
           break;
         }
-        case Name.Image: {
+        case ElementType.Image: {
           elem = new Image(e.height, e.width, e.x, e.y);
           break;
         }
-        case Name.Button: {
+        case ElementType.Button: {
           elem = new Button(e.height, e.width, e.x, e.y);
           break;
         }
-        case Name.Input: {
-          if (e.type === "radio") elem = new Radio(e.height, e.width, e.x, e.y, e.type);
-          else if (e.type === "checkbox") elem = new Checkbox(e.height, e.width, e.x, e.y, e.type);
-          else elem = new Input(e.height, e.width, e.x, e.y, e.type);
+        case ElementType.TextField: {
+          elem = new TextField(e.height, e.width, e.x, e.y);
           break;
         }
-        case Name.Dropdown: {
+        case ElementType.Checkbox: {
+          elem = new Checkbox(e.height, e.width, e.x, e.y);
+          break;
+        }
+        case ElementType.Radio: {
+          elem = new Radio(e.height, e.width, e.x, e.y);
+          break;
+        }
+        case ElementType.Dropdown: {
           elem = new Dropdown(e.height, e.width, e.x, e.y);
           break;
         }
         default: {
-          elem = new Input(e.height, e.width, e.x, e.y, "none");
+          elem = new TextField(e.height, e.width, e.x, e.y);
           break;
         }
       }

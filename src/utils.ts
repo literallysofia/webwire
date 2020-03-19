@@ -1,10 +1,25 @@
-export enum Name {
+export enum ElementType {
   Title = "title",
   Text = "text",
   Image = "image",
-  Input = "input",
+  TextField = "text-field",
+  Checkbox = "checkbox",
+  Radio = "radio",
   Button = "button",
   Dropdown = "dropdown"
+}
+
+export class Element {
+  type: string;
+  paths: string[];
+  ignore: string[];
+
+  constructor(t: string, p: string[], i?: string[]) {
+    this.type = t;
+    this.paths = p;
+    if (i) this.ignore = i;
+    else this.ignore = [];
+  }
 }
 
 export interface Ellipse {
@@ -38,17 +53,4 @@ export function p_lerp(a: number[], b: number[], t: number) {
 
 export function p_trans(a: number[], xd: number, yd: number) {
   return [a[0] + xd, a[1] + yd];
-}
-
-export class Tag {
-  name: string;
-  paths: string[];
-  ignore: string[];
-
-  constructor(n: string, p: string[], i?: string[]) {
-    this.name = n;
-    this.paths = p;
-    if (i) this.ignore = i;
-    else this.ignore = [];
-  }
 }

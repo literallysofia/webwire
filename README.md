@@ -27,4 +27,8 @@ $ npm start https://v4-alpha.getbootstrap.com/examples/album/
 $ npm start https://getbootstrap.com/docs/4.4/examples/jumbotron/
 $ npm start https://getbootstrap.com/docs/4.4/examples/pricing/
 $ npm start https://getbootstrap.com/docs/4.4/examples/checkout/
+$ npm start https://getbootstrap.com/docs/4.4/examples/blog/
+$ npm start https://getbootstrap.com/docs/4.4/examples/cover/
+$ npm start https://getbootstrap.com/docs/4.4/examples/sign-in/
+$ npm start https://getbootstrap.com/docs/4.4/examples/carousel/
 ```

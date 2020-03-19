@@ -1,14 +1,15 @@
 import "chromedriver";
 import { Builder, ThenableWebDriver, WebElement, By, WebElementPromise } from "selenium-webdriver";
+import { ElementType } from "./utils";
 
 export class Browser {
   private driver: ThenableWebDriver;
 
-  public constructor(browserName: string) {
+  constructor(browserName: string) {
     this.driver = new Builder().forBrowser(browserName).build();
   }
 
-  public async navigate(url: string): Promise<void> {
+  async navigate(url: string): Promise<void> {
     await this.driver.get(url);
     await this.driver
       .manage()
@@ -16,29 +17,33 @@ export class Browser {
       .maximize();
   }
 
-  public findElement(selector: string): WebElementPromise {
+  findElement(selector: string): WebElementPromise {
     return this.driver.findElement(By.css(selector));
   }
 
-  public async findElements(selector: string): Promise<WebElement[]> {
+  async findElements(selector: string): Promise<WebElement[]> {
     return this.driver.findElements(By.xpath(selector));
   }
 
-  public setDataType(elems: WebElement[], type: string) {
+  async setDataType(elems: WebElement[], type: string): Promise<void> {
     for (let elem of elems) {
+      var displayed = await elem.isDisplayed();
       var script = "arguments[0].setAttribute('data-type', '" + type + "')";
-      this.driver.executeScript(script, elem);
+
+      if (displayed || type === ElementType.Checkbox || type === ElementType.Radio) {
+        this.driver.executeScript(script, elem);
+      }
     }
   }
 
-  public removeDataType(elems: WebElement[]) {
+  removeDataType(elems: WebElement[]) {
     for (let elem of elems) {
       var script = "arguments[0].removeAttribute('data-type')";
       this.driver.executeScript(script, elem);
     }
   }
 
-  public async clearCookies(url?: string): Promise<void> {
+  async clearCookies(url?: string): Promise<void> {
     if (url) {
       const currentUrl = await this.driver.getCurrentUrl();
       await this.navigate(url);
@@ -49,7 +54,7 @@ export class Browser {
     }
   }
 
-  public async close(): Promise<void> {
+  async close(): Promise<void> {
     await this.driver.quit();
   }
 }

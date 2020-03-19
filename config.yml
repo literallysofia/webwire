@@ -1,66 +1,64 @@
-tags:
-  - tag:
-      name: h1
+elements:
+  - element:
+      type: title
       paths:
         - //h1[text()]
-  - tag:
-      name: h2
-      paths:
         - //h2[text()]
-  - tag:
-      name: h3
-      paths:
         - //h3[text()]
-  - tag:
-      name: h4
-      paths:
         - //h4[text()]
-  - tag:
-      name: h5
-      paths:
         - //h5[text()]
-  - tag:
-      name: h6
-      paths:
         - //h6[text()]
-  - tag:
-      name: p
+  - element:
+      type: text
       paths:
         - //p[text()]
+        - //a[text()]
+        - //strong[text()]
+        - //small[text()]
+        - //div[contains(@class, 'text-muted')]
+        - //li[text()]
+        - //label[text()]
       ignore:
         - //p[a[contains(@class, 'btn')]]
-  - tag:
-      name: small
-      paths:
-        - //small[text()]
-  - tag:
-      name: a
-      paths:
-        - //a[text()]
-      ignore:
+        - //strong[ancestor::p[text()]]
+        - //small[ancestor::p[text()]]
+        - //li[*[text()]]
         - //a[contains(@class, 'btn')]
-        - //a[ancestor::p]
-  - tag:
-      name: img
+        - //a[ancestor::p[text()]]
+        - //a[contains(@class, 'dropdown-toggle')]
+        - //a[@role = 'button']
+  - element:
+      type: image
       paths:
         - //img
-  - tag:
-      name: input
+        - //*[name()="svg"]
+        - //*[name()="canvas"]
+  - element:
+      type: text-field
       paths:
-        - //input
-  - tag:
-      name: label
+        - //input[@type = 'text']
+        - //input[@type = 'password']
+        - //input[@type = 'email']
+        - //input[@type = 'search']
+        - //input[@type = 'url']
+  - element:
+      type: checkbox
       paths:
-        - //label
-  - tag:
-      name: button
+        - //input[@type = 'checkbox']
+  - element:
+      type: radio
+      paths:
+        - //input[@type = 'radio']
+  - element:
+      type: button
       paths:
         - //button
         - //a[contains(@class, 'btn')]
-  - tag:
-      name: select
+  - element:
+      type: dropdown
       paths:
         - //select
+        - //a[contains(@class, 'dropdown-toggle')]
 font:
   [
     "'Indie Flower', cursive",
