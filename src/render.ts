@@ -2,15 +2,14 @@ import { JSDOM } from "jsdom";
 import xmlserializer from "xmlserializer";
 import fs from "fs";
 import sharp from "sharp";
+import yaml from "js-yaml";
 import { Drawable, Title, Text, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
-import { ElementType, Ellipse } from "./utils";
+import { ElementType, Config, Ellipse } from "./utils";
 
 /* VARIABLES */
 const rough = require("roughjs/bundled/rough.cjs.js");
 const { document } = new JSDOM(`...`).window;
-
 var data = require("../data.json");
-var font = "'Kalam', cursive";
 
 const options = {
   roughness: Math.random() + 0.5,
@@ -24,30 +23,41 @@ class Render {
   data: any;
   canvas: SVGSVGElement;
   roughCanvas: any;
-  size = {
-    height: 0,
-    width: 0
-  };
+  config: Config;
 
   constructor(data: any) {
     this.data = data;
-    //this.canvas = document.getElementById("canvas") as HTMLElement;
+    var file = fs.readFileSync("./config.yml", "utf8");
+    var renderConfigs = yaml.safeLoad(file);
+    var fontIndex = Math.floor(Math.random() * Math.floor(renderConfigs.render.fonts.length - 1));
+    this.config = new Config(renderConfigs.render.fonts[fontIndex], renderConfigs.render.titles);
+
     this.canvas = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-    const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
-    style.setAttribute("type", "text/css");
-    var textnode = document.createTextNode(
-      "@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap')"
-    );
-    style.appendChild(textnode);
-    defs.appendChild(style);
-    this.canvas.append(defs);
+    this.createSVGDefs();
+    
     this.roughCanvas = rough.svg(this.canvas);
   }
 
+  createSVGDefs() {
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+    style.setAttribute("type", "text/css");
+
+    var fontFamily = this.config.fontFamily.substr(
+      this.config.fontFamily.indexOf("'") + 1,
+      this.config.fontFamily.lastIndexOf("'") - 1
+    );
+    var font = fontFamily.split(" ").join("+");
+    var importFont = "@import url('https://fonts.googleapis.com/css2?family=" + font + "&display=swap')";
+    var textnode = document.createTextNode(importFont);
+    style.appendChild(textnode);
+    defs.appendChild(style);
+    this.canvas.append(defs);
+  }
+
   setCanvasSize() {
-    this.canvas.setAttribute("height", (this.size.height + 30).toString());
-    this.canvas.setAttribute("width", (this.size.width + 30).toString());
+    this.canvas.setAttribute("height", (this.config.sizeCanvas.height + 30).toString());
+    this.canvas.setAttribute("width", (this.config.sizeCanvas.width + 30).toString());
   }
 
   draw() {
@@ -98,8 +108,8 @@ class Render {
       if (elem.ellipse) this.drawEllipse(elem.ellipse);
       if (!elem.lines && !elem.ellipse) this.drawText(elem);
 
-      if (this.size.height < e.height + e.y) this.size.height = e.height + e.y;
-      if (this.size.width < e.width + e.x) this.size.width = e.width + e.x;
+      if (this.config.sizeCanvas.height < e.height + e.y) this.config.setCanvasHeight(e.height + e.y);
+      if (this.config.sizeCanvas.width < e.width + e.x) this.config.setCanvasWidth(e.width + e.x);
     }
     this.setCanvasSize();
   }
@@ -131,7 +141,7 @@ class Render {
     svgText.setAttribute("x", elem.x.toString());
     svgText.setAttribute("y", elem.y.toString());
     svgText.setAttribute("font-size", elem.height.toString());
-    svgText.setAttribute("font-family", font);
+    svgText.setAttribute("font-family", this.config.fontFamily);
 
     var textnode = document.createTextNode("Title");
     svgText.appendChild(textnode);
