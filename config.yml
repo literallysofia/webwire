@@ -1,79 +1,70 @@
 elements:
-  - element:
-      type: title
-      paths:
-        - //h1[text()]
-        - //h2[text()]
-        - //h3[text()]
-        - //h4[text()]
-        - //h5[text()]
-        - //h6[text()]
-  - element:
-      type: text
-      paths:
-        - //p[text()]
-        - //a[text()]
-        - //strong[text()]
-        - //small[text()]
-        - //div[contains(@class, 'text-muted')]
-        - //li[text()]
-        - //label[text()]
-      ignore:
-        - //p[a[contains(@class, 'btn')]]
-        - //strong[ancestor::p[text()]]
-        - //small[ancestor::p[text()]]
-        - //li[*[text()]]
-        - //a[contains(@class, 'btn')]
-        - //a[ancestor::p[text()]]
-        - //a[contains(@class, 'dropdown-toggle')]
-        - //a[@role = 'button']
-  - element:
-      type: image
-      paths:
-        - //img
-        - //*[name()="svg"]
-        - //*[name()="canvas"]
-  - element:
-      type: text-field
-      paths:
-        - //input[@type = 'text']
-        - //input[@type = 'password']
-        - //input[@type = 'email']
-        - //input[@type = 'search']
-        - //input[@type = 'url']
-  - element:
-      type: checkbox
-      paths:
-        - //input[@type = 'checkbox']
-  - element:
-      type: radio
-      paths:
-        - //input[@type = 'radio']
-  - element:
-      type: button
-      paths:
-        - //button
-        - //a[contains(@class, 'btn')]
-  - element:
-      type: dropdown
-      paths:
-        - //select
-        - //a[contains(@class, 'dropdown-toggle')]
-render:
-  fonts:
-    - "'Indie Flower', cursive"
-    - "'Kalam', cursive"
-    - "'Amatic SC', cursive"
-    - "'Rock Salt', cursive"
-    - "'Shadows Into Light', cursive"
-    - "'Caveat', cursive"
-    - "'Nothing You Could Do', cursive"
-  titles:
-    - Title
-    - Heading
-    - Header
-  options:
-    roughness: 1
-    bowing: 5
-    strokeWidth: 1.5
-    hachureGap: 4
+  - type: title
+    paths:
+      - //h1[text()]
+      - //h2[text()]
+      - //h3[text()]
+      - //h4[text()]
+      - //h5[text()]
+      - //h6[text()]
+  - type: text
+    paths:
+      - //p[text()]
+      - //a[text()]
+      - //strong[text()]
+      - //small[text()]
+      - //div[contains(@class, 'text-muted')]
+      - //li[text()]
+      - //label[text()]
+    ignore:
+      - //p[a[contains(@class, 'btn')]]
+      - //strong[ancestor::p[text()]]
+      - //small[ancestor::p[text()]]
+      - //li[*[text()]]
+      - //a[contains(@class, 'btn')]
+      - //a[ancestor::p[text()]]
+      - //a[contains(@class, 'dropdown-toggle')]
+      - //a[@role = 'button']
+  - type: image
+    paths:
+      - //img
+      - //*[name()="svg"]
+      - //*[name()="canvas"]
+  - type: text-field
+    paths:
+      - //input[@type = 'text']
+      - //input[@type = 'password']
+      - //input[@type = 'email']
+      - //input[@type = 'search']
+      - //input[@type = 'url']
+  - type: checkbox
+    paths:
+      - //input[@type = 'checkbox']
+  - type: radio
+    paths:
+      - //input[@type = 'radio']
+  - type: button
+    paths:
+      - //button
+      - //a[contains(@class, 'btn')]
+  - type: dropdown
+    paths:
+      - //select
+      - //a[contains(@class, 'dropdown-toggle')]
+fonts:
+  - "'Indie Flower', cursive"
+  - "'Kalam', cursive"
+  - "'Amatic SC', cursive"
+  - "'Rock Salt', cursive"
+  - "'Shadows Into Light', cursive"
+  - "'Caveat', cursive"
+  - "'Nothing You Could Do', cursive"
+titles:
+  - Title
+  - Heading
+  - Header
+options:
+  roughness: 1
+  bowing: 5
+  strokeWidth: 1.5
+  hachureGap: 4

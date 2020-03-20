@@ -9,19 +9,6 @@ export enum ElementType {
   Dropdown = "dropdown"
 }
 
-export class Element {
-  type: string;
-  paths: string[];
-  ignore: string[];
-
-  constructor(t: string, p: string[], i?: string[]) {
-    this.type = t;
-    this.paths = p;
-    if (i) this.ignore = i;
-    else this.ignore = [];
-  }
-}
-
 export interface Ellipse {
   cx: number;
   cy: number;

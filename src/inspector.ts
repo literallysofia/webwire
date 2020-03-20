@@ -1,30 +1,23 @@
-import fs from "fs";
-import yaml from "js-yaml";
 import { WebElement, IRectangle } from "selenium-webdriver";
 import { Browser } from "./browser";
 import { Drawable, Title, Text, Image, TextField, Radio, Checkbox, Button, Dropdown } from "./drawable";
-import { ElementType, Element } from "./utils";
+import { ElementType } from "./utils";
+import { Config } from "./config";
+import fs from "fs";
 
 export class Inspector {
-  data: Drawable[];
   browser: Browser;
-  elements: Element[];
+  config: Config;
+  data: Drawable[];
 
-  constructor(b: Browser) {
+  constructor(b: Browser, c: Config) {
     this.browser = b;
+    this.config = c;
     this.data = [];
-    this.elements = [];
-    var file = fs.readFileSync("./config.yml", "utf8");
-    var config = yaml.safeLoad(file);
-
-    for (let obj of config.elements) {
-      let e = new Element(obj.element.type, obj.element.paths, obj.element.ignore ? obj.element.ignore : null);
-      this.elements.push(e);
-    }
   }
 
   async normalize(): Promise<void> {
-    for (let element of this.elements) {
+    for (let element of this.config.elements) {
       for (let path of element.paths) {
         let elems = await this.browser.findElements(path);
         await this.browser.setDataType(elems, element.type);

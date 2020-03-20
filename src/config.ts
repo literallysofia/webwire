@@ -1,24 +1,36 @@
+import { JsonObject, JsonProperty } from "json2typescript";
+
+@JsonObject("XElement")
+export class XElement {
+  @JsonProperty("type", String)
+  type: string = "";
+
+  @JsonProperty("paths", [String])
+  paths: string[] = [];
+
+  @JsonProperty("ignore", [String], true)
+  ignore: string[] = [];
+}
+
+@JsonObject("Config")
 export class Config {
-  fontFamily: string;
-  titles: string[];
-  sizeCanvas = {
-    height: 0,
-    width: 0
-  };
-  options: object;
+  @JsonProperty("elements", [XElement])
+  elements: XElement[] = [];
 
-  constructor(font: string, t: string[], op: object) {
-    this.fontFamily = font;
-    this.titles = t;
-    this.options = op;
-  }
+  @JsonProperty("fonts", [String])
+  fonts: string[] = [];
 
-  setCanvasHeight(n: number) {
-    this.sizeCanvas.height = n;
-  }
+  @JsonProperty("titles", [String])
+  titles: string[] = [];
 
-  setCanvasWidth(n: number) {
-    this.sizeCanvas.width = n;
+  @JsonProperty("options")
+  options: any = undefined;
+
+  fontFamily: string = "";
+
+  setFontFamily() {
+    var fontIndex = Math.floor(Math.random() * Math.floor(this.fonts.length - 1));
+    this.fontFamily = this.fonts[fontIndex];
   }
 }
 

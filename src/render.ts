@@ -2,7 +2,7 @@ import { Drawable, Title, Text, Image, Button, Dropdown, TextField, Radio, Check
 import { IElement } from "./ielement";
 import { Config } from "./config";
 import { ElementType, Ellipse } from "./utils";
-import { JsonConvert, ValueCheckingMode } from "json2typescript";
+import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
 import { JSDOM } from "jsdom";
 import xmlserializer from "xmlserializer";
 import fs from "fs";
@@ -15,21 +15,20 @@ const { document } = new JSDOM(`...`).window;
 
 class Render {
   data: IElement[];
+  config: Config;
   canvas: SVGSVGElement;
   roughCanvas: any;
-  config: Config;
+  sizeCanvas = {
+    height: 0,
+    width: 0
+  };
 
-  constructor(data: IElement[]) {
+  constructor(data: IElement[], config: Config) {
     this.data = data;
-
-    var file = fs.readFileSync("./config.yml", "utf8");
-    var renderConfigs = yaml.safeLoad(file).render;
-    var fontIndex = Math.floor(Math.random() * Math.floor(renderConfigs.fonts.length - 1));
-    this.config = new Config(renderConfigs.fonts[fontIndex], renderConfigs.titles, renderConfigs.options);
-
+    this.config = config;
+    this.config.setFontFamily();
     this.canvas = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     this.createSVGDefs();
-
     this.roughCanvas = rough.svg(this.canvas);
   }
 
@@ -43,6 +42,7 @@ class Render {
       this.config.fontFamily.lastIndexOf("'") - 1
     );
     var font = fontFamily.split(" ").join("+");
+
     var importFont = "@import url('https://fonts.googleapis.com/css2?family=" + font + "&display=swap')";
     var textnode = document.createTextNode(importFont);
     style.appendChild(textnode);
@@ -51,8 +51,8 @@ class Render {
   }
 
   setCanvasSize() {
-    this.canvas.setAttribute("height", (this.config.sizeCanvas.height + 30).toString());
-    this.canvas.setAttribute("width", (this.config.sizeCanvas.width + 30).toString());
+    this.canvas.setAttribute("height", (this.sizeCanvas.height + 30).toString());
+    this.canvas.setAttribute("width", (this.sizeCanvas.width + 30).toString());
   }
 
   draw() {
@@ -103,8 +103,8 @@ class Render {
       if (elem.ellipse) this.drawEllipse(elem.ellipse);
       if (!elem.lines && !elem.ellipse) this.drawText(elem);
 
-      if (this.config.sizeCanvas.height < e.height + e.y) this.config.setCanvasHeight(e.height + e.y);
-      if (this.config.sizeCanvas.width < e.width + e.x) this.config.setCanvasWidth(e.width + e.x);
+      if (this.sizeCanvas.height < e.height + e.y) this.sizeCanvas.height = e.height + e.y;
+      if (this.sizeCanvas.width < e.width + e.x) this.sizeCanvas.width = e.width + e.x;
     }
     this.setCanvasSize();
   }
@@ -121,7 +121,13 @@ class Render {
   }
 
   drawEllipse(ellipse: Ellipse) {
-    let shapeNode = this.roughCanvas.ellipse(ellipse.cx, ellipse.cy, ellipse.width, ellipse.height, this.config.options);
+    let shapeNode = this.roughCanvas.ellipse(
+      ellipse.cx,
+      ellipse.cy,
+      ellipse.width,
+      ellipse.height,
+      this.config.options
+    );
     let center = this.roughCanvas
       .ellipse(ellipse.cx, ellipse.cy, ellipse.width / 2, ellipse.height / 2, { fill: "black", fillStyle: "solid" })
       .getElementsByTagName("path")[0];
@@ -167,20 +173,29 @@ class Render {
 }
 
 function renderWireframe() {
-  var file = fs.readFileSync("./data.json", "utf8");
-  var jsonObject = JSON.parse(file);
+  var dataFile = fs.readFileSync("./data.json", "utf8");
+  var jsonData = JSON.parse(dataFile);
+
+  var configFile = fs.readFileSync("./config.yml", "utf8");
+  var jsonConfig = yaml.safeLoad(configFile);
 
   var jsonConvert: JsonConvert = new JsonConvert();
-  //jsonConvert.operationMode = OperationMode.LOGGING;
+  jsonConvert.operationMode = OperationMode.LOGGING;
   jsonConvert.ignorePrimitiveChecks = false; // don't allow assigning number to string etc.
   jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL; // never allow null
 
   var data: IElement[];
   try {
-    data = jsonConvert.deserializeArray(jsonObject, IElement);
-    const render = new Render(data);
-    render.draw();
-    render.export();
+    data = jsonConvert.deserializeArray(jsonData, IElement);
+    var config: Config;
+    try {
+      config = jsonConvert.deserializeObject(jsonConfig, Config);
+      const render = new Render(data, config);
+      render.draw();
+      render.export();
+    } catch (e) {
+      console.log(<Error>e);
+    }
   } catch (e) {
     console.log(<Error>e);
   }
