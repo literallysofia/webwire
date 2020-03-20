@@ -1,4 +1,3 @@
-//import * as Utils from "./utils";
 import { ElementType, Ellipse, random, p_lerp, p_trans } from "./utils";
 
 var randomize = true;

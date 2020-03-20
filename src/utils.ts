@@ -22,29 +22,6 @@ export class Element {
   }
 }
 
-export class Config {
-  fontFamily: string;
-  titleOptions: string[];
-  sizeCanvas = {
-    height: 0,
-    width: 0
-  };
-  drawOptions: any;
-
-  constructor(font: string, titles: string[]) {
-    this.fontFamily = font;
-    this.titleOptions = titles;
-  }
-
-  setCanvasHeight(n: number) {
-    this.sizeCanvas.height = n;
-  }
-
-  setCanvasWidth(n: number) {
-    this.sizeCanvas.width = n;
-  }
-}
-
 export interface Ellipse {
   cx: number;
   cy: number;

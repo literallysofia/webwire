@@ -1,7 +1,8 @@
 import { Drawable, Title, Text, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
 import { IElement } from "./ielement";
-import { ElementType, Config, Ellipse } from "./utils";
-import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
+import { Config } from "./config";
+import { ElementType, Ellipse } from "./utils";
+import { JsonConvert, ValueCheckingMode } from "json2typescript";
 import { JSDOM } from "jsdom";
 import xmlserializer from "xmlserializer";
 import fs from "fs";
@@ -11,14 +12,6 @@ import yaml from "js-yaml";
 /* VARIABLES */
 const rough = require("roughjs/bundled/rough.cjs.js");
 const { document } = new JSDOM(`...`).window;
-
-const options = {
-  roughness: Math.random() + 0.5,
-  bowing: Math.random() * 5,
-  //strokeWidth: Math.random() * 4 + 1,
-  strokeWidth: 1.5,
-  hachureGap: Math.random() * 4
-};
 
 class Render {
   data: IElement[];
@@ -30,9 +23,9 @@ class Render {
     this.data = data;
 
     var file = fs.readFileSync("./config.yml", "utf8");
-    var renderConfigs = yaml.safeLoad(file);
-    var fontIndex = Math.floor(Math.random() * Math.floor(renderConfigs.render.fonts.length - 1));
-    this.config = new Config(renderConfigs.render.fonts[fontIndex], renderConfigs.render.titles);
+    var renderConfigs = yaml.safeLoad(file).render;
+    var fontIndex = Math.floor(Math.random() * Math.floor(renderConfigs.fonts.length - 1));
+    this.config = new Config(renderConfigs.fonts[fontIndex], renderConfigs.titles, renderConfigs.options);
 
     this.canvas = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     this.createSVGDefs();
@@ -120,7 +113,7 @@ class Render {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
     for (let points of lines) {
-      let line = this.roughCanvas.curve(points, options).getElementsByTagName("path")[0];
+      let line = this.roughCanvas.curve(points, this.config.options).getElementsByTagName("path")[0];
       g.appendChild(line);
     }
 
@@ -128,7 +121,7 @@ class Render {
   }
 
   drawEllipse(ellipse: Ellipse) {
-    let shapeNode = this.roughCanvas.ellipse(ellipse.cx, ellipse.cy, ellipse.width, ellipse.height, options);
+    let shapeNode = this.roughCanvas.ellipse(ellipse.cx, ellipse.cy, ellipse.width, ellipse.height, this.config.options);
     let center = this.roughCanvas
       .ellipse(ellipse.cx, ellipse.cy, ellipse.width / 2, ellipse.height / 2, { fill: "black", fillStyle: "solid" })
       .getElementsByTagName("path")[0];

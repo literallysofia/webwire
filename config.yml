@@ -72,3 +72,8 @@ render:
     - Title
     - Heading
     - Header
+  options:
+    roughness: 1
+    bowing: 5
+    strokeWidth: 1.5
+    hachureGap: 4
