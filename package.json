@@ -7,7 +7,7 @@
     "build": "tsc",
     "start": "npm run build; node dist/index.js",
     "render": "npm run build; node dist/render.js; open wireframe.svg",
-    "ui": "ts-node src/render.ts; open wireframe.svg",
+    "test-render": "ts-node src/render.ts",
     "browserify": "browserify dist/render.js -o bundle.js",
     "draw": "npm run build; npm run browserify; open index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -43,6 +43,7 @@
     "command-line-args": "^5.1.1",
     "js-yaml": "^3.13.1",
     "jsdom": "^16.2.1",
+    "json2typescript": "^1.2.5",
     "roughjs": "^4.0.4",
     "selenium-webdriver": "^4.0.0-alpha.7",
     "sharp": "^0.25.1",

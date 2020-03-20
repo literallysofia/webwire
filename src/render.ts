@@ -1,15 +1,16 @@
+import { Drawable, Title, Text, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
+import { IElement } from "./ielement";
+import { ElementType, Config, Ellipse } from "./utils";
+import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
 import { JSDOM } from "jsdom";
 import xmlserializer from "xmlserializer";
 import fs from "fs";
-import sharp from "sharp";
 import yaml from "js-yaml";
-import { Drawable, Title, Text, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
-import { ElementType, Config, Ellipse } from "./utils";
+//import sharp from "sharp";
 
 /* VARIABLES */
 const rough = require("roughjs/bundled/rough.cjs.js");
 const { document } = new JSDOM(`...`).window;
-var data = require("../data.json");
 
 const options = {
   roughness: Math.random() + 0.5,
@@ -20,13 +21,14 @@ const options = {
 };
 
 class Render {
-  data: any;
+  data: IElement[];
   canvas: SVGSVGElement;
   roughCanvas: any;
   config: Config;
 
-  constructor(data: any) {
+  constructor(data: IElement[]) {
     this.data = data;
+
     var file = fs.readFileSync("./config.yml", "utf8");
     var renderConfigs = yaml.safeLoad(file);
     var fontIndex = Math.floor(Math.random() * Math.floor(renderConfigs.render.fonts.length - 1));
@@ -34,7 +36,7 @@ class Render {
 
     this.canvas = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     this.createSVGDefs();
-    
+
     this.roughCanvas = rough.svg(this.canvas);
   }
 
@@ -171,6 +173,24 @@ class Render {
   }
 }
 
-const render = new Render(data);
-render.draw();
-render.export();
+function renderWireframe() {
+  var file = fs.readFileSync("./data.json", "utf8");
+  var jsonObject = JSON.parse(file);
+
+  var jsonConvert: JsonConvert = new JsonConvert();
+  //jsonConvert.operationMode = OperationMode.LOGGING;
+  jsonConvert.ignorePrimitiveChecks = false; // don't allow assigning number to string etc.
+  jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL; // never allow null
+
+  var data: IElement[];
+  try {
+    data = jsonConvert.deserializeArray(jsonObject, IElement);
+    const render = new Render(data);
+    render.draw();
+    render.export();
+  } catch (e) {
+    console.log(<Error>e);
+  }
+}
+
+renderWireframe();
