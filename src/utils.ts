@@ -9,11 +9,24 @@ export enum ElementType {
   Dropdown = "dropdown"
 }
 
+export enum Anchor {
+  Start = "start",
+  Middle = "middle",
+  End = "end"
+}
+
 export interface Ellipse {
   cx: number;
   cy: number;
   height: number;
   width: number;
+}
+
+export interface Heading {
+  x: number;
+  y: number;
+  size: number;
+  anchor: Anchor;
 }
 
 export function random(min: number, max: number) {

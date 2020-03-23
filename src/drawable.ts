@@ -1,4 +1,4 @@
-import { ElementType, Ellipse, random, p_lerp, p_trans } from "./utils";
+import { ElementType, Ellipse, Anchor, Heading, random, p_lerp, p_trans } from "./utils";
 
 var randomize = true;
 var randomOffset = 5;
@@ -10,6 +10,7 @@ export abstract class Drawable {
   y: number;
   lines?: number[][][];
   ellipse?: Ellipse;
+  heading?: Heading;
 
   constructor(h: number, w: number, x: number, y: number) {
     this.height = h;
@@ -45,28 +46,51 @@ export abstract class Drawable {
 
 export class Title extends Drawable {
   name = ElementType.Title;
+  align: string;
 
-  constructor(h: number, w: number, x: number, y: number) {
+  constructor(h: number, w: number, x: number, y: number, a: string) {
     super(h, w, x, y);
+    this.align = a;
   }
 
-  generate(): void {}
+  generate(): void {
+    var x = this.x;
+    var y = this.y + this.height;
+    var anchor = Anchor.Start;
+
+    if (this.align === "center") {
+      x = this.x + this.width / 2;
+      anchor = Anchor.Middle;
+    }
+
+    if (this.align === "right") {
+      x = this.x + this.width;
+      anchor = Anchor.End;
+    }
+
+    this.heading = {
+      x: x,
+      y: y,
+      size: this.height,
+      anchor: anchor
+    };
+  }
 }
 
 export class Text extends Drawable {
   name = ElementType.Text;
-  nLines: number;
+  nlines: number;
 
   constructor(h: number, w: number, x: number, y: number, l: number) {
     super(h, w, x, y);
-    this.nLines = l;
+    this.nlines = l;
   }
 
   generate(): void {
     this.lines = [];
-    var lineHeight = this.height / this.nLines;
+    var lineHeight = this.height / this.nlines;
 
-    for (let i = 0; i < this.nLines; i++) {
+    for (let i = 0; i < this.nlines; i++) {
       var nPoints = Math.floor((Math.random() * this.width) / 30 + 4);
       var points = [];
 

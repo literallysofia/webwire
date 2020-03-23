@@ -1,7 +1,7 @@
 import { Drawable, Title, Text, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
 import { IElement } from "./ielement";
 import { Config } from "./config";
-import { ElementType, Ellipse } from "./utils";
+import { ElementType, Ellipse, Heading } from "./utils";
 import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
 import { JSDOM } from "jsdom";
 import xmlserializer from "xmlserializer";
@@ -61,7 +61,7 @@ class Render {
 
       switch (e.name) {
         case ElementType.Title: {
-          elem = new Title(e.height, e.width, e.x, e.y);
+          elem = new Title(e.height, e.width, e.x, e.y, e.align);
           break;
         }
         case ElementType.Text: {
@@ -101,7 +101,7 @@ class Render {
       elem.generate();
       if (elem.lines) this.drawLines(elem.lines);
       if (elem.ellipse) this.drawEllipse(elem.ellipse);
-      if (!elem.lines && !elem.ellipse) this.drawText(elem);
+      if (elem.heading) this.drawHeading(elem.heading);
 
       if (this.sizeCanvas.height < e.height + e.y) this.sizeCanvas.height = e.height + e.y;
       if (this.sizeCanvas.width < e.width + e.x) this.sizeCanvas.width = e.width + e.x;
@@ -136,13 +136,14 @@ class Render {
     this.canvas.appendChild(shapeNode);
   }
 
-  drawText(elem: Drawable) {
+  drawHeading(head: Heading) {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
     var svgText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    svgText.setAttribute("x", elem.x.toString());
-    svgText.setAttribute("y", (elem.y + elem.height).toString());
-    svgText.setAttribute("font-size", elem.height.toString());
+    svgText.setAttribute("x", head.x.toString());
+    svgText.setAttribute("y", head.y.toString());
+    svgText.setAttribute("font-size", head.size.toString());
     svgText.setAttribute("font-family", this.config.fontFamily);
+    svgText.setAttribute("text-anchor", head.anchor);
 
     var textnode = document.createTextNode("Title");
     svgText.appendChild(textnode);

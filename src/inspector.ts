@@ -47,7 +47,8 @@ export class Inspector {
       switch (type) {
         case ElementType.Title:
           rect = await this.getRectangle(elem);
-          this.data.push(this.createTitle(rect.height, rect.width, rect.x, rect.y));
+          var textAlign = await elem.getCssValue("text-align");
+          this.data.push(this.createTitle(rect.height, rect.width, rect.x, rect.y, textAlign));
           break;
         case ElementType.Text:
           rect = await this.getRectangle(elem);
@@ -95,12 +96,12 @@ export class Inspector {
     return rect;
   }
 
-  createTitle(h: number, w: number, x: number, y: number): Drawable {
-    return new Title(h, w, x, y);
+  createTitle(h: number, w: number, x: number, y: number, align: string): Drawable {
+    return new Title(h, w, x, y, align);
   }
 
-  createText(h: number, w: number, x: number, y: number, lines: number): Drawable {
-    return new Text(h, w, x, y, lines);
+  createText(h: number, w: number, x: number, y: number, nlines: number): Drawable {
+    return new Text(h, w, x, y, nlines);
   }
 
   createImage(h: number, w: number, x: number, y: number): Drawable {
