@@ -64,6 +64,11 @@ export class Title extends Drawable {
       anchor = Anchor.End;
     }
 
+    if (randomize) {
+      x += Math.random() * randomOffset * 3 - randomOffset;
+      y += Math.random() * randomOffset * 2 - randomOffset;
+    }
+
     this.heading = {
       x: x,
       y: y,
@@ -100,7 +105,6 @@ export class Text extends Drawable {
         points.push([x, y]);
       }
       if (randomize) this.mutate(points, randomOffset);
-
       this.lines.push(points);
     }
   }
@@ -231,9 +235,8 @@ export class Radio extends Drawable {
     var cy = this.y + this.height / 2;
 
     if (randomize) {
-      var offset = randomOffset * 0.5;
-      cx += Math.random() * offset * 2 - offset;
-      cy += Math.random() * offset * 2 - offset;
+      cx += Math.random() * randomOffset * 2 - randomOffset;
+      cy += Math.random() * randomOffset * 2 - randomOffset;
     }
 
     this.ellipse = { cx: cx, cy: cy, height: this.height, width: this.width };
@@ -251,7 +254,7 @@ export class Checkbox extends Drawable {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
-    if (randomize) this.mutate(points, randomOffset, 0.2);
+    if (randomize) this.mutate(points, randomOffset, 0.3);
 
     var checkmark = [];
     var point1 = p_trans(points[0], random(-this.width / 2, 0), random(0, this.height / 2));
