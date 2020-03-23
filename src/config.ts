@@ -29,8 +29,13 @@ export class Config {
   fontFamily: string = "";
 
   setFontFamily() {
-    var fontIndex = Math.floor(Math.random() * Math.floor(this.fonts.length - 1));
-    this.fontFamily = this.fonts[fontIndex];
+    var index = Math.floor(Math.random() * Math.floor(this.fonts.length - 1));
+    this.fontFamily = this.fonts[index];
+  }
+
+  getRandomTitle(): string {
+    var index = Math.floor(Math.random() * Math.floor(this.titles.length - 1));
+    return this.titles[index];
   }
 }
 

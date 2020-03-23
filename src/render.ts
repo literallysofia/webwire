@@ -65,7 +65,7 @@ class Render {
           break;
         }
         case ElementType.Text: {
-          elem = new Text(e.height, e.width, e.x, e.y, e.nLines);
+          elem = new Text(e.height, e.width, e.x, e.y, e.nlines);
           break;
         }
         case ElementType.Image: {
@@ -145,7 +145,7 @@ class Render {
     svgText.setAttribute("font-family", this.config.fontFamily);
     svgText.setAttribute("text-anchor", head.anchor);
 
-    var textnode = document.createTextNode("Title");
+    var textnode = document.createTextNode(this.config.getRandomTitle());
     svgText.appendChild(textnode);
     g.appendChild(svgText);
     this.canvas.appendChild(g);

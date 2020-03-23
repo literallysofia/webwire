@@ -20,6 +20,6 @@ export class IElement {
   @JsonProperty("align", String, true)
   align: string = "left";
 
-  @JsonProperty("nLines", Number, true)
-  nLines: number = 0;
+  @JsonProperty("nlines", Number, true)
+  nlines: number = 0;
 }
