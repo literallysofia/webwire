@@ -140,7 +140,7 @@ class Render {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
     var svgText = document.createElementNS("http://www.w3.org/2000/svg", "text");
     svgText.setAttribute("x", elem.x.toString());
-    svgText.setAttribute("y", elem.y.toString());
+    svgText.setAttribute("y", (elem.y + elem.height).toString());
     svgText.setAttribute("font-size", elem.height.toString());
     svgText.setAttribute("font-family", this.config.fontFamily);
 
