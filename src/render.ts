@@ -29,7 +29,7 @@ class Render {
     this.config.setFontFamily();
     this.canvas = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     this.createSVGDefs();
-    this.roughCanvas = rough.svg(this.canvas);
+    this.roughCanvas = rough.svg(this.canvas, { options: this.config.options });
   }
 
   createSVGDefs() {
@@ -113,7 +113,7 @@ class Render {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
     for (let points of lines) {
-      let line = this.roughCanvas.curve(points, this.config.options).getElementsByTagName("path")[0];
+      let line = this.roughCanvas.curve(points).getElementsByTagName("path")[0];
       g.appendChild(line);
     }
 
@@ -121,13 +121,7 @@ class Render {
   }
 
   drawEllipse(ellipse: Ellipse) {
-    let shapeNode = this.roughCanvas.ellipse(
-      ellipse.cx,
-      ellipse.cy,
-      ellipse.width,
-      ellipse.height,
-      this.config.options
-    );
+    let shapeNode = this.roughCanvas.ellipse(ellipse.cx, ellipse.cy, ellipse.width, ellipse.height);
     let center = this.roughCanvas
       .ellipse(ellipse.cx, ellipse.cy, ellipse.width / 2, ellipse.height / 2, { fill: "black", fillStyle: "solid" })
       .getElementsByTagName("path")[0];
@@ -145,7 +139,7 @@ class Render {
     svgText.setAttribute("font-family", this.config.fontFamily);
     svgText.setAttribute("text-anchor", head.anchor);
 
-    var textnode = document.createTextNode(this.config.getRandomTitle());
+    var textnode = document.createTextNode(this.config.getTitleText());
     svgText.appendChild(textnode);
     g.appendChild(svgText);
     this.canvas.appendChild(g);

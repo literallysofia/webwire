@@ -44,6 +44,7 @@
     "js-yaml": "^3.13.1",
     "jsdom": "^16.2.1",
     "json2typescript": "^1.2.5",
+    "lorem-ipsum": "^2.0.3",
     "roughjs": "^4.0.4",
     "selenium-webdriver": "^4.0.0-alpha.7",
     "sharp": "^0.25.1",

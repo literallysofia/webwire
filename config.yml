@@ -59,14 +59,13 @@ fonts:
   - "'Shadows Into Light', cursive"
   - "'Caveat', cursive"
   - "'Nothing You Could Do', cursive"
-titles:
-  - Title
-  - Heading
-  - Header
+wordsPerTitle:
+  max: 4
+  min: 1
 randomize: true
 randomOffset: 5
 options:
-  roughness: 1
+  roughness: 1.5
   bowing: 5
   strokeWidth: 1.5
   hachureGap: 4

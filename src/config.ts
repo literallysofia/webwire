@@ -1,4 +1,5 @@
 import { JsonObject, JsonProperty } from "json2typescript";
+import { LoremIpsum } from "lorem-ipsum";
 
 @JsonObject("XElement")
 export class XElement {
@@ -20,8 +21,8 @@ export class Config {
   @JsonProperty("fonts", [String])
   fonts: string[] = [];
 
-  @JsonProperty("titles", [String])
-  titles: string[] = [];
+  @JsonProperty("wordsPerTitle")
+  wordsPerTitle = { min: 1, max: 6 };
 
   @JsonProperty("randomize", Boolean)
   randomize: boolean = false;
@@ -30,7 +31,7 @@ export class Config {
   randomOffset: number = 1;
 
   @JsonProperty("options")
-  options: any = undefined;
+  options = { roughness: 1, bowing: 5, strokeWidth: 1.5, hachureGap: 4 };
 
   fontFamily: string = "";
 
@@ -39,9 +40,14 @@ export class Config {
     this.fontFamily = this.fonts[index];
   }
 
-  getRandomTitle(): string {
-    var index = Math.floor(Math.random() * Math.floor(this.titles.length));
-    return this.titles[index];
+  getTitleText(): string {
+    var lorem = new LoremIpsum({
+      wordsPerSentence: {
+        max: this.wordsPerTitle.max,
+        min: this.wordsPerTitle.min
+      }
+    });
+    return lorem.generateSentences(1).slice(0, -1);
   }
 }
 
