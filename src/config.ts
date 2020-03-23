@@ -23,6 +23,12 @@ export class Config {
   @JsonProperty("titles", [String])
   titles: string[] = [];
 
+  @JsonProperty("randomize", Boolean)
+  randomize: boolean = false;
+
+  @JsonProperty("randomOffset", Number)
+  randomOffset: number = 1;
+
   @JsonProperty("options")
   options: any = undefined;
 
@@ -34,7 +40,7 @@ export class Config {
   }
 
   getRandomTitle(): string {
-    var index = Math.floor(Math.random() * Math.floor(this.titles.length - 1));
+    var index = Math.floor(Math.random() * Math.floor(this.titles.length));
     return this.titles[index];
   }
 }

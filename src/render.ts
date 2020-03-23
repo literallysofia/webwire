@@ -98,7 +98,7 @@ class Render {
         }
       }
 
-      elem.generate();
+      elem.generate(this.config.randomize, this.config.randomOffset);
       if (elem.lines) this.drawLines(elem.lines);
       if (elem.ellipse) this.drawEllipse(elem.ellipse);
       if (elem.heading) this.drawHeading(elem.heading);

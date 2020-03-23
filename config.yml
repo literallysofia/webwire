@@ -63,8 +63,11 @@ titles:
   - Title
   - Heading
   - Header
+randomize: true
+randomOffset: 5
 options:
   roughness: 1
   bowing: 5
   strokeWidth: 1.5
   hachureGap: 4
+

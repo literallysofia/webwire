@@ -1,8 +1,5 @@
 import { ElementType, Ellipse, Anchor, Heading, random, p_lerp, p_trans } from "./utils";
 
-var randomize = true;
-var randomOffset = 5;
-
 export abstract class Drawable {
   height: number;
   width: number;
@@ -28,8 +25,7 @@ export abstract class Drawable {
     return [p1, p2, p3, p4];
   }
 
-  mutate(points: number[][], value?: number) {
-    var offset = randomOffset;
+  mutate(points: number[][], offset: number, value?: number) {
     if (value) {
       offset *= value;
     }
@@ -41,7 +37,7 @@ export abstract class Drawable {
     }
   }
 
-  abstract generate(): void;
+  abstract generate(randomize: boolean, randomOffset: number): void;
 }
 
 export class Title extends Drawable {
@@ -53,7 +49,7 @@ export class Title extends Drawable {
     this.align = a;
   }
 
-  generate(): void {
+  generate(randomize: boolean, randomOffset: number): void {
     var x = this.x;
     var y = this.y + this.height;
     var anchor = Anchor.Start;
@@ -86,7 +82,7 @@ export class Text extends Drawable {
     this.nlines = l;
   }
 
-  generate(): void {
+  generate(randomize: boolean, randomOffset: number): void {
     this.lines = [];
     var lineHeight = this.height / this.nlines;
 
@@ -103,7 +99,7 @@ export class Text extends Drawable {
 
         points.push([x, y]);
       }
-      if (randomize) this.mutate(points);
+      if (randomize) this.mutate(points, randomOffset);
 
       this.lines.push(points);
     }
@@ -117,11 +113,11 @@ export class Image extends Drawable {
     super(h, w, x, y);
   }
 
-  generate(): void {
+  generate(randomize: boolean, randomOffset: number): void {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
-    if (randomize) this.mutate(points);
+    if (randomize) this.mutate(points, randomOffset);
 
     var cross = [];
     cross.push(
@@ -131,7 +127,7 @@ export class Image extends Drawable {
       p_lerp(points[3], points[1], random(0.0, 0.2))
     );
 
-    if (randomize) this.mutate(cross);
+    if (randomize) this.mutate(cross, randomOffset);
 
     this.lines.push([points[0], points[1]]);
     this.lines.push([points[1], points[2]]);
@@ -149,11 +145,11 @@ export class Button extends Drawable {
     super(h, w, x, y);
   }
 
-  generate(): void {
+  generate(randomize: boolean, randomOffset: number): void {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
-    if (randomize) this.mutate(points);
+    if (randomize) this.mutate(points, randomOffset);
 
     var nPoints = Math.floor((Math.random() * this.width) / 30 + 4);
     var line = [];
@@ -170,7 +166,7 @@ export class Button extends Drawable {
       line.push([x, y]);
     }
 
-    if (randomize) this.mutate(line);
+    if (randomize) this.mutate(line, randomOffset);
 
     this.lines.push([points[0], points[1]]);
     this.lines.push([points[1], points[2]]);
@@ -187,16 +183,16 @@ export class Dropdown extends Drawable {
     super(h, w, x, y);
   }
 
-  generate(): void {
+  generate(randomize: boolean, randomOffset: number): void {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
-    if (randomize) this.mutate(points);
+    if (randomize) this.mutate(points, randomOffset);
 
     var divider = [];
     divider.push(p_trans(points[1], -random(20, 40), 0), p_trans(points[2], -random(20, 40), 0));
 
-    if (randomize) this.mutate(divider);
+    if (randomize) this.mutate(divider, randomOffset);
 
     this.lines.push([points[0], points[1]]);
     this.lines.push([points[1], points[2]]);
@@ -213,11 +209,11 @@ export class TextField extends Drawable {
     super(h, w, x, y);
   }
 
-  generate(): void {
+  generate(randomize: boolean, randomOffset: number): void {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
-    if (randomize) this.mutate(points);
+    if (randomize) this.mutate(points, randomOffset);
 
     this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
   }
@@ -230,7 +226,7 @@ export class Radio extends Drawable {
     super(h, w, x, y);
   }
 
-  generate(): void {
+  generate(randomize: boolean, randomOffset: number): void {
     var cx = this.x + this.width / 2;
     var cy = this.y + this.height / 2;
 
@@ -251,11 +247,11 @@ export class Checkbox extends Drawable {
     super(h, w, x, y);
   }
 
-  generate(): void {
+  generate(randomize: boolean, randomOffset: number): void {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
-    if (randomize) this.mutate(points, 0.2);
+    if (randomize) this.mutate(points, randomOffset, 0.2);
 
     var checkmark = [];
     var point1 = p_trans(points[0], random(-this.width / 2, 0), random(0, this.height / 2));
