@@ -25,6 +25,8 @@ elements:
       - //a[ancestor::p[text()]]
       - //a[contains(@class, 'dropdown-toggle')]
       - //a[@role = 'button']
+      - //a[*[name()="svg"]]
+      - //small[ancestor::h1[text()]]
   - type: image
     paths:
       - //img
@@ -60,12 +62,12 @@ fonts:
   - "'Caveat', cursive"
   - "'Nothing You Could Do', cursive"
 wordsPerTitle:
-  max: 4
+  max: 3
   min: 1
 randomize: true
 randomOffset: 5
 options:
-  roughness: 1.5
+  roughness: 1.3
   bowing: 5
   strokeWidth: 1.5
   hachureGap: 4

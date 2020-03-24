@@ -36,7 +36,7 @@ export class Config {
   fontFamily: string = "";
 
   setFontFamily() {
-    var index = Math.floor(Math.random() * Math.floor(this.fonts.length - 1));
+    var index = Math.floor(Math.random() * Math.floor(this.fonts.length));
     this.fontFamily = this.fonts[index];
   }
 

@@ -7,11 +7,9 @@ import { Config } from "./config";
 import { Inspector } from "./inspector";
 
 const website = commandLineArgs([{ name: "src", alias: "s", type: String, defaultOption: true }]);
-
 const browser = new Browser("chrome");
-browser.navigate(website.src);
 
-async function generateData() {
+async function generateData(): Promise<void> {
   var configFile = fs.readFileSync("./config.yml", "utf8");
   var jsonConfig = yaml.safeLoad(configFile);
 
@@ -32,4 +30,10 @@ async function generateData() {
   }
 }
 
-generateData();
+async function inspect() {
+  await browser.navigate(website.src);
+  await generateData();
+  browser.close();
+}
+
+inspect();

@@ -61,7 +61,7 @@ class Render {
 
       switch (e.name) {
         case ElementType.Title: {
-          elem = new Title(e.height, e.width, e.x, e.y, e.align);
+          elem = new Title(e.height, e.width, e.x, e.y, e.fsize, e.lineHeight, e.align);
           break;
         }
         case ElementType.Text: {

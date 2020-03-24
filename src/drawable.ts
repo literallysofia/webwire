@@ -42,10 +42,14 @@ export abstract class Drawable {
 
 export class Title extends Drawable {
   name = ElementType.Title;
+  fsize: number;
+  lineHeight: number;
   align: string;
 
-  constructor(h: number, w: number, x: number, y: number, a: string) {
+  constructor(h: number, w: number, x: number, y: number, s: number, lheight: number, a: string) {
     super(h, w, x, y);
+    this.fsize = s;
+    this.lineHeight = lheight;
     this.align = a;
   }
 
@@ -53,6 +57,8 @@ export class Title extends Drawable {
     var x = this.x;
     var y = this.y + this.height;
     var anchor = Anchor.Start;
+
+    if (this.height > this.lineHeight) y = this.y + this.height / 2;
 
     if (this.align === "center") {
       x = this.x + this.width / 2;
@@ -72,7 +78,7 @@ export class Title extends Drawable {
     this.heading = {
       x: x,
       y: y,
-      size: this.height,
+      size: this.fsize,
       anchor: anchor
     };
   }

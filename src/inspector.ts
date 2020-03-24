@@ -47,13 +47,15 @@ export class Inspector {
       switch (type) {
         case ElementType.Title:
           rect = await this.getRectangle(elem);
+          var fontSize = parseInt(await elem.getCssValue("font-size"), 10);
+          var lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
           var textAlign = await elem.getCssValue("text-align");
-          this.data.push(this.createTitle(rect.height, rect.width, rect.x, rect.y, textAlign));
+          this.data.push(this.createTitle(rect.height, rect.width, rect.x, rect.y, fontSize, lineHeight, textAlign));
           break;
         case ElementType.Text:
           rect = await this.getRectangle(elem);
-          let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
-          let numLines = Math.round(rect.height / lineHeight);
+          var lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
+          var numLines = Math.round(rect.height / lineHeight);
           this.data.push(this.createText(rect.height, rect.width, rect.x, rect.y, numLines));
           break;
         case ElementType.Image:
@@ -96,8 +98,8 @@ export class Inspector {
     return rect;
   }
 
-  createTitle(h: number, w: number, x: number, y: number, align: string): Drawable {
-    return new Title(h, w, x, y, align);
+  createTitle(h: number, w: number, x: number, y: number, fsize: number, lheight: number, align: string): Drawable {
+    return new Title(h, w, x, y, fsize, lheight, align);
   }
 
   createText(h: number, w: number, x: number, y: number, nlines: number): Drawable {
