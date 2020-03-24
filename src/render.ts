@@ -7,7 +7,6 @@ import { JSDOM } from "jsdom";
 import xmlserializer from "xmlserializer";
 import fs from "fs";
 import yaml from "js-yaml";
-//import sharp from "sharp";
 
 /* VARIABLES */
 const rough = require("roughjs/bundled/rough.cjs.js");
@@ -146,24 +145,23 @@ class Render {
   }
 
   export() {
+    //generates svg file
     var svg = xmlserializer.serializeToString(this.canvas);
     fs.writeFile("wireframe.svg", svg, function(err) {
       if (err) {
         console.log(err);
       }
     });
-    /*     const buf = Buffer.from(svg);
 
-    sharp(buf)
-      .flatten({ background: { r: 255, g: 255, b: 255 } })
-      .png()
-      .toFile("test.png")
-      .then(function(info: any) {
-        console.log(info);
-      })
-      .catch(function(err: any) {
+    //generates html file
+    var doc = document.implementation.createHTMLDocument("Wireframe");
+    doc.body.appendChild(this.canvas);
+    var html = xmlserializer.serializeToString(doc);
+    fs.writeFile("wireframe.html", html, function(err) {
+      if (err) {
         console.log(err);
-      }); */
+      }
+    });
   }
 }
 
