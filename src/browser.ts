@@ -18,7 +18,7 @@ export class Browser {
   }
 
   findElement(selector: string): WebElementPromise {
-    return this.driver.findElement(By.css(selector));
+    return this.driver.findElement(By.tagName(selector));
   }
 
   async findElements(selector: string): Promise<WebElement[]> {

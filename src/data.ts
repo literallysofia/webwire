@@ -29,3 +29,24 @@ export class IElement {
   @JsonProperty("nlines", Number, true)
   nlines: number = 0;
 }
+
+@JsonObject("Size")
+export class Size {
+  @JsonProperty("height", Number)
+  height: number = 0;
+
+  @JsonProperty("width", Number)
+  width: number = 0;
+}
+
+@JsonObject("Data")
+export class Data {
+  @JsonProperty("size", Size)
+  size: Size = {
+    height: 0,
+    width: 0
+  };
+
+  @JsonProperty("elements", [IElement])
+  elements: IElement[] = [];
+}

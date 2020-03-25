@@ -9,6 +9,10 @@ export class Inspector {
   browser: Browser;
   config: Config;
   data: Drawable[];
+  size = {
+    height: 0,
+    width: 0
+  };
 
   constructor(b: Browser, c: Config) {
     this.browser = b;
@@ -29,7 +33,7 @@ export class Inspector {
     }
   }
 
-  async fetchData(): Promise<void> {
+  async fetch(): Promise<void> {
     var foundElements;
 
     for (let type of Object.values(ElementType)) {
@@ -37,6 +41,8 @@ export class Inspector {
       foundElements = await this.browser.findElements(xpath);
       await this.addElements(foundElements);
     }
+
+    await this.setSize();
   }
 
   async addElements(elems: WebElement[]): Promise<void> {
@@ -78,6 +84,13 @@ export class Inspector {
           break;
       }
     }
+  }
+
+  async setSize(): Promise<void> {
+    var html = this.browser.findElement("html");
+    var rect = await html.getRect();
+    this.size.height = rect.height;
+    this.size.width = rect.width;
   }
 
   async getRectangle(elem: WebElement): Promise<IRectangle> {
@@ -131,8 +144,12 @@ export class Inspector {
   }
 
   export() {
-    var json = JSON.stringify(this.data);
-    fs.writeFile("data.json", json, function(err) {
+    var obj = {
+      size: this.size,
+      elements: this.data
+    };
+    var json = JSON.stringify(obj);
+    fs.writeFile("./generated/data.json", json, function(err) {
       if (err) {
         console.log(err);
       }

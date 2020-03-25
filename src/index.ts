@@ -23,7 +23,7 @@ async function generateData(): Promise<void> {
     config = jsonConvert.deserializeObject(jsonConfig, Config);
     const inspector = new Inspector(browser, config);
     await inspector.normalize();
-    await inspector.fetchData();
+    await inspector.fetch();
     inspector.export();
   } catch (e) {
     console.log(<Error>e);

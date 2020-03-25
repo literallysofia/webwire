@@ -13,6 +13,15 @@ export class XElement {
   ignore: string[] = [];
 }
 
+@JsonObject("WordsPerTitle")
+export class WordsPerTitle {
+  @JsonProperty("min", Number)
+  min: number = 1;
+
+  @JsonProperty("max", Number)
+  max: number = 2;
+}
+
 @JsonObject("Config")
 export class Config {
   @JsonProperty("elements", [XElement])
@@ -21,8 +30,8 @@ export class Config {
   @JsonProperty("fonts", [String])
   fonts: string[] = [];
 
-  @JsonProperty("wordsPerTitle")
-  wordsPerTitle = { min: 1, max: 6 };
+  @JsonProperty("wordsPerTitle", WordsPerTitle)
+  wordsPerTitle: WordsPerTitle = { min: 1, max: 6 };
 
   @JsonProperty("randomize", Boolean)
   randomize: boolean = false;

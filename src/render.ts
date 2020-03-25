@@ -1,5 +1,5 @@
 import { Drawable, Title, Text, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
-import { IElement } from "./ielement";
+import { Data } from "./data";
 import { Config } from "./config";
 import { ElementType, Ellipse, Heading } from "./utils";
 import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
@@ -13,16 +13,12 @@ const rough = require("roughjs/bundled/rough.cjs.js");
 const { document } = new JSDOM(`...`).window;
 
 class Render {
-  data: IElement[];
+  data: Data;
   config: Config;
   canvas: SVGSVGElement;
   roughCanvas: any;
-  sizeCanvas = {
-    height: 0,
-    width: 0
-  };
 
-  constructor(data: IElement[], config: Config) {
+  constructor(data: Data, config: Config) {
     this.data = data;
     this.config = config;
     this.config.setFontFamily();
@@ -47,15 +43,16 @@ class Render {
     style.appendChild(textnode);
     defs.appendChild(style);
     this.canvas.append(defs);
+    this.setCanvasSize();
   }
 
   setCanvasSize() {
-    this.canvas.setAttribute("height", (this.sizeCanvas.height + 30).toString());
-    this.canvas.setAttribute("width", (this.sizeCanvas.width + 30).toString());
+    this.canvas.setAttribute("height", (this.data.size.height + 10).toString());
+    this.canvas.setAttribute("width", (this.data.size.width + 10).toString());
   }
 
   draw() {
-    for (let e of this.data) {
+    for (let e of this.data.elements) {
       var elem: Drawable;
 
       switch (e.name) {
@@ -101,11 +98,7 @@ class Render {
       if (elem.lines) this.drawLines(elem.lines);
       if (elem.ellipse) this.drawEllipse(elem.ellipse);
       if (elem.heading) this.drawHeading(elem.heading);
-
-      if (this.sizeCanvas.height < e.height + e.y) this.sizeCanvas.height = e.height + e.y;
-      if (this.sizeCanvas.width < e.width + e.x) this.sizeCanvas.width = e.width + e.x;
     }
-    this.setCanvasSize();
   }
 
   drawLines(lines: number[][][]) {
@@ -147,7 +140,7 @@ class Render {
   export() {
     //generates svg file
     var svg = xmlserializer.serializeToString(this.canvas);
-    fs.writeFile("wireframe.svg", svg, function(err) {
+    fs.writeFile("./generated/wireframe.svg", svg, function(err) {
       if (err) {
         console.log(err);
       }
@@ -157,7 +150,7 @@ class Render {
     var doc = document.implementation.createHTMLDocument("Wireframe");
     doc.body.appendChild(this.canvas);
     var html = xmlserializer.serializeToString(doc);
-    fs.writeFile("wireframe.html", html, function(err) {
+    fs.writeFile("./generated/wireframe.html", html, function(err) {
       if (err) {
         console.log(err);
       }
@@ -166,7 +159,7 @@ class Render {
 }
 
 function renderWireframe() {
-  var dataFile = fs.readFileSync("./data.json", "utf8");
+  var dataFile = fs.readFileSync("./generated/data.json", "utf8");
   var jsonData = JSON.parse(dataFile);
 
   var configFile = fs.readFileSync("./config.yml", "utf8");
@@ -177,9 +170,9 @@ function renderWireframe() {
   jsonConvert.ignorePrimitiveChecks = false; // don't allow assigning number to string etc.
   jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL; // never allow null
 
-  var data: IElement[];
+  var data: Data;
   try {
-    data = jsonConvert.deserializeArray(jsonData, IElement);
+    data = jsonConvert.deserializeObject(jsonData, Data);
     var config: Config;
     try {
       config = jsonConvert.deserializeObject(jsonConfig, Config);
