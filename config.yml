@@ -61,6 +61,7 @@ fonts:
   - "'Shadows Into Light', cursive"
   - "'Caveat', cursive"
   - "'Nothing You Could Do', cursive"
+keepOriginalText: true
 wordsPerTitle:
   max: 3
   min: 1

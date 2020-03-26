@@ -1,4 +1,4 @@
-import { ElementType, Ellipse, Anchor, Heading, random, p_lerp, p_trans } from "./utils";
+import { ElementType, Ellipse, Anchor, random, p_lerp, p_trans } from "./utils";
 
 export abstract class Drawable {
   height: number;
@@ -7,7 +7,6 @@ export abstract class Drawable {
   y: number;
   lines?: number[][][];
   ellipse?: Ellipse;
-  heading?: Heading;
 
   constructor(h: number, w: number, x: number, y: number) {
     this.height = h;
@@ -45,6 +44,7 @@ export class Title extends Drawable {
   fsize: number;
   lineHeight: number;
   align: string;
+  text?: string;
 
   constructor(h: number, w: number, x: number, y: number, s: number, lheight: number, a: string) {
     super(h, w, x, y);
@@ -53,34 +53,33 @@ export class Title extends Drawable {
     this.align = a;
   }
 
+  setText(t: string) {
+    this.text = t;
+  }
+
+  getAnchor(): string {
+    var anchor = Anchor.Start;
+    if (this.align === "center") anchor = Anchor.Middle;
+    else if (this.align === "right") anchor = Anchor.End;
+    return anchor;
+  }
+
   generate(randomize: boolean, randomOffset: number): void {
     var x = this.x;
     var y = this.y + this.height;
-    var anchor = Anchor.Start;
 
     if (this.height > this.lineHeight) y = this.y + this.height / 2;
 
-    if (this.align === "center") {
-      x = this.x + this.width / 2;
-      anchor = Anchor.Middle;
-    }
-
-    if (this.align === "right") {
-      x = this.x + this.width;
-      anchor = Anchor.End;
-    }
+    if (this.align === "center") x = this.x + this.width / 2;
+    else if (this.align === "right") x = this.x + this.width;
 
     if (randomize) {
       x += Math.random() * randomOffset * 3 - randomOffset;
       y += Math.random() * randomOffset * 2 - randomOffset;
     }
 
-    this.heading = {
-      x: x,
-      y: y,
-      size: this.fsize,
-      anchor: anchor
-    };
+    this.x = x;
+    this.y = y;
   }
 }
 

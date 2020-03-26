@@ -24,7 +24,10 @@ export class IElement {
   lineHeight: number = 0;
 
   @JsonProperty("align", String, true)
-  align: string = "left";
+  align: string = "";
+
+  @JsonProperty("text", String, true)
+  text: string = "";
 
   @JsonProperty("nlines", Number, true)
   nlines: number = 0;

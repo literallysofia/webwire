@@ -30,6 +30,9 @@ export class Config {
   @JsonProperty("fonts", [String])
   fonts: string[] = [];
 
+  @JsonProperty("keepOriginalText", Boolean)
+  keepOriginalText: boolean = true;
+
   @JsonProperty("wordsPerTitle", WordsPerTitle)
   wordsPerTitle: WordsPerTitle = { min: 1, max: 6 };
 
@@ -49,7 +52,7 @@ export class Config {
     this.fontFamily = this.fonts[index];
   }
 
-  getTitleText(): string {
+  getRandomText(): string {
     var lorem = new LoremIpsum({
       wordsPerSentence: {
         max: this.wordsPerTitle.max,

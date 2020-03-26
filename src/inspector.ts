@@ -35,55 +35,97 @@ export class Inspector {
 
   async fetch(): Promise<void> {
     var foundElements;
-
     for (let type of Object.values(ElementType)) {
       var xpath = "//*[@data-type='" + type + "']";
       foundElements = await this.browser.findElements(xpath);
       await this.addElements(foundElements);
     }
-
     await this.setSize();
   }
 
   async addElements(elems: WebElement[]): Promise<void> {
     for (let elem of elems) {
       var type = await elem.getAttribute("data-type");
-      var rect = await elem.getRect();
 
       switch (type) {
         case ElementType.Title:
-          rect = await this.getRectangle(elem);
-          var fontSize = parseInt(await elem.getCssValue("font-size"), 10);
-          var lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
-          var textAlign = await elem.getCssValue("text-align");
-          this.data.push(this.createTitle(rect.height, rect.width, rect.x, rect.y, fontSize, lineHeight, textAlign));
+          this.addTitle(elem);
           break;
         case ElementType.Text:
-          rect = await this.getRectangle(elem);
-          var lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
-          var numLines = Math.round(rect.height / lineHeight);
-          this.data.push(this.createText(rect.height, rect.width, rect.x, rect.y, numLines));
+          this.addText(elem);
           break;
         case ElementType.Image:
-          this.data.push(this.createImage(rect.height, rect.width, rect.x, rect.y));
+          this.addImage(elem);
           break;
         case ElementType.TextField:
-          this.data.push(this.createTextField(rect.height, rect.width, rect.x, rect.y));
+          this.addTextField(elem);
           break;
         case ElementType.Checkbox:
-          this.data.push(this.createCheckbox(rect.height, rect.width, rect.x, rect.y));
+          this.addCheckbox(elem);
           break;
         case ElementType.Radio:
-          this.data.push(this.createRadio(rect.height, rect.width, rect.x, rect.y));
+          this.addRadio(elem);
           break;
         case ElementType.Button:
-          this.data.push(this.createButton(rect.height, rect.width, rect.x, rect.y));
+          this.addButton(elem);
           break;
         case ElementType.Dropdown:
-          this.data.push(this.createDropdown(rect.height, rect.width, rect.x, rect.y));
+          this.addDropdown(elem);
           break;
       }
     }
+  }
+
+  async addTitle(elem: WebElement) {
+    var rect = await this.getRectangle(elem);
+    var fontSize = parseInt(await elem.getCssValue("font-size"), 10);
+    var lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
+    var textAlign = await elem.getCssValue("text-align");
+    var title = new Title(rect.height, rect.width, rect.x, rect.y, fontSize, lineHeight, textAlign);
+
+    if (this.config.keepOriginalText) {
+      var text = await elem.getText();
+      title.setText(text);
+    }
+
+    this.data.push(title);
+  }
+
+  async addText(elem: WebElement) {
+    var rect = await this.getRectangle(elem);
+    var lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
+    var numLines = Math.round(rect.height / lineHeight);
+    this.data.push(new Text(rect.height, rect.width, rect.x, rect.y, numLines));
+  }
+
+  async addImage(elem: WebElement) {
+    var rect = await elem.getRect();
+    this.data.push(new Image(rect.height, rect.width, rect.x, rect.y));
+  }
+
+  async addTextField(elem: WebElement) {
+    var rect = await elem.getRect();
+    this.data.push(new TextField(rect.height, rect.width, rect.x, rect.y));
+  }
+
+  async addCheckbox(elem: WebElement) {
+    var rect = await elem.getRect();
+    this.data.push(new Checkbox(rect.height, rect.width, rect.x, rect.y));
+  }
+
+  async addRadio(elem: WebElement) {
+    var rect = await elem.getRect();
+    this.data.push(new Radio(rect.height, rect.width, rect.x, rect.y));
+  }
+
+  async addButton(elem: WebElement) {
+    var rect = await elem.getRect();
+    this.data.push(new Button(rect.height, rect.width, rect.x, rect.y));
+  }
+
+  async addDropdown(elem: WebElement) {
+    var rect = await elem.getRect();
+    this.data.push(new Dropdown(rect.height, rect.width, rect.x, rect.y));
   }
 
   async setSize(): Promise<void> {
@@ -109,38 +151,6 @@ export class Inspector {
     };
 
     return rect;
-  }
-
-  createTitle(h: number, w: number, x: number, y: number, fsize: number, lheight: number, align: string): Drawable {
-    return new Title(h, w, x, y, fsize, lheight, align);
-  }
-
-  createText(h: number, w: number, x: number, y: number, nlines: number): Drawable {
-    return new Text(h, w, x, y, nlines);
-  }
-
-  createImage(h: number, w: number, x: number, y: number): Drawable {
-    return new Image(h, w, x, y);
-  }
-
-  createTextField(h: number, w: number, x: number, y: number): Drawable {
-    return new TextField(h, w, x, y);
-  }
-
-  createCheckbox(h: number, w: number, x: number, y: number): Drawable {
-    return new Checkbox(h, w, x, y);
-  }
-
-  createRadio(h: number, w: number, x: number, y: number): Drawable {
-    return new Radio(h, w, x, y);
-  }
-
-  createButton(h: number, w: number, x: number, y: number): Drawable {
-    return new Button(h, w, x, y);
-  }
-
-  createDropdown(h: number, w: number, x: number, y: number): Drawable {
-    return new Dropdown(h, w, x, y);
   }
 
   export() {

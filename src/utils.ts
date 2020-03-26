@@ -22,13 +22,6 @@ export interface Ellipse {
   width: number;
 }
 
-export interface Heading {
-  x: number;
-  y: number;
-  size: number;
-  anchor: Anchor;
-}
-
 export function random(min: number, max: number) {
   return Math.random() * (max - min) + min;
 }
