@@ -1,7 +1,7 @@
-import { Drawable, Title, Text, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
+import { Title, Text, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
 import { Data, IElement } from "./data";
 import { Config } from "./config";
-import { ElementType, Ellipse } from "./utils";
+import { ElementType } from "./utils";
 import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
 import { JSDOM } from "jsdom";
 import xmlserializer from "xmlserializer";
@@ -53,68 +53,38 @@ class Render {
   }
 
   draw() {
-    for (let e of this.data.elements) {
-      var elem: Drawable;
-
-      switch (e.name) {
+    for (let elem of this.data.elements) {
+      switch (elem.name) {
         case ElementType.Title: {
-          this.drawTitle(e);
+          this.drawTitle(elem);
           break;
         }
         case ElementType.Text: {
-          elem = new Text(e.height, e.width, e.x, e.y, e.nlines);
-          elem.generate(this.config.randomize, this.config.randomOffset);
-          if (elem.lines) this.drawLines(elem.lines);
-          if (elem.ellipse) this.drawEllipse(elem.ellipse);
+          this.drawText(elem);
           break;
         }
         case ElementType.Image: {
-          elem = new Image(e.height, e.width, e.x, e.y);
-          elem.generate(this.config.randomize, this.config.randomOffset);
-          if (elem.lines) this.drawLines(elem.lines);
-          if (elem.ellipse) this.drawEllipse(elem.ellipse);
+          this.drawImage(elem);
           break;
         }
         case ElementType.Button: {
-          elem = new Button(e.height, e.width, e.x, e.y);
-          elem.generate(this.config.randomize, this.config.randomOffset);
-          if (elem.lines) this.drawLines(elem.lines);
-          if (elem.ellipse) this.drawEllipse(elem.ellipse);
+          this.drawButton(elem);
           break;
         }
         case ElementType.TextField: {
-          elem = new TextField(e.height, e.width, e.x, e.y);
-          elem.generate(this.config.randomize, this.config.randomOffset);
-          if (elem.lines) this.drawLines(elem.lines);
-          if (elem.ellipse) this.drawEllipse(elem.ellipse);
+          this.drawTextField(elem);
           break;
         }
         case ElementType.Checkbox: {
-          elem = new Checkbox(e.height, e.width, e.x, e.y);
-          elem.generate(this.config.randomize, this.config.randomOffset);
-          if (elem.lines) this.drawLines(elem.lines);
-          if (elem.ellipse) this.drawEllipse(elem.ellipse);
+          this.drawCheckbox(elem);
           break;
         }
         case ElementType.Radio: {
-          elem = new Radio(e.height, e.width, e.x, e.y);
-          elem.generate(this.config.randomize, this.config.randomOffset);
-          if (elem.lines) this.drawLines(elem.lines);
-          if (elem.ellipse) this.drawEllipse(elem.ellipse);
+          this.drawRadio(elem);
           break;
         }
         case ElementType.Dropdown: {
-          elem = new Dropdown(e.height, e.width, e.x, e.y);
-          elem.generate(this.config.randomize, this.config.randomOffset);
-          if (elem.lines) this.drawLines(elem.lines);
-          if (elem.ellipse) this.drawEllipse(elem.ellipse);
-          break;
-        }
-        default: {
-          elem = new TextField(e.height, e.width, e.x, e.y);
-          elem.generate(this.config.randomize, this.config.randomOffset);
-          if (elem.lines) this.drawLines(elem.lines);
-          if (elem.ellipse) this.drawEllipse(elem.ellipse);
+          this.drawDropdown(elem);
           break;
         }
       }
@@ -125,11 +95,53 @@ class Render {
     var title = new Title(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lineHeight, elem.align);
     if (elem.text !== "") title.setText(elem.text);
     title.generate(this.config.randomize, this.config.randomOffset);
-
-    this.createTextSvg(title.x, title.y, title.fsize, title.getAnchor(), title.text);
+    this.createText(title.x, title.y, title.fsize, title.getAnchor(), title.text);
   }
 
-  createTextSvg(x: number, y: number, fontSize: number, anchor: string, text?: string) {
+  drawText(elem: IElement) {
+    var text = new Text(elem.height, elem.width, elem.x, elem.y, elem.nlines);
+    text.generate(this.config.randomize, this.config.randomOffset);
+    if (text.lines) this.createLines(text.lines);
+  }
+
+  drawImage(elem: IElement) {
+    var image = new Image(elem.height, elem.width, elem.x, elem.y);
+    image.generate(this.config.randomize, this.config.randomOffset);
+    if (image.lines) this.createLines(image.lines);
+  }
+
+  drawButton(elem: IElement) {
+    var btn = new Button(elem.height, elem.width, elem.x, elem.y);
+    btn.generate(this.config.randomize, this.config.randomOffset);
+    if (btn.lines) this.createLines(btn.lines);
+  }
+
+  drawTextField(elem: IElement) {
+    var tfield = new TextField(elem.height, elem.width, elem.x, elem.y);
+    tfield.generate(this.config.randomize, this.config.randomOffset);
+    if (tfield.lines) this.createLines(tfield.lines);
+  }
+
+  drawCheckbox(elem: IElement) {
+    var cbox = new Checkbox(elem.height, elem.width, elem.x, elem.y);
+    cbox.generate(this.config.randomize, this.config.randomOffset);
+    if (cbox.lines) this.createLines(cbox.lines);
+  }
+
+  drawRadio(elem: IElement) {
+    var radio = new Radio(elem.height, elem.width, elem.x, elem.y);
+    radio.generate(this.config.randomize, this.config.randomOffset);
+    if (radio.ellipse)
+      this.createEllipse(radio.ellipse.cx, radio.ellipse.cy, radio.ellipse.width, radio.ellipse.height, true);
+  }
+
+  drawDropdown(elem: IElement) {
+    var drop = new Dropdown(elem.height, elem.width, elem.x, elem.y);
+    drop.generate(this.config.randomize, this.config.randomOffset);
+    if (drop.lines) this.createLines(drop.lines);
+  }
+
+  createText(x: number, y: number, fontSize: number, anchor: string, text?: string) {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
     var svgText = document.createElementNS("http://www.w3.org/2000/svg", "text");
     svgText.setAttribute("x", x.toString());
@@ -147,7 +159,7 @@ class Render {
     this.canvas.appendChild(g);
   }
 
-  drawLines(lines: number[][][]) {
+  createLines(lines: number[][][]) {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
     for (let points of lines) {
@@ -158,13 +170,14 @@ class Render {
     this.canvas.appendChild(g);
   }
 
-  drawEllipse(ellipse: Ellipse) {
-    let shapeNode = this.roughCanvas.ellipse(ellipse.cx, ellipse.cy, ellipse.width, ellipse.height);
-    let center = this.roughCanvas
-      .ellipse(ellipse.cx, ellipse.cy, ellipse.width / 2, ellipse.height / 2, { fill: "black", fillStyle: "solid" })
-      .getElementsByTagName("path")[0];
-
-    shapeNode.appendChild(center);
+  createEllipse(cx: number, cy: number, width: number, height: number, dot: boolean) {
+    var shapeNode = this.roughCanvas.ellipse(cx, cy, width, height);
+    if (dot) {
+      var center = this.roughCanvas
+        .ellipse(cx, cy, width / 2, height / 2, { fill: "black", fillStyle: "solid" })
+        .getElementsByTagName("path")[0];
+      shapeNode.appendChild(center);
+    }
     this.canvas.appendChild(shapeNode);
   }
 

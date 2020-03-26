@@ -5,8 +5,6 @@ export abstract class Drawable {
   width: number;
   x: number;
   y: number;
-  lines?: number[][][];
-  ellipse?: Ellipse;
 
   constructor(h: number, w: number, x: number, y: number) {
     this.height = h;
@@ -86,6 +84,7 @@ export class Title extends Drawable {
 export class Text extends Drawable {
   name = ElementType.Text;
   nlines: number;
+  lines?: number[][][];
 
   constructor(h: number, w: number, x: number, y: number, l: number) {
     super(h, w, x, y);
@@ -117,6 +116,7 @@ export class Text extends Drawable {
 
 export class Image extends Drawable {
   name = ElementType.Image;
+  lines?: number[][][];
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -149,6 +149,7 @@ export class Image extends Drawable {
 
 export class Button extends Drawable {
   name = ElementType.Button;
+  lines?: number[][][];
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -187,6 +188,7 @@ export class Button extends Drawable {
 
 export class Dropdown extends Drawable {
   name = ElementType.Dropdown;
+  lines?: number[][][];
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -213,6 +215,7 @@ export class Dropdown extends Drawable {
 
 export class TextField extends Drawable {
   name = ElementType.TextField;
+  lines?: number[][][];
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -230,6 +233,7 @@ export class TextField extends Drawable {
 
 export class Radio extends Drawable {
   name = ElementType.Radio;
+  ellipse?: Ellipse;
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -250,6 +254,7 @@ export class Radio extends Drawable {
 
 export class Checkbox extends Drawable {
   name = ElementType.Checkbox;
+  lines?: number[][][];
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
