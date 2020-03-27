@@ -57,14 +57,11 @@ fonts:
   - "'Indie Flower', cursive"
   - "'Kalam', cursive"
   - "'Amatic SC', cursive"
-  - "'Rock Salt', cursive"
   - "'Shadows Into Light', cursive"
   - "'Caveat', cursive"
+  - "'Caveat Brush', cursive"
   - "'Nothing You Could Do', cursive"
 keepOriginalText: true
-wordsPerTitle:
-  max: 3
-  min: 1
 randomize: true
 randomOffset: 5
 options:

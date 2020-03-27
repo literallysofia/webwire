@@ -22,6 +22,48 @@ export interface Ellipse {
   width: number;
 }
 
+export interface Paragraph {
+  width: number;
+  text: string;
+}
+
+export class TextBlock {
+  static _id: number = 0;
+  id: number;
+  x: string;
+  y: string;
+  height: string;
+  width: string;
+  fontSize: string;
+  lineHeight: string;
+  anchor: string;
+  cx: string;
+  words: string[];
+
+  constructor(
+    x: number,
+    y: number,
+    h: number,
+    w: number,
+    fsize: number,
+    lheight: number,
+    a: string,
+    cx: number,
+    words: string[]
+  ) {
+    this.id = TextBlock._id++;
+    this.x = x.toString();
+    this.y = y.toString();
+    this.height = h.toString();
+    this.width = w.toString();
+    this.fontSize = fsize.toString();
+    this.lineHeight = lheight.toString();
+    this.anchor = a;
+    this.cx = cx.toString();
+    this.words = words;
+  }
+}
+
 export function random(min: number, max: number) {
   return Math.random() * (max - min) + min;
 }

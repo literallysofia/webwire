@@ -1,4 +1,4 @@
-import { ElementType, Ellipse, Anchor, random, p_lerp, p_trans } from "./utils";
+import { ElementType, Ellipse, Anchor, TextBlock, random, p_lerp, p_trans } from "./utils";
 
 export abstract class Drawable {
   height: number;
@@ -42,42 +42,55 @@ export class Title extends Drawable {
   fsize: number;
   lineHeight: number;
   align: string;
-  text?: string;
+  text: string;
+  textBlock?: TextBlock;
 
-  constructor(h: number, w: number, x: number, y: number, s: number, lheight: number, a: string) {
+  constructor(h: number, w: number, x: number, y: number, s: number, lheight: number, a: string, t: string) {
     super(h, w, x, y);
     this.fsize = s;
     this.lineHeight = lheight;
     this.align = a;
-  }
-
-  setText(t: string) {
     this.text = t;
   }
 
-  getAnchor(): string {
-    var anchor = Anchor.Start;
-    if (this.align === "center") anchor = Anchor.Middle;
-    else if (this.align === "right") anchor = Anchor.End;
-    return anchor;
+  setTextRandom(t: string) {
+    this.text = t;
+  }
+
+  getWords(): string[] {
+    const words = this.text.split(/\s+/g);
+    if (!words[words.length - 1]) words.pop();
+    if (!words[0]) words.shift();
+    return words;
   }
 
   generate(randomize: boolean, randomOffset: number): void {
-    var x = this.x;
-    var y = this.y + this.height;
-
-    if (this.height > this.lineHeight) y = this.y + this.height / 2;
-
-    if (this.align === "center") x = this.x + this.width / 2;
-    else if (this.align === "right") x = this.x + this.width;
-
     if (randomize) {
-      x += Math.random() * randomOffset * 3 - randomOffset;
-      y += Math.random() * randomOffset * 2 - randomOffset;
+      this.x += Math.random() * randomOffset * 3 - randomOffset;
+      this.y += Math.random() * randomOffset * 2 - randomOffset;
     }
 
-    this.x = x;
-    this.y = y;
+    var anchor = Anchor.Start;
+    var cx = this.x;
+    if (this.align === "center") {
+      anchor = Anchor.Middle;
+      cx = this.x + this.width / 2;
+    } else if (this.align === "right") {
+      anchor = Anchor.End;
+      cx = this.x + this.width;
+    }
+
+    this.textBlock = new TextBlock(
+      this.x,
+      this.y,
+      this.height,
+      this.width,
+      this.fsize,
+      this.lineHeight,
+      anchor,
+      cx,
+      this.getWords()
+    );
   }
 }
 

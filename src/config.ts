@@ -13,15 +13,6 @@ export class XElement {
   ignore: string[] = [];
 }
 
-@JsonObject("WordsPerTitle")
-export class WordsPerTitle {
-  @JsonProperty("min", Number)
-  min: number = 1;
-
-  @JsonProperty("max", Number)
-  max: number = 2;
-}
-
 @JsonObject("Config")
 export class Config {
   @JsonProperty("elements", [XElement])
@@ -32,9 +23,6 @@ export class Config {
 
   @JsonProperty("keepOriginalText", Boolean)
   keepOriginalText: boolean = true;
-
-  @JsonProperty("wordsPerTitle", WordsPerTitle)
-  wordsPerTitle: WordsPerTitle = { min: 1, max: 6 };
 
   @JsonProperty("randomize", Boolean)
   randomize: boolean = false;
@@ -53,13 +41,8 @@ export class Config {
   }
 
   getRandomText(): string {
-    var lorem = new LoremIpsum({
-      wordsPerSentence: {
-        max: this.wordsPerTitle.max,
-        min: this.wordsPerTitle.min
-      }
-    });
-    return lorem.generateSentences(1).slice(0, -1);
+    var lorem = new LoremIpsum();
+    return lorem.generateWords(10);
   }
 }
 

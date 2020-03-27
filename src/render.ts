@@ -1,7 +1,7 @@
 import { Title, Text, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
 import { Data, IElement } from "./data";
 import { Config } from "./config";
-import { ElementType } from "./utils";
+import { ElementType, Paragraph, TextBlock } from "./utils";
 import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
 import { JSDOM } from "jsdom";
 import xmlserializer from "xmlserializer";
@@ -11,6 +11,7 @@ import yaml from "js-yaml";
 /* VARIABLES */
 const rough = require("roughjs/bundled/rough.cjs.js");
 const { document } = new JSDOM(`...`).window;
+var namespaceURI = "http://www.w3.org/2000/svg";
 
 class Render {
   data: Data;
@@ -28,9 +29,9 @@ class Render {
   }
 
   createSvg(): SVGSVGElement {
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-    const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+    const svg = document.createElementNS(namespaceURI, "svg") as SVGSVGElement;
+    const defs = document.createElementNS(namespaceURI, "defs");
+    const style = document.createElementNS(namespaceURI, "style");
     style.setAttribute("type", "text/css");
 
     var fontFamily = this.config.fontFamily.substr(
@@ -91,11 +92,44 @@ class Render {
     }
   }
 
+  measureWidth(text: string, fsize: number) {
+    const context = document.createElement("canvas").getContext("2d") as CanvasRenderingContext2D;
+    context.font = fsize + "px Arial";
+    return context.measureText(text).width;
+  }
+
+  getTextLines(words: string[], targetWidth: number, fsize: number): Paragraph[] {
+    var lines: Paragraph[] = [];
+    var line;
+
+    for (let i = 0, n = words.length; i < n; i++) {
+      let lineText: string = (line ? line.text + " " : "") + words[i];
+      let lineWidth = this.measureWidth(lineText, fsize);
+
+      if (lineWidth <= targetWidth && line) {
+        line.width = lineWidth;
+        line.text = lineText;
+      } else if (lineWidth <= targetWidth && !line) {
+        line = { width: lineWidth, text: lineText };
+        lines.push(line);
+      } else {
+        let width = this.measureWidth(words[i], fsize);
+        line = { width: width, text: words[i] };
+        lines.push(line);
+      }
+    }
+    return lines;
+  }
+
   drawTitle(elem: IElement) {
-    var title = new Title(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lineHeight, elem.align);
-    if (elem.text !== "") title.setText(elem.text);
+    var title = new Title(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lineHeight, elem.align, elem.text);
+    if (this.config.keepOriginalText) title.setTextRandom(this.config.getRandomText());
     title.generate(this.config.randomize, this.config.randomOffset);
-    this.createText(title.x, title.y, title.fsize, title.getAnchor(), title.text);
+
+    if (title.textBlock) {
+      var lines = this.getTextLines(title.textBlock.words, title.width, title.fsize);
+      this.createText(title.textBlock, lines);
+    }
   }
 
   drawText(elem: IElement) {
@@ -141,26 +175,42 @@ class Render {
     if (drop.lines) this.createLines(drop.lines);
   }
 
-  createText(x: number, y: number, fontSize: number, anchor: string, text?: string) {
-    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    var svgText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    svgText.setAttribute("x", x.toString());
-    svgText.setAttribute("y", y.toString());
-    svgText.setAttribute("font-size", fontSize.toString());
-    svgText.setAttribute("font-family", this.config.fontFamily);
-    svgText.setAttribute("text-anchor", anchor);
+  createText(tb: TextBlock, lines: Paragraph[]) {
+    const id = "clip" + tb.id;
+    const g = document.createElementNS(namespaceURI, "g");
 
-    var textnode;
-    if (this.config.keepOriginalText && text) textnode = document.createTextNode(text);
-    else textnode = document.createTextNode(this.config.getRandomText());
+    const clip = document.createElementNS(namespaceURI, "clipPath");
+    clip.setAttribute("id", id);
+    const rect = document.createElementNS(namespaceURI, "rect");
+    rect.setAttribute("x", tb.x);
+    rect.setAttribute("y", tb.y);
+    rect.setAttribute("height", tb.height);
+    rect.setAttribute("width", tb.width);
+    clip.appendChild(rect);
 
-    svgText.appendChild(textnode);
-    g.appendChild(svgText);
+    const text = document.createElementNS(namespaceURI, "text");
+    text.setAttribute("x", tb.cx);
+    text.setAttribute("y", tb.y);
+    text.setAttribute("font-size", tb.fontSize);
+    text.setAttribute("font-family", this.config.fontFamily);
+    text.setAttribute("text-anchor", tb.anchor);
+    text.setAttribute("clip-path", "url(#" + id + ")");
+
+    for (let line of lines) {
+      const tspan = document.createElementNS(namespaceURI, "tspan");
+      tspan.setAttribute("x", tb.cx);
+      tspan.setAttribute("dy", tb.lineHeight);
+      tspan.textContent = line.text;
+      text.appendChild(tspan);
+    }
+
+    g.appendChild(clip);
+    g.appendChild(text);
     this.canvas.appendChild(g);
   }
 
   createLines(lines: number[][][]) {
-    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    const g = document.createElementNS(namespaceURI, "g");
 
     for (let points of lines) {
       let line = this.roughCanvas.curve(points).getElementsByTagName("path")[0];
@@ -210,7 +260,7 @@ function renderWireframe() {
   var jsonConfig = yaml.safeLoad(configFile);
 
   var jsonConvert: JsonConvert = new JsonConvert();
-  jsonConvert.operationMode = OperationMode.LOGGING;
+  //jsonConvert.operationMode = OperationMode.LOGGING;
   jsonConvert.ignorePrimitiveChecks = false; // don't allow assigning number to string etc.
   jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL; // never allow null
 

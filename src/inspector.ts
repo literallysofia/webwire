@@ -81,13 +81,10 @@ export class Inspector {
     var fontSize = parseInt(await elem.getCssValue("font-size"), 10);
     var lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
     var textAlign = await elem.getCssValue("text-align");
-    var title = new Title(rect.height, rect.width, rect.x, rect.y, fontSize, lineHeight, textAlign);
+    var text = "";
+    if (this.config.keepOriginalText) text = await elem.getText();
 
-    if (this.config.keepOriginalText) {
-      var text = await elem.getText();
-      title.setText(text);
-    }
-
+    var title = new Title(rect.height, rect.width, rect.x, rect.y, fontSize, lineHeight, textAlign, text);
     this.data.push(title);
   }
 
