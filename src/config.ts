@@ -40,9 +40,14 @@ export class Config {
     this.fontFamily = this.fonts[index];
   }
 
-  getRandomText(): string {
-    var lorem = new LoremIpsum();
-    return lorem.generateWords(10);
+  getRandomSentence(): string {
+    var lorem = new LoremIpsum({
+      wordsPerSentence: {
+        max: 15,
+        min: 1
+      }
+    });
+    return lorem.generateSentences(1);
   }
 }
 

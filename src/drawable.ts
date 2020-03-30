@@ -71,26 +71,16 @@ export class Title extends Drawable {
     }
 
     var anchor = Anchor.Start;
-    var cx = this.x;
+    var x = this.x;
     if (this.align === "center") {
       anchor = Anchor.Middle;
-      cx = this.x + this.width / 2;
+      x = this.x + this.width / 2;
     } else if (this.align === "right") {
       anchor = Anchor.End;
-      cx = this.x + this.width;
+      x = this.x + this.width;
     }
 
-    this.textBlock = new TextBlock(
-      this.x,
-      this.y,
-      this.height,
-      this.width,
-      this.fsize,
-      this.lineHeight,
-      anchor,
-      cx,
-      this.getWords()
-    );
+    this.textBlock = new TextBlock(x, this.y, this.fsize, this.lineHeight, anchor, this.getWords());
   }
 }
 

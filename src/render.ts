@@ -123,11 +123,14 @@ class Render {
 
   drawTitle(elem: IElement) {
     var title = new Title(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lineHeight, elem.align, elem.text);
-    if (this.config.keepOriginalText) title.setTextRandom(this.config.getRandomText());
+    if (this.config.keepOriginalText) title.setTextRandom(this.config.getRandomSentence());
     title.generate(this.config.randomize, this.config.randomOffset);
 
     if (title.textBlock) {
       var lines = this.getTextLines(title.textBlock.words, title.width, title.fsize);
+      while (lines.length > title.height / title.lineHeight) {
+        lines.pop();
+      }
       this.createText(title.textBlock, lines);
     }
   }
@@ -176,35 +179,22 @@ class Render {
   }
 
   createText(tb: TextBlock, lines: Paragraph[]) {
-    const id = "clip" + tb.id;
     const g = document.createElementNS(namespaceURI, "g");
-
-    const clip = document.createElementNS(namespaceURI, "clipPath");
-    clip.setAttribute("id", id);
-    const rect = document.createElementNS(namespaceURI, "rect");
-    rect.setAttribute("x", tb.x);
-    rect.setAttribute("y", tb.y);
-    rect.setAttribute("height", tb.height);
-    rect.setAttribute("width", tb.width);
-    clip.appendChild(rect);
-
     const text = document.createElementNS(namespaceURI, "text");
-    text.setAttribute("x", tb.cx);
+    text.setAttribute("x", tb.x);
     text.setAttribute("y", tb.y);
     text.setAttribute("font-size", tb.fontSize);
     text.setAttribute("font-family", this.config.fontFamily);
     text.setAttribute("text-anchor", tb.anchor);
-    text.setAttribute("clip-path", "url(#" + id + ")");
 
     for (let line of lines) {
       const tspan = document.createElementNS(namespaceURI, "tspan");
-      tspan.setAttribute("x", tb.cx);
+      tspan.setAttribute("x", tb.x);
       tspan.setAttribute("dy", tb.lineHeight);
       tspan.textContent = line.text;
       text.appendChild(tspan);
     }
 
-    g.appendChild(clip);
     g.appendChild(text);
     this.canvas.appendChild(g);
   }
