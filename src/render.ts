@@ -123,7 +123,7 @@ class Render {
 
   drawTitle(elem: IElement) {
     var title = new Title(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lineHeight, elem.align, elem.text);
-    if (this.config.keepOriginalText) title.setTextRandom(this.config.getRandomSentence());
+    if (!this.config.keepOriginalText) title.setTextRandom(this.config.getRandomSentence());
     title.generate(this.config.randomize, this.config.randomOffset);
 
     if (title.textBlock) {
