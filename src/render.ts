@@ -49,8 +49,8 @@ class Render {
   }
 
   setCanvasSize() {
-    this.canvas.setAttribute("height", (this.data.size.height + 10).toString());
-    this.canvas.setAttribute("width", (this.data.size.width + 10).toString());
+    this.canvas.setAttribute("height", this.data.size.height.toString());
+    this.canvas.setAttribute("width", this.data.size.width.toString());
   }
 
   draw() {

@@ -34,13 +34,16 @@ export class Inspector {
   }
 
   async fetch(): Promise<void> {
-    var foundElements;
     for (let type of Object.values(ElementType)) {
-      var xpath = "//*[@data-type='" + type + "']";
-      foundElements = await this.browser.findElements(xpath);
+      let xpath = "//*[@data-type='" + type + "']";
+      let foundElements = await this.browser.findElements(xpath);
       await this.addElements(foundElements);
     }
     await this.setSize();
+    for (let elem of this.data) {
+      elem.x += 10;
+      elem.y += 10;
+    }
   }
 
   async addElements(elems: WebElement[]): Promise<void> {
@@ -144,8 +147,8 @@ export class Inspector {
   async setSize(): Promise<void> {
     var html = this.browser.findElement("html");
     var rect = await html.getRect();
-    this.size.height = rect.height;
-    this.size.width = rect.width;
+    this.size.height = rect.height + 20;
+    this.size.width = rect.width + 20;
   }
 
   async getRectangle(elem: WebElement): Promise<IRectangle> {
