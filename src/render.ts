@@ -1,4 +1,4 @@
-import { Title, Text, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
+import { Header, Title, Text, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
 import { Data, IElement } from "./data";
 import { Config } from "./config";
 import { ElementType, Paragraph, TextBlock } from "./utils";
@@ -56,6 +56,10 @@ class Render {
   draw() {
     for (let elem of this.data.elements) {
       switch (elem.name) {
+        case ElementType.Header: {
+          this.drawHeader(elem);
+          break;
+        }
         case ElementType.Title: {
           this.drawTitle(elem);
           break;
@@ -119,6 +123,12 @@ class Render {
       }
     }
     return lines;
+  }
+
+  drawHeader(elem: IElement) {
+    var header = new Header(elem.height, elem.width, elem.x, elem.y);
+    header.generate(this.config.randomize, this.config.randomOffset);
+    if (header.lines) this.createLines(header.lines);
   }
 
   drawTitle(elem: IElement) {

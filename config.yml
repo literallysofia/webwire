@@ -1,4 +1,7 @@
 elements:
+  - type: header
+    paths:
+      - //header
   - type: title
     paths:
       - //h1[text()]

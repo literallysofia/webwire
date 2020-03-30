@@ -1,6 +1,6 @@
 import { WebElement, IRectangle } from "selenium-webdriver";
 import { Browser } from "./browser";
-import { Drawable, Title, Text, Image, TextField, Radio, Checkbox, Button, Dropdown } from "./drawable";
+import { Drawable, Header, Title, Text, Image, TextField, Radio, Checkbox, Button, Dropdown } from "./drawable";
 import { ElementType } from "./utils";
 import { Config } from "./config";
 import fs from "fs";
@@ -48,6 +48,9 @@ export class Inspector {
       var type = await elem.getAttribute("data-type");
 
       switch (type) {
+        case ElementType.Header:
+          this.addHeader(elem);
+          break;
         case ElementType.Title:
           this.addTitle(elem);
           break;
@@ -74,6 +77,11 @@ export class Inspector {
           break;
       }
     }
+  }
+
+  async addHeader(elem: WebElement) {
+    var rect = await elem.getRect();
+    this.data.push(new Header(rect.height, rect.width, rect.x, rect.y));
   }
 
   async addTitle(elem: WebElement) {
