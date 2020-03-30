@@ -1,5 +1,6 @@
 export enum ElementType {
   Header = "header",
+  Footer = "footer",
   Title = "title",
   Text = "text",
   Image = "image",

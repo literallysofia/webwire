@@ -2,6 +2,9 @@ elements:
   - type: header
     paths:
       - //header
+  - type: footer
+    paths:
+      - //footer
   - type: title
     paths:
       - //h1[text()]

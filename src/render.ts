@@ -1,4 +1,4 @@
-import { Header, Title, Text, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
+import { Header, Footer, Title, Text, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
 import { Data, IElement } from "./data";
 import { Config } from "./config";
 import { ElementType, Paragraph, TextBlock } from "./utils";
@@ -56,42 +56,36 @@ class Render {
   draw() {
     for (let elem of this.data.elements) {
       switch (elem.name) {
-        case ElementType.Header: {
+        case ElementType.Header:
           this.drawHeader(elem);
           break;
-        }
-        case ElementType.Title: {
+        case ElementType.Footer:
+          this.drawFooter(elem);
+          break;
+        case ElementType.Title:
           this.drawTitle(elem);
           break;
-        }
-        case ElementType.Text: {
+        case ElementType.Text:
           this.drawText(elem);
           break;
-        }
-        case ElementType.Image: {
+        case ElementType.Image:
           this.drawImage(elem);
           break;
-        }
-        case ElementType.Button: {
+        case ElementType.Button:
           this.drawButton(elem);
           break;
-        }
-        case ElementType.TextField: {
+        case ElementType.TextField:
           this.drawTextField(elem);
           break;
-        }
-        case ElementType.Checkbox: {
+        case ElementType.Checkbox:
           this.drawCheckbox(elem);
           break;
-        }
-        case ElementType.Radio: {
+        case ElementType.Radio:
           this.drawRadio(elem);
           break;
-        }
-        case ElementType.Dropdown: {
+        case ElementType.Dropdown:
           this.drawDropdown(elem);
           break;
-        }
       }
     }
   }
@@ -129,6 +123,12 @@ class Render {
     var header = new Header(elem.height, elem.width, elem.x, elem.y);
     header.generate(this.config.randomize, this.config.randomOffset);
     if (header.lines) this.createLines(header.lines);
+  }
+
+  drawFooter(elem: IElement) {
+    var footer = new Footer(elem.height, elem.width, elem.x, elem.y);
+    footer.generate(this.config.randomize, this.config.randomOffset);
+    if (footer.lines) this.createLines(footer.lines);
   }
 
   drawTitle(elem: IElement) {

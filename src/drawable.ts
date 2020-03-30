@@ -55,6 +55,24 @@ export class Header extends Drawable {
   }
 }
 
+export class Footer extends Drawable {
+  name = ElementType.Footer;
+  lines?: number[][][];
+
+  constructor(h: number, w: number, x: number, y: number) {
+    super(h, w, x, y);
+  }
+
+  generate(randomize: boolean, randomOffset: number): void {
+    this.lines = [];
+    var points = this.rectPoints(this.height, this.width, this.x, this.y);
+
+    if (randomize) this.mutate(points, randomOffset);
+
+    this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
+  }
+}
+
 export class Title extends Drawable {
   name = ElementType.Title;
   fsize: number;
