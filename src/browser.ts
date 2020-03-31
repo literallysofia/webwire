@@ -15,6 +15,12 @@ export class Browser {
       .manage()
       .window()
       .maximize();
+
+    //remove css and jquery animations
+    var script =
+      "const styleElement = document.createElement('style');styleElement.setAttribute('id','style-tag');const styleTagCSSes = document.createTextNode('*,:after,:before{transition:none!important;transform:none!important;animation: none !important;}');styleElement.appendChild(styleTagCSSes);document.head.appendChild(styleElement);" +
+      "if (typeof window.jQuery !== 'undefined') {window.jQuery(() => {window.jQuery.support.transition = false;if (typeof window.jQuery.fx !== 'undefined') {window.jQuery.fx.off = true;}});}";
+    await this.driver.executeScript(script);
   }
 
   findElement(selector: string): WebElementPromise {
@@ -27,10 +33,9 @@ export class Browser {
 
   async setDataType(elems: WebElement[], type: string): Promise<void> {
     for (let elem of elems) {
-      var displayed = await elem.isDisplayed();
-      var script = "arguments[0].setAttribute('data-type', '" + type + "')";
-
+      let displayed = await elem.isDisplayed();
       if (displayed || type === ElementType.Checkbox || type === ElementType.Radio) {
+        let script = "arguments[0].setAttribute('data-type', '" + type + "')";
         this.driver.executeScript(script, elem);
       }
     }
@@ -38,7 +43,7 @@ export class Browser {
 
   removeDataType(elems: WebElement[]) {
     for (let elem of elems) {
-      var script = "arguments[0].removeAttribute('data-type')";
+      let script = "arguments[0].removeAttribute('data-type')";
       this.driver.executeScript(script, elem);
     }
   }

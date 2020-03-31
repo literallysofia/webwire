@@ -87,6 +87,7 @@ export class Inspector {
 
   async addHeader(elem: WebElement) {
     var rect = await elem.getRect();
+    if (rect.height === 0 || rect.width === 0) return;
     this.data.push(new Header(rect.height, rect.width, rect.x, rect.y));
   }
 

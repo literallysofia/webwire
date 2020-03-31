@@ -2,6 +2,7 @@ elements:
   - type: header
     paths:
       - //header
+      - //nav[contains(@class, 'navbar')]
   - type: footer
     paths:
       - //footer
