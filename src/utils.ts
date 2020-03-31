@@ -47,6 +47,13 @@ export class TextBlock {
   }
 }
 
+export function t_words(text: string): string[] {
+  const words = text.split(/\s+/g);
+  if (!words[words.length - 1]) words.pop();
+  if (!words[0]) words.shift();
+  return words;
+}
+
 export function random(min: number, max: number) {
   return Math.random() * (max - min) + min;
 }

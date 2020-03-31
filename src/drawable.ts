@@ -1,4 +1,4 @@
-import { ElementType, Ellipse, Anchor, TextBlock, random, p_lerp, p_trans } from "./utils";
+import { ElementType, Ellipse, Anchor, TextBlock, t_words, random, p_lerp, p_trans } from "./utils";
 
 export abstract class Drawable {
   height: number;
@@ -93,13 +93,6 @@ export class Title extends Drawable {
     this.text = t;
   }
 
-  getWords(): string[] {
-    const words = this.text.split(/\s+/g);
-    if (!words[words.length - 1]) words.pop();
-    if (!words[0]) words.shift();
-    return words;
-  }
-
   generate(randomize: boolean, randomOffset: number): void {
     if (randomize) {
       this.x += Math.random() * randomOffset * 3 - randomOffset;
@@ -116,7 +109,7 @@ export class Title extends Drawable {
       x = this.x + this.width;
     }
 
-    this.textBlock = new TextBlock(x, this.y, this.fsize, this.lineHeight, anchor, this.getWords());
+    this.textBlock = new TextBlock(x, this.y, this.fsize, this.lineHeight, anchor, t_words(this.text));
   }
 }
 
@@ -188,18 +181,18 @@ export class Image extends Drawable {
 
 export class Button extends Drawable {
   name = ElementType.Button;
+  fsize: number;
+  text: string;
   lines?: number[][][];
+  textBlock?: TextBlock;
 
-  constructor(h: number, w: number, x: number, y: number) {
+  constructor(h: number, w: number, x: number, y: number, s: number, t: string) {
     super(h, w, x, y);
+    this.fsize = s;
+    this.text = t;
   }
 
-  generate(randomize: boolean, randomOffset: number): void {
-    this.lines = [];
-    var points = this.rectPoints(this.height, this.width, this.x, this.y);
-
-    if (randomize) this.mutate(points, randomOffset);
-
+  private genTextLine(): number[][] {
     var nPoints = Math.floor((Math.random() * this.width) / 30 + 4);
     var line = [];
     var paddingLeft = random(0, 30);
@@ -214,14 +207,35 @@ export class Button extends Drawable {
 
       line.push([x, y]);
     }
+    return line;
+  }
 
-    if (randomize) this.mutate(line, randomOffset);
+  private genTextBlock(fs: number): TextBlock {
+    var x = this.x + this.width / 2;
+    var lineHeight = this.fsize + this.fsize / 2;
+    return new TextBlock(x, this.y, fs, lineHeight, Anchor.Middle, t_words(this.text));
+  }
+
+  generate(randomize: boolean, randomOffset: number): void {
+    this.lines = [];
+    var points = this.rectPoints(this.height, this.width, this.x, this.y);
+
+    if (randomize) this.mutate(points, randomOffset);
 
     this.lines.push([points[0], points[1]]);
     this.lines.push([points[1], points[2]]);
     this.lines.push([points[2], points[3]]);
     this.lines.push([points[3], points[0]]);
-    this.lines.push(line);
+
+    if (this.text === "") {
+      var line = this.genTextLine();
+      if (randomize) this.mutate(line, randomOffset);
+      this.lines.push(line);
+    } else {
+      var fs = this.fsize;
+      if (randomize) fs += Math.random() * randomOffset;
+      this.textBlock = this.genTextBlock(fs);
+    }
   }
 }
 

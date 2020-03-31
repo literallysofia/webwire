@@ -14,7 +14,7 @@ async function generateData(): Promise<void> {
   var jsonConfig = yaml.safeLoad(configFile);
 
   var jsonConvert: JsonConvert = new JsonConvert();
-  jsonConvert.operationMode = OperationMode.LOGGING;
+  //jsonConvert.operationMode = OperationMode.LOGGING;
   jsonConvert.ignorePrimitiveChecks = false; // don't allow assigning number to string etc.
   jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL; // never allow null
 

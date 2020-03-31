@@ -52,51 +52,51 @@ export class Inspector {
 
       switch (type) {
         case ElementType.Header:
-          this.addHeader(elem);
+          await this.addHeader(elem);
           break;
         case ElementType.Footer:
-          this.addFooter(elem);
+          await this.addFooter(elem);
           break;
         case ElementType.Title:
-          this.addTitle(elem);
+          await this.addTitle(elem);
           break;
         case ElementType.Text:
-          this.addText(elem);
+          await this.addText(elem);
           break;
         case ElementType.Image:
-          this.addImage(elem);
+          await this.addImage(elem);
           break;
         case ElementType.TextField:
-          this.addTextField(elem);
+          await this.addTextField(elem);
           break;
         case ElementType.Checkbox:
-          this.addCheckbox(elem);
+          await this.addCheckbox(elem);
           break;
         case ElementType.Radio:
-          this.addRadio(elem);
+          await this.addRadio(elem);
           break;
         case ElementType.Button:
-          this.addButton(elem);
+          await this.addButton(elem);
           break;
         case ElementType.Dropdown:
-          this.addDropdown(elem);
+          await this.addDropdown(elem);
           break;
       }
     }
   }
 
-  async addHeader(elem: WebElement) {
+  async addHeader(elem: WebElement): Promise<void> {
     var rect = await elem.getRect();
     if (rect.height === 0 || rect.width === 0) return;
     this.data.push(new Header(rect.height, rect.width, rect.x, rect.y));
   }
 
-  async addFooter(elem: WebElement) {
+  async addFooter(elem: WebElement): Promise<void> {
     var rect = await elem.getRect();
     this.data.push(new Footer(rect.height, rect.width, rect.x, rect.y));
   }
 
-  async addTitle(elem: WebElement) {
+  async addTitle(elem: WebElement): Promise<void> {
     var rect = await this.getRectangle(elem);
     var fontSize = parseInt(await elem.getCssValue("font-size"), 10);
     var lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
@@ -108,39 +108,42 @@ export class Inspector {
     this.data.push(title);
   }
 
-  async addText(elem: WebElement) {
+  async addText(elem: WebElement): Promise<void> {
     var rect = await this.getRectangle(elem);
     var lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
     var numLines = Math.round(rect.height / lineHeight);
     this.data.push(new Text(rect.height, rect.width, rect.x, rect.y, numLines));
   }
 
-  async addImage(elem: WebElement) {
+  async addImage(elem: WebElement): Promise<void> {
     var rect = await elem.getRect();
     this.data.push(new Image(rect.height, rect.width, rect.x, rect.y));
   }
 
-  async addTextField(elem: WebElement) {
+  async addTextField(elem: WebElement): Promise<void> {
     var rect = await elem.getRect();
     this.data.push(new TextField(rect.height, rect.width, rect.x, rect.y));
   }
 
-  async addCheckbox(elem: WebElement) {
+  async addCheckbox(elem: WebElement): Promise<void> {
     var rect = await elem.getRect();
     this.data.push(new Checkbox(rect.height, rect.width, rect.x, rect.y));
   }
 
-  async addRadio(elem: WebElement) {
+  async addRadio(elem: WebElement): Promise<void> {
     var rect = await elem.getRect();
     this.data.push(new Radio(rect.height, rect.width, rect.x, rect.y));
   }
 
-  async addButton(elem: WebElement) {
+  async addButton(elem: WebElement): Promise<void> {
     var rect = await elem.getRect();
-    this.data.push(new Button(rect.height, rect.width, rect.x, rect.y));
+    var fontSize = parseInt(await elem.getCssValue("font-size"), 10);
+    var text = "";
+    if (this.config.keepOriginalText) text = await elem.getText();
+    this.data.push(new Button(rect.height, rect.width, rect.x, rect.y, fontSize, text));
   }
 
-  async addDropdown(elem: WebElement) {
+  async addDropdown(elem: WebElement): Promise<void> {
     var rect = await elem.getRect();
     this.data.push(new Dropdown(rect.height, rect.width, rect.x, rect.y));
   }

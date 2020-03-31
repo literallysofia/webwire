@@ -158,8 +158,12 @@ class Render {
   }
 
   drawButton(elem: IElement) {
-    var btn = new Button(elem.height, elem.width, elem.x, elem.y);
+    var btn = new Button(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.text);
     btn.generate(this.config.randomize, this.config.randomOffset);
+
+    if (this.config.keepOriginalText && btn.textBlock) {
+      this.createText(btn.textBlock);
+    }
     if (btn.lines) this.createLines(btn.lines);
   }
 
@@ -188,7 +192,7 @@ class Render {
     if (drop.lines) this.createLines(drop.lines);
   }
 
-  createText(tb: TextBlock, lines: Paragraph[]) {
+  createText(tb: TextBlock, lines?: Paragraph[]) {
     const g = document.createElementNS(namespaceURI, "g");
     const text = document.createElementNS(namespaceURI, "text");
     text.setAttribute("x", tb.x);
@@ -197,11 +201,19 @@ class Render {
     text.setAttribute("font-family", this.config.fontFamily);
     text.setAttribute("text-anchor", tb.anchor);
 
-    for (let line of lines) {
+    if (lines) {
+      for (let line of lines) {
+        const tspan = document.createElementNS(namespaceURI, "tspan");
+        tspan.setAttribute("x", tb.x);
+        tspan.setAttribute("dy", tb.lineHeight);
+        tspan.textContent = line.text;
+        text.appendChild(tspan);
+      }
+    } else {
       const tspan = document.createElementNS(namespaceURI, "tspan");
       tspan.setAttribute("x", tb.x);
       tspan.setAttribute("dy", tb.lineHeight);
-      tspan.textContent = line.text;
+      tspan.textContent = tb.words.join(" ");
       text.appendChild(tspan);
     }
 
