@@ -81,9 +81,9 @@ export class Title extends Drawable {
   text: string;
   textBlock?: TextBlock;
 
-  constructor(h: number, w: number, x: number, y: number, s: number, lheight: number, a: string, t: string) {
+  constructor(h: number, w: number, x: number, y: number, fs: number, lheight: number, a: string, t: string) {
     super(h, w, x, y);
-    this.fsize = s;
+    this.fsize = fs;
     this.lineHeight = lheight;
     this.align = a;
     this.text = t;
@@ -146,6 +146,36 @@ export class Text extends Drawable {
   }
 }
 
+export class NavLink extends Drawable {
+  name = ElementType.NavLink;
+  fsize: number;
+  lineHeight: number;
+  align: string;
+  text: string;
+  textBlock?: TextBlock;
+
+  constructor(h: number, w: number, x: number, y: number, fs: number, lheight: number, a: string, t: string) {
+    super(h, w, x, y);
+    this.fsize = fs;
+    this.lineHeight = lheight;
+    this.align = a;
+    this.text = t;
+  }
+
+  generate(randomize: boolean, randomOffset: number): void {
+    var anchor = Anchor.Start;
+    var x = this.x;
+    if (this.align === "center") {
+      anchor = Anchor.Middle;
+      x = this.x + this.width / 2;
+    } else if (this.align === "right") {
+      anchor = Anchor.End;
+      x = this.x + this.width;
+    }
+    this.textBlock = new TextBlock(x, this.y, this.fsize, this.lineHeight, anchor, t_words(this.text));
+  }
+}
+
 export class Image extends Drawable {
   name = ElementType.Image;
   lines?: number[][][];
@@ -186,9 +216,9 @@ export class Button extends Drawable {
   lines?: number[][][];
   textBlock?: TextBlock;
 
-  constructor(h: number, w: number, x: number, y: number, s: number, t: string) {
+  constructor(h: number, w: number, x: number, y: number, fs: number, t: string) {
     super(h, w, x, y);
-    this.fsize = s;
+    this.fsize = fs;
     this.text = t;
   }
 

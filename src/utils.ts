@@ -3,6 +3,7 @@ export enum ElementType {
   Footer = "footer",
   Title = "title",
   Text = "text",
+  NavLink = "nav-link",
   Image = "image",
   TextField = "text-field",
   Checkbox = "checkbox",

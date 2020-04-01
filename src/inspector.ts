@@ -1,6 +1,19 @@
 import { WebElement, IRectangle } from "selenium-webdriver";
 import { Browser } from "./browser";
-import { Drawable, Header, Footer, Title, Text, Image, TextField, Radio, Checkbox, Button, Dropdown } from "./drawable";
+import {
+  Drawable,
+  Header,
+  Footer,
+  Title,
+  Text,
+  NavLink,
+  Image,
+  TextField,
+  Radio,
+  Checkbox,
+  Button,
+  Dropdown
+} from "./drawable";
 import { ElementType } from "./utils";
 import { Config } from "./config";
 import fs from "fs";
@@ -63,6 +76,10 @@ export class Inspector {
         case ElementType.Text:
           await this.addText(elem);
           break;
+        case ElementType.NavLink:
+          if (this.config.keepOriginalText) await this.addNavLink(elem);
+          else await this.addText(elem);
+          break;
         case ElementType.Image:
           await this.addImage(elem);
           break;
@@ -115,6 +132,16 @@ export class Inspector {
     this.data.push(new Text(rect.height, rect.width, rect.x, rect.y, numLines));
   }
 
+  async addNavLink(elem: WebElement): Promise<void> {
+    var rect = await this.getRectangle(elem);
+    var fontSize = parseInt(await elem.getCssValue("font-size"), 10);
+    var lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
+    var textAlign = await elem.getCssValue("text-align");
+    var text = await elem.getText();
+    text = text.split("\n")[0];
+    this.data.push(new NavLink(rect.height, rect.width, rect.x, rect.y, fontSize, lineHeight, textAlign, text));
+  }
+
   async addImage(elem: WebElement): Promise<void> {
     var rect = await elem.getRect();
     this.data.push(new Image(rect.height, rect.width, rect.x, rect.y));
@@ -157,19 +184,16 @@ export class Inspector {
 
   async getRectangle(elem: WebElement): Promise<IRectangle> {
     var rec = await elem.getRect();
-
-    let paddingTop = parseInt(await elem.getCssValue("padding-top"), 10);
-    let paddingBottom = parseInt(await elem.getCssValue("padding-bottom"), 10);
-    let paddingLeft = parseInt(await elem.getCssValue("padding-left"), 10);
-    let paddingRight = parseInt(await elem.getCssValue("padding-right"), 10);
-
-    let rect: IRectangle = {
+    var paddingTop = parseInt(await elem.getCssValue("padding-top"), 10);
+    var paddingBottom = parseInt(await elem.getCssValue("padding-bottom"), 10);
+    var paddingLeft = parseInt(await elem.getCssValue("padding-left"), 10);
+    var paddingRight = parseInt(await elem.getCssValue("padding-right"), 10);
+    var rect: IRectangle = {
       x: rec.x,
       y: rec.y,
       width: rec.width - paddingLeft - paddingRight,
       height: rec.height - paddingTop - paddingBottom
     };
-
     return rect;
   }
 

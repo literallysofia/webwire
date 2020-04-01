@@ -1,4 +1,4 @@
-import { Header, Footer, Title, Text, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
+import { Header, Footer, Title, Text, NavLink, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
 import { Data, IElement } from "./data";
 import { Config } from "./config";
 import { ElementType, Paragraph, TextBlock } from "./utils";
@@ -67,6 +67,9 @@ class Render {
           break;
         case ElementType.Text:
           this.drawText(elem);
+          break;
+        case ElementType.NavLink:
+          this.drawNavLink(elem);
           break;
         case ElementType.Image:
           this.drawImage(elem);
@@ -149,6 +152,12 @@ class Render {
     var text = new Text(elem.height, elem.width, elem.x, elem.y, elem.nlines);
     text.generate(this.config.randomize, this.config.randomOffset);
     if (text.lines) this.createLines(text.lines);
+  }
+
+  drawNavLink(elem: IElement) {
+    var link = new NavLink(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lineHeight, elem.align, elem.text);
+    link.generate(this.config.randomize, this.config.randomOffset);
+    if (link.textBlock) this.createText(link.textBlock);
   }
 
   drawImage(elem: IElement) {

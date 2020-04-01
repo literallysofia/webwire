@@ -34,6 +34,13 @@ elements:
       - //a[@role = 'button']
       - //a[*[name()="svg"]]
       - //small[ancestor::h1[text()]]
+  - type: nav-link
+    paths:
+      - //ul/li/a[text()]
+      - //nav//a[text()]
+      - //nav//a[contains(@class, 'nav-link')]
+    ignore:
+      - //ul/li/a[contains(@class, 'dropdown-toggle')]
   - type: image
     paths:
       - //img
