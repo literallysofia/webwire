@@ -31,6 +31,9 @@ export class IElement {
 
   @JsonProperty("nlines", Number, true)
   nlines: number = 0;
+
+  @JsonProperty("svg", String, true)
+  svg: string = "";
 }
 
 @JsonObject("Size")

@@ -34,6 +34,7 @@ elements:
       - //a[@role = 'button']
       - //a[*[name()="svg"]]
       - //small[ancestor::h1[text()]]
+      - //li[.//*[name()="svg"]]
   - type: nav-link
     paths:
       - //ul/li/a[text()]
@@ -46,6 +47,9 @@ elements:
       - //img
       - //*[name()="svg"]
       - //*[name()="canvas"]
+  - type: icon
+    paths:
+      - //*[name()="svg"]
   - type: text-field
     paths:
       - //input[@type = 'text']

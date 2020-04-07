@@ -5,6 +5,7 @@ export enum ElementType {
   Text = "text",
   NavLink = "nav-link",
   Image = "image",
+  Icon = "icon",
   TextField = "text-field",
   Checkbox = "checkbox",
   Radio = "radio",

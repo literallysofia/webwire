@@ -1,4 +1,17 @@
-import { Header, Footer, Title, Text, NavLink, Image, Button, Dropdown, TextField, Radio, Checkbox } from "./drawable";
+import {
+  Header,
+  Footer,
+  Title,
+  Text,
+  NavLink,
+  Image,
+  Icon,
+  Button,
+  Dropdown,
+  TextField,
+  Radio,
+  Checkbox,
+} from "./drawable";
 import { Data, IElement } from "./data";
 import { Config } from "./config";
 import { ElementType, Paragraph, TextBlock } from "./utils";
@@ -7,10 +20,12 @@ import { JSDOM } from "jsdom";
 import xmlserializer from "xmlserializer";
 import fs from "fs";
 import yaml from "js-yaml";
+var svgpath = require("svgpath");
 
 /* VARIABLES */
 const rough = require("roughjs/bundled/rough.cjs.js");
 const { document } = new JSDOM(`...`).window;
+const DOMParser = new JSDOM(`...`).window.DOMParser;
 var namespaceURI = "http://www.w3.org/2000/svg";
 
 class Render {
@@ -53,7 +68,7 @@ class Render {
     this.canvas.setAttribute("width", this.data.size.width.toString());
   }
 
-  draw() {
+  async draw() {
     for (let elem of this.data.elements) {
       switch (elem.name) {
         case ElementType.Header:
@@ -73,6 +88,9 @@ class Render {
           break;
         case ElementType.Image:
           this.drawImage(elem);
+          break;
+        case ElementType.Icon:
+          await this.drawIcon(elem);
           break;
         case ElementType.Button:
           this.drawButton(elem);
@@ -166,6 +184,15 @@ class Render {
     if (image.lines) this.createLines(image.lines);
   }
 
+  async drawIcon(elem: IElement) {
+    var icon = new Icon(elem.height, elem.width, elem.x, elem.y, elem.svg);
+    await icon.generate(this.config.randomize, this.config.randomOffset);
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(icon.svg, "image/svg+xml");
+    var svg = doc.firstChild as SVGSVGElement;
+    this.createIcon(svg, icon.x, icon.y, icon.height, icon.width);
+  }
+
   drawButton(elem: IElement) {
     var btn = new Button(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.text);
     btn.generate(this.config.randomize, this.config.randomOffset);
@@ -232,12 +259,10 @@ class Render {
 
   createLines(lines: number[][][]) {
     const g = document.createElementNS(namespaceURI, "g");
-
     for (let points of lines) {
       let line = this.roughCanvas.curve(points).getElementsByTagName("path")[0];
       g.appendChild(line);
     }
-
     this.canvas.appendChild(g);
   }
 
@@ -250,6 +275,36 @@ class Render {
       shapeNode.appendChild(center);
     }
     this.canvas.appendChild(shapeNode);
+  }
+
+  createIcon(svg: SVGSVGElement, x: number, y: number, height: number, width: number) {
+    var drawnPaths = [];
+    for (let i = 0; i < svg.children.length; i++) {
+      let svgPath = svgpath(svg.children[i].getAttribute("d"))
+        .abs()
+        .round(1)
+        .toString();
+      drawnPaths.push(
+        this.roughCanvas
+          .path(svgPath, {
+            roughness: 0.3,
+            bowing: 2,
+          })
+          .getElementsByTagName("path")[0]
+      );
+    }
+
+    svg.setAttribute("x", x.toString());
+    svg.setAttribute("y", y.toString());
+    svg.setAttribute("height", height.toString());
+    svg.setAttribute("width", width.toString());
+    svg.setAttribute("overflow", "visible");
+    svg.innerHTML = "";
+    drawnPaths.forEach((path) => {
+      path.setAttribute("vector-effect", "non-scaling-stroke");
+      svg.appendChild(path);
+    });
+    this.canvas.appendChild(svg);
   }
 
   export() {
@@ -273,7 +328,7 @@ class Render {
   }
 }
 
-function renderWireframe() {
+async function renderWireframe(): Promise<boolean> {
   var dataFile = fs.readFileSync("./generated/data.json", "utf8");
   var jsonData = JSON.parse(dataFile);
 
@@ -286,20 +341,24 @@ function renderWireframe() {
   jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL; // never allow null
 
   var data: Data;
+  var result: boolean = false;
   try {
     data = jsonConvert.deserializeObject(jsonData, Data);
     var config: Config;
     try {
       config = jsonConvert.deserializeObject(jsonConfig, Config);
       const render = new Render(data, config);
-      render.draw();
+      await render.draw();
       render.export();
+      result = true;
     } catch (e) {
       console.log(<Error>e);
     }
   } catch (e) {
     console.log(<Error>e);
   }
+  return result;
 }
 
-renderWireframe();
+if (renderWireframe()) console.log("> Wireframe rendered with success!");
+else console.log("> Woops! Something happened, the wireframe did not render.");

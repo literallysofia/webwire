@@ -8,11 +8,12 @@ import {
   Text,
   NavLink,
   Image,
+  Icon,
   TextField,
   Radio,
   Checkbox,
   Button,
-  Dropdown
+  Dropdown,
 } from "./drawable";
 import { ElementType } from "./utils";
 import { Config } from "./config";
@@ -24,7 +25,7 @@ export class Inspector {
   data: Drawable[];
   size = {
     height: 0,
-    width: 0
+    width: 0,
   };
 
   constructor(b: Browser, c: Config) {
@@ -41,7 +42,7 @@ export class Inspector {
       }
       for (let path of element.ignore) {
         let elems = await this.browser.findElements(path);
-        this.browser.removeDataType(elems);
+        await this.browser.removeDataType(elems);
       }
     }
   }
@@ -82,6 +83,9 @@ export class Inspector {
           break;
         case ElementType.Image:
           await this.addImage(elem);
+          break;
+        case ElementType.Icon:
+          await this.addIcon(elem);
           break;
         case ElementType.TextField:
           await this.addTextField(elem);
@@ -147,6 +151,12 @@ export class Inspector {
     this.data.push(new Image(rect.height, rect.width, rect.x, rect.y));
   }
 
+  async addIcon(elem: WebElement): Promise<void> {
+    var rect = await elem.getRect();
+    var svg = await this.browser.getSVG(elem);
+    this.data.push(new Icon(rect.height, rect.width, rect.x, rect.y, svg));
+  }
+
   async addTextField(elem: WebElement): Promise<void> {
     var rect = await elem.getRect();
     this.data.push(new TextField(rect.height, rect.width, rect.x, rect.y));
@@ -192,7 +202,7 @@ export class Inspector {
       x: rec.x,
       y: rec.y,
       width: rec.width - paddingLeft - paddingRight,
-      height: rec.height - paddingTop - paddingBottom
+      height: rec.height - paddingTop - paddingBottom,
     };
     return rect;
   }
@@ -200,7 +210,7 @@ export class Inspector {
   export() {
     var obj = {
       size: this.size,
-      elements: this.data
+      elements: this.data,
     };
     var json = JSON.stringify(obj);
     fs.writeFile("./generated/data.json", json, function(err) {

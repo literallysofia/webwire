@@ -1,4 +1,5 @@
 import { ElementType, Ellipse, Anchor, TextBlock, t_words, random, p_lerp, p_trans } from "./utils";
+import SVGO from "svgo";
 
 export abstract class Drawable {
   height: number;
@@ -206,6 +207,35 @@ export class Image extends Drawable {
     this.lines.push([points[3], points[0]]);
     this.lines.push([cross[0], cross[1]]);
     this.lines.push([cross[3], cross[2]]);
+  }
+}
+
+export class Icon extends Drawable {
+  name = ElementType.Icon;
+  svg: string;
+
+  constructor(h: number, w: number, x: number, y: number, s: string) {
+    super(h, w, x, y);
+    this.svg = s;
+  }
+
+  async generate(randomize: boolean, randomOffset: number): Promise<void> {
+    var svgo = new SVGO({
+      plugins: [
+        { cleanupAttrs: true },
+        { convertPathData: true },
+        { mergePaths: true },
+        {
+          removeAttrs: {
+            attrs:
+              "(stroke|fill|fill-opacity|data-type|fill-rule|class|stroke-linecap|stroke-linejoin|stroke-width|aria-hidden)",
+          },
+        },
+        { convertShapeToPath: { convertArcs: true } },
+      ],
+    });
+    var optimizedSvg = await svgo.optimize(this.svg);
+    this.svg = optimizedSvg.data;
   }
 }
 
