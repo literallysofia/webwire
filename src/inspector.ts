@@ -13,6 +13,7 @@ import {
   Radio,
   Checkbox,
   Button,
+  Burguer,
   Dropdown,
 } from "./drawable";
 import { ElementType } from "./utils";
@@ -99,6 +100,9 @@ export class Inspector {
         case ElementType.Button:
           await this.addButton(elem);
           break;
+        case ElementType.Burguer:
+          await this.addBurguer(elem);
+          break;
         case ElementType.Dropdown:
           await this.addDropdown(elem);
           break;
@@ -178,6 +182,11 @@ export class Inspector {
     var text = "";
     if (this.config.keepOriginalText) text = await elem.getText();
     this.data.push(new Button(rect.height, rect.width, rect.x, rect.y, fontSize, text));
+  }
+
+  async addBurguer(elem: WebElement): Promise<void> {
+    var rect = await elem.getRect();
+    this.data.push(new Burguer(rect.height, rect.width, rect.x, rect.y));
   }
 
   async addDropdown(elem: WebElement): Promise<void> {

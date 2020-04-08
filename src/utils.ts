@@ -10,13 +10,14 @@ export enum ElementType {
   Checkbox = "checkbox",
   Radio = "radio",
   Button = "button",
-  Dropdown = "dropdown"
+  Burguer = "burguer",
+  Dropdown = "dropdown",
 }
 
 export enum Anchor {
   Start = "start",
   Middle = "middle",
-  End = "end"
+  End = "end",
 }
 
 export interface Ellipse {

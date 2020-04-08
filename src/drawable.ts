@@ -239,6 +239,37 @@ export class Icon extends Drawable {
   }
 }
 
+export class Burguer extends Drawable {
+  name = ElementType.Burguer;
+  lines?: number[][][];
+
+  constructor(h: number, w: number, x: number, y: number) {
+    super(h, w, x, y);
+  }
+
+  async generate(randomize: boolean, randomOffset: number): Promise<void> {
+    this.lines = [];
+    var lineHeight = this.height / 3;
+
+    for (let i = 0; i < 3; i++) {
+      var nPoints = Math.floor((Math.random() * this.width) / 30 + 4);
+      var points = [];
+
+      for (let j = 0; j < nPoints; j++) {
+        let frac = j / (nPoints - 1);
+        let x = this.x + this.width * frac; // x position
+        let xdeg = Math.PI * x; // frequency
+        // amplitude * sin(frequency) + offset
+        let y = Math.sin(xdeg) + (this.y + lineHeight * i + lineHeight / 2);
+
+        points.push([x, y]);
+      }
+      if (randomize) this.mutate(points, randomOffset, 0.3);
+      this.lines.push(points);
+    }
+  }
+}
+
 export class Button extends Drawable {
   name = ElementType.Button;
   fsize: number;

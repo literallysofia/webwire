@@ -7,6 +7,7 @@ import {
   Image,
   Icon,
   Button,
+  Burguer,
   Dropdown,
   TextField,
   Radio,
@@ -94,6 +95,9 @@ class Render {
           break;
         case ElementType.Button:
           this.drawButton(elem);
+          break;
+        case ElementType.Burguer:
+          this.drawBurguer(elem);
           break;
         case ElementType.TextField:
           this.drawTextField(elem);
@@ -201,6 +205,12 @@ class Render {
       this.createText(btn.textBlock);
     }
     if (btn.lines) this.createLines(btn.lines);
+  }
+
+  async drawBurguer(elem: IElement) {
+    var burguer = new Burguer(elem.height, elem.width, elem.x, elem.y);
+    burguer.generate(this.config.randomize, this.config.randomOffset);
+    if (burguer.lines) this.createLines(burguer.lines);
   }
 
   drawTextField(elem: IElement) {

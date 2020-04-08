@@ -67,6 +67,9 @@ elements:
     paths:
       - //button
       - //a[contains(@class, 'btn')]
+  - type: burguer
+    paths:
+      - //button[@aria-label = 'Toggle navigation' and contains(@class, 'navbar-toggler')]
   - type: dropdown
     paths:
       - //select
@@ -87,4 +90,3 @@ options:
   bowing: 5
   strokeWidth: 1.5
   hachureGap: 4
-
