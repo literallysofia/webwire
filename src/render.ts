@@ -294,6 +294,7 @@ class Render {
         .abs()
         .round(1)
         .toString();
+
       drawnPaths.push(
         this.roughCanvas
           .path(svgPath, {

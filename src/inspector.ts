@@ -18,6 +18,7 @@ import {
 } from "./drawable";
 import { ElementType } from "./utils";
 import { Config } from "./config";
+import SVGO from "svgo";
 import fs from "fs";
 
 export class Inspector {
@@ -158,7 +159,19 @@ export class Inspector {
   async addIcon(elem: WebElement): Promise<void> {
     var rect = await elem.getRect();
     var svg = await this.browser.getSVG(elem);
-    this.data.push(new Icon(rect.height, rect.width, rect.x, rect.y, svg));
+    var svgo = new SVGO({
+      plugins: [
+        { cleanupAttrs: true },
+        {
+          removeAttrs: {
+            attrs:
+              "(stroke|fill|fill-opacity|data-type|fill-rule|class|stroke-linecap|stroke-linejoin|stroke-width|aria-hidden|rx|ry)",
+          },
+        },
+      ],
+    });
+    var optimizedSvg = await svgo.optimize(svg);
+    this.data.push(new Icon(rect.height, rect.width, rect.x, rect.y, optimizedSvg.data));
   }
 
   async addTextField(elem: WebElement): Promise<void> {

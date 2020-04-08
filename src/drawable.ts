@@ -221,18 +221,7 @@ export class Icon extends Drawable {
 
   async generate(randomize: boolean, randomOffset: number): Promise<void> {
     var svgo = new SVGO({
-      plugins: [
-        { cleanupAttrs: true },
-        { convertPathData: true },
-        { mergePaths: true },
-        {
-          removeAttrs: {
-            attrs:
-              "(stroke|fill|fill-opacity|data-type|fill-rule|class|stroke-linecap|stroke-linejoin|stroke-width|aria-hidden)",
-          },
-        },
-        { convertShapeToPath: { convertArcs: true } },
-      ],
+      plugins: [{ convertShapeToPath: { convertArcs: true } }, { convertPathData: true }, { mergePaths: true }],
     });
     var optimizedSvg = await svgo.optimize(this.svg);
     this.svg = optimizedSvg.data;
