@@ -217,12 +217,13 @@ export class Inspector {
   }
 
   export() {
-    var obj = {
+    var dir = "./generated";
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+    var json = JSON.stringify({
       size: this.size,
       elements: this.data,
-    };
-    var json = JSON.stringify(obj);
-    fs.writeFile("./generated/data.json", json, function(err) {
+    });
+    fs.writeFile(dir + "/data.json", json, function(err) {
       if (err) {
         console.log(err);
       }

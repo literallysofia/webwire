@@ -318,9 +318,12 @@ class Render {
   }
 
   export() {
+    var dir = "./generated";
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+
     //generates svg file
     var svg = xmlserializer.serializeToString(this.canvas);
-    fs.writeFile("./generated/wireframe.svg", svg, function(err) {
+    fs.writeFile(dir + "/wireframe.svg", svg, function(err) {
       if (err) {
         console.log(err);
       }
@@ -330,7 +333,7 @@ class Render {
     var doc = document.implementation.createHTMLDocument("Wireframe");
     doc.body.appendChild(this.canvas);
     var html = xmlserializer.serializeToString(doc);
-    fs.writeFile("./generated/wireframe.html", html, function(err) {
+    fs.writeFile(dir + "/wireframe.html", html, function(err) {
       if (err) {
         console.log(err);
       }

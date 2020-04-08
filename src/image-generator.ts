@@ -14,7 +14,7 @@ class ImageGenerator {
     await page.screenshot({
       path: "./generated/wireframe.jpg",
       type: "jpeg",
-      fullPage: true
+      fullPage: true,
     });
     await page.close();
     await browser.close();
