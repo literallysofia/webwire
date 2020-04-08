@@ -24,6 +24,9 @@ export class Config {
   @JsonProperty("keepOriginalText", Boolean)
   keepOriginalText: boolean = true;
 
+  @JsonProperty("iconMinWidth", Number)
+  iconMinWidth: number = 50;
+
   @JsonProperty("randomize", Boolean)
   randomize: boolean = false;
 

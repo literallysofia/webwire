@@ -31,11 +31,11 @@ export class Browser {
     return this.driver.findElements(By.xpath(selector));
   }
 
-  async setDataType(elems: WebElement[], type: string): Promise<void> {
+  async setDataType(elems: WebElement[], type: string, iconMinWidth: number): Promise<void> {
     for (let elem of elems) {
       let displayed = await elem.isDisplayed();
       let rect = await elem.getRect();
-      if (type === ElementType.Icon && rect.width > 50) return;
+      if (type === ElementType.Icon && rect.width > iconMinWidth) return;
       if (displayed || type === ElementType.Checkbox || type === ElementType.Radio) {
         let script = "arguments[0].setAttribute('data-type', '" + type + "')";
         this.driver.executeScript(script, elem);
