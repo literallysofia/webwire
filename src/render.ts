@@ -1,11 +1,13 @@
 import fs from "fs";
 import xmlserializer from "xmlserializer";
 import { SingleBar } from "cli-progress";
+import rough from "roughjs";
+import { RoughSVG } from "roughjs/bin/svg";
 import svgpath from "svgpath";
 import { JSDOM } from "jsdom";
 import { Data, IElement } from "./data";
 import { Config } from "./config";
-import { ElementType, Paragraph, TextBlock } from "./utils";
+import { ElementType, Line, Paragraph, TextBlock } from "./utils";
 import {
   Header,
   Footer,
@@ -23,7 +25,6 @@ import {
 } from "./drawable";
 
 /* VARIABLES */
-const rough = require("roughjs/bundled/rough.cjs.js");
 const { document } = new JSDOM(`...`).window;
 const DOMParser = new JSDOM(`...`).window.DOMParser;
 var namespaceURI = "http://www.w3.org/2000/svg";
@@ -33,7 +34,7 @@ export class Render {
   config: Config;
   bar: SingleBar;
   canvas: SVGSVGElement;
-  roughCanvas: any;
+  roughCanvas: RoughSVG;
 
   constructor(data: Data, config: Config, bar: SingleBar) {
     this.data = data;
@@ -270,7 +271,7 @@ export class Render {
     this.canvas.appendChild(g);
   }
 
-  createLines(lines: number[][][]) {
+  createLines(lines: Line[]) {
     const g = document.createElementNS(namespaceURI, "g");
     for (let points of lines) {
       let line = this.roughCanvas.curve(points).getElementsByTagName("path")[0];

@@ -1,4 +1,4 @@
-import { ElementType, Ellipse, Anchor, TextBlock, t_words, random, p_lerp, p_trans } from "./utils";
+import { ElementType, Line, Point, Ellipse, Anchor, TextBlock, t_words, random, p_lerp, p_trans } from "./utils";
 import SVGO from "svgo";
 
 export abstract class Drawable {
@@ -14,16 +14,16 @@ export abstract class Drawable {
     this.y = y;
   }
 
-  rectPoints(h: number, w: number, x: number, y: number): number[][] {
-    var p1 = [x, y];
-    var p2 = [x + w, y];
-    var p3 = [x + w, y + h];
-    var p4 = [x, y + h];
+  rectPoints(h: number, w: number, x: number, y: number): Point[] {
+    var p1: Point = [x, y];
+    var p2: Point = [x + w, y];
+    var p3: Point = [x + w, y + h];
+    var p4: Point = [x, y + h];
 
     return [p1, p2, p3, p4];
   }
 
-  mutate(points: number[][], offset: number, value?: number) {
+  mutate(points: Point[], offset: number, value?: number) {
     if (value) {
       offset *= value;
     }
@@ -40,13 +40,13 @@ export abstract class Drawable {
 
 export class Header extends Drawable {
   name = ElementType.Header;
-  lines?: number[][][];
+  lines?: Line[];
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
   }
 
-  generate(randomize: boolean, randomOffset: number): void {
+  generate(randomize: boolean, randomOffset: number) {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
@@ -58,13 +58,13 @@ export class Header extends Drawable {
 
 export class Footer extends Drawable {
   name = ElementType.Footer;
-  lines?: number[][][];
+  lines?: Line[];
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
   }
 
-  generate(randomize: boolean, randomOffset: number): void {
+  generate(randomize: boolean, randomOffset: number) {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
@@ -94,7 +94,7 @@ export class Title extends Drawable {
     this.text = t;
   }
 
-  generate(randomize: boolean, randomOffset: number): void {
+  generate(randomize: boolean, randomOffset: number) {
     if (randomize) {
       this.x += Math.random() * randomOffset * 3 - randomOffset;
       this.y += Math.random() * randomOffset * 2 - randomOffset;
@@ -117,20 +117,20 @@ export class Title extends Drawable {
 export class Text extends Drawable {
   name = ElementType.Text;
   nlines: number;
-  lines?: number[][][];
+  lines?: Line[];
 
   constructor(h: number, w: number, x: number, y: number, l: number) {
     super(h, w, x, y);
     this.nlines = l;
   }
 
-  generate(randomize: boolean, randomOffset: number): void {
+  generate(randomize: boolean, randomOffset: number) {
     this.lines = [];
     var lineHeight = this.height / this.nlines;
 
     for (let i = 0; i < this.nlines; i++) {
       var nPoints = Math.floor((Math.random() * this.width) / 30 + 4);
-      var points = [];
+      var line: Point[] = [];
 
       for (let j = 0; j < nPoints; j++) {
         let frac = j / (nPoints - 1);
@@ -139,10 +139,10 @@ export class Text extends Drawable {
         // amplitude * sin(frequency) + offset
         let y = random(2, lineHeight / 2) * Math.sin(xdeg) + (this.y + lineHeight * i + lineHeight / 2);
 
-        points.push([x, y]);
+        line.push([x, y]);
       }
-      if (randomize) this.mutate(points, randomOffset);
-      this.lines.push(points);
+      if (randomize) this.mutate(line, randomOffset);
+      this.lines.push(line);
     }
   }
 }
@@ -163,7 +163,7 @@ export class NavLink extends Drawable {
     this.text = t;
   }
 
-  generate(randomize: boolean, randomOffset: number): void {
+  generate(randomize: boolean, randomOffset: number) {
     var anchor = Anchor.Start;
     var x = this.x;
     if (this.align === "center") {
@@ -179,19 +179,19 @@ export class NavLink extends Drawable {
 
 export class Image extends Drawable {
   name = ElementType.Image;
-  lines?: number[][][];
+  lines?: Line[];
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
   }
 
-  generate(randomize: boolean, randomOffset: number): void {
+  generate(randomize: boolean, randomOffset: number) {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
     if (randomize) this.mutate(points, randomOffset);
 
-    var cross = [];
+    var cross: Point[] = [];
     cross.push(
       p_lerp(points[0], points[2], random(0.0, 0.2)),
       p_lerp(points[2], points[0], random(0.0, 0.2)),
@@ -230,7 +230,7 @@ export class Icon extends Drawable {
 
 export class Burguer extends Drawable {
   name = ElementType.Burguer;
-  lines?: number[][][];
+  lines?: Line[];
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -242,7 +242,7 @@ export class Burguer extends Drawable {
 
     for (let i = 0; i < 3; i++) {
       var nPoints = Math.floor((Math.random() * this.width) / 30 + 4);
-      var points = [];
+      var line: Point[] = [];
 
       for (let j = 0; j < nPoints; j++) {
         let frac = j / (nPoints - 1);
@@ -251,10 +251,10 @@ export class Burguer extends Drawable {
         // amplitude * sin(frequency) + offset
         let y = Math.sin(xdeg) + (this.y + lineHeight * i + lineHeight / 2);
 
-        points.push([x, y]);
+        line.push([x, y]);
       }
-      if (randomize) this.mutate(points, randomOffset, 0.3);
-      this.lines.push(points);
+      if (randomize) this.mutate(line, randomOffset, 0.3);
+      this.lines.push(line);
     }
   }
 }
@@ -263,7 +263,7 @@ export class Button extends Drawable {
   name = ElementType.Button;
   fsize: number;
   text: string;
-  lines?: number[][][];
+  lines?: Line[];
   textBlock?: TextBlock;
 
   constructor(h: number, w: number, x: number, y: number, fs: number, t: string) {
@@ -272,9 +272,9 @@ export class Button extends Drawable {
     this.text = t;
   }
 
-  private genTextLine(): number[][] {
+  private getTextLine(): Point[] {
     var nPoints = Math.floor((Math.random() * this.width) / 30 + 4);
-    var line = [];
+    var line: Point[] = [];
     var paddingLeft = random(0, 30);
     var paddingRight = random(0, 30) + paddingLeft;
 
@@ -290,13 +290,13 @@ export class Button extends Drawable {
     return line;
   }
 
-  private genTextBlock(fs: number): TextBlock {
+  private getTextBlock(fs: number): TextBlock {
     var x = this.x + this.width / 2;
     var lineHeight = this.fsize + this.fsize / 2;
     return new TextBlock(x, this.y, fs, lineHeight, Anchor.Middle, t_words(this.text));
   }
 
-  generate(randomize: boolean, randomOffset: number): void {
+  generate(randomize: boolean, randomOffset: number) {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
@@ -308,26 +308,26 @@ export class Button extends Drawable {
     this.lines.push([points[3], points[0]]);
 
     if (this.text === "") {
-      var line = this.genTextLine();
-      if (randomize) this.mutate(line, randomOffset);
-      this.lines.push(line);
+      let textLine = this.getTextLine();
+      if (randomize) this.mutate(textLine, randomOffset);
+      this.lines.push(textLine);
     } else {
-      var fs = this.fsize;
+      let fs = this.fsize;
       if (randomize) fs += Math.random() * randomOffset;
-      this.textBlock = this.genTextBlock(fs);
+      this.textBlock = this.getTextBlock(fs);
     }
   }
 }
 
 export class Dropdown extends Drawable {
   name = ElementType.Dropdown;
-  lines?: number[][][];
+  lines?: Line[];
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
   }
 
-  generate(randomize: boolean, randomOffset: number): void {
+  generate(randomize: boolean, randomOffset: number) {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
@@ -348,13 +348,13 @@ export class Dropdown extends Drawable {
 
 export class TextField extends Drawable {
   name = ElementType.TextField;
-  lines?: number[][][];
+  lines?: Line[];
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
   }
 
-  generate(randomize: boolean, randomOffset: number): void {
+  generate(randomize: boolean, randomOffset: number) {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
@@ -372,7 +372,7 @@ export class Radio extends Drawable {
     super(h, w, x, y);
   }
 
-  generate(randomize: boolean, randomOffset: number): void {
+  generate(randomize: boolean, randomOffset: number) {
     var cx = this.x + this.width / 2;
     var cy = this.y + this.height / 2;
 
@@ -387,13 +387,13 @@ export class Radio extends Drawable {
 
 export class Checkbox extends Drawable {
   name = ElementType.Checkbox;
-  lines?: number[][][];
+  lines?: Line[];
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
   }
 
-  generate(randomize: boolean, randomOffset: number): void {
+  generate(randomize: boolean, randomOffset: number) {
     this.lines = [];
     var points = this.rectPoints(this.height, this.width, this.x, this.y);
 
