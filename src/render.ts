@@ -21,7 +21,7 @@ import { JSDOM } from "jsdom";
 import xmlserializer from "xmlserializer";
 import fs from "fs";
 import yaml from "js-yaml";
-var svgpath = require("svgpath");
+import svgpath from "svgpath";
 
 /* VARIABLES */
 const rough = require("roughjs/bundled/rough.cjs.js");
@@ -290,19 +290,22 @@ class Render {
   createIcon(svg: SVGSVGElement, x: number, y: number, height: number, width: number) {
     var drawnPaths = [];
     for (let i = 0; i < svg.children.length; i++) {
-      let svgPath = svgpath(svg.children[i].getAttribute("d"))
-        .abs()
-        .round(1)
-        .toString();
+      let path = svg.children[i].getAttribute("d");
+      if (path) {
+        let svgPath = svgpath(path)
+          .abs()
+          .round(1)
+          .toString();
 
-      drawnPaths.push(
-        this.roughCanvas
-          .path(svgPath, {
-            roughness: 0.3,
-            bowing: 2,
-          })
-          .getElementsByTagName("path")[0]
-      );
+        drawnPaths.push(
+          this.roughCanvas
+            .path(svgPath, {
+              roughness: 0.3,
+              bowing: 2,
+            })
+            .getElementsByTagName("path")[0]
+        );
+      }
     }
 
     svg.setAttribute("x", x.toString());

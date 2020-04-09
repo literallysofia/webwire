@@ -20,6 +20,8 @@ import { ElementType } from "./utils";
 import { Config } from "./config";
 import SVGO from "svgo";
 import fs from "fs";
+import cliProgress, { SingleBar } from "cli-progress";
+import colors from "colors";
 
 export class Inspector {
   browser: Browser;
@@ -29,11 +31,32 @@ export class Inspector {
     height: 0,
     width: 0,
   };
+  nBar: SingleBar;
+  fBar: SingleBar;
 
   constructor(b: Browser, c: Config) {
     this.browser = b;
     this.config = c;
     this.data = [];
+    this.nBar = new SingleBar(
+      {
+        format:
+          "Page Normalization |" +
+          colors.cyan("{bar}") +
+          "| {percentage}% || {value}/{total} Web Elements || ETA: {eta}s",
+      },
+      cliProgress.Presets.shades_classic
+    );
+    this.fBar = new SingleBar(
+      {
+        format:
+          "Element Extraction |" +
+          colors.magenta("{bar}") +
+          "| {percentage}% || {value}/{total} Web Elements || ETA: {eta}s",
+      },
+      cliProgress.Presets.shades_classic
+    );
+    this.nBar.start(this.config.elements.length, 0);
   }
 
   async normalize(): Promise<void> {
@@ -46,20 +69,27 @@ export class Inspector {
         let elems = await this.browser.findElements(path);
         await this.browser.removeDataType(elems);
       }
+      this.nBar.increment();
     }
+    this.nBar.stop();
   }
 
   async fetch(): Promise<void> {
+    var allElem = await this.browser.findElements("//*[@data-type]");
+    this.fBar.start(allElem.length, 0);
+
     for (let type of Object.values(ElementType)) {
       let xpath = "//*[@data-type='" + type + "']";
       let foundElements = await this.browser.findElements(xpath);
       await this.addElements(foundElements);
+      if (foundElements.length > 0) this.fBar.increment(foundElements.length);
     }
     await this.setSize();
     for (let elem of this.data) {
       elem.x += 10;
       elem.y += 10;
     }
+    this.fBar.stop();
   }
 
   async addElements(elems: WebElement[]): Promise<void> {
@@ -239,7 +269,7 @@ export class Inspector {
     fs.writeFile(dir + "/data.json", json, function(err) {
       if (err) {
         console.log(err);
-      }
+      } else console.log("\n> Data saved with success!");
     });
   }
 }
