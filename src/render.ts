@@ -1,3 +1,11 @@
+import fs from "fs";
+import xmlserializer from "xmlserializer";
+import { SingleBar } from "cli-progress";
+import svgpath from "svgpath";
+import { JSDOM } from "jsdom";
+import { Data, IElement } from "./data";
+import { Config } from "./config";
+import { ElementType, Paragraph, TextBlock } from "./utils";
 import {
   Header,
   Footer,
@@ -13,15 +21,6 @@ import {
   Radio,
   Checkbox,
 } from "./drawable";
-import { Data, IElement } from "./data";
-import { Config } from "./config";
-import { ElementType, Paragraph, TextBlock } from "./utils";
-import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
-import { JSDOM } from "jsdom";
-import xmlserializer from "xmlserializer";
-import fs from "fs";
-import yaml from "js-yaml";
-import svgpath from "svgpath";
 
 /* VARIABLES */
 const rough = require("roughjs/bundled/rough.cjs.js");
@@ -29,16 +28,18 @@ const { document } = new JSDOM(`...`).window;
 const DOMParser = new JSDOM(`...`).window.DOMParser;
 var namespaceURI = "http://www.w3.org/2000/svg";
 
-class Render {
+export class Render {
   data: Data;
   config: Config;
+  bar: SingleBar;
   canvas: SVGSVGElement;
   roughCanvas: any;
 
-  constructor(data: Data, config: Config) {
+  constructor(data: Data, config: Config, bar: SingleBar) {
     this.data = data;
     this.config = config;
     this.config.setFontFamily();
+    this.bar = bar;
     this.canvas = this.createSvg();
     this.setCanvasSize();
     this.roughCanvas = rough.svg(this.canvas, { options: this.config.options });
@@ -112,7 +113,9 @@ class Render {
           this.drawDropdown(elem);
           break;
       }
+      this.bar.increment();
     }
+    this.bar.stop();
   }
 
   measureWidth(text: string, fsize: number) {
@@ -344,38 +347,3 @@ class Render {
     });
   }
 }
-
-async function renderWireframe(): Promise<boolean> {
-  var dataFile = fs.readFileSync("./generated/data.json", "utf8");
-  var jsonData = JSON.parse(dataFile);
-
-  var configFile = fs.readFileSync("./config.yml", "utf8");
-  var jsonConfig = yaml.safeLoad(configFile);
-
-  var jsonConvert: JsonConvert = new JsonConvert();
-  //jsonConvert.operationMode = OperationMode.LOGGING;
-  jsonConvert.ignorePrimitiveChecks = false; // don't allow assigning number to string etc.
-  jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL; // never allow null
-
-  var data: Data;
-  var result: boolean = false;
-  try {
-    data = jsonConvert.deserializeObject(jsonData, Data);
-    var config: Config;
-    try {
-      config = jsonConvert.deserializeObject(jsonConfig, Config);
-      const render = new Render(data, config);
-      await render.draw();
-      render.export();
-      result = true;
-    } catch (e) {
-      console.log(<Error>e);
-    }
-  } catch (e) {
-    console.log(<Error>e);
-  }
-  return result;
-}
-
-if (renderWireframe()) console.log("> Wireframe rendered with success!");
-else console.log("> Woops! Something happened, the wireframe did not render.");

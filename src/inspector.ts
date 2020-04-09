@@ -1,5 +1,10 @@
-import { WebElement, IRectangle } from "selenium-webdriver";
+import fs from "fs";
+import { SingleBar } from "cli-progress";
+import SVGO from "svgo";
 import { Browser } from "./browser";
+import { Config } from "./config";
+import { WebElement, IRectangle } from "selenium-webdriver";
+import { ElementType } from "./utils";
 import {
   Drawable,
   Header,
@@ -16,12 +21,6 @@ import {
   Burguer,
   Dropdown,
 } from "./drawable";
-import { ElementType } from "./utils";
-import { Config } from "./config";
-import SVGO from "svgo";
-import fs from "fs";
-import cliProgress, { SingleBar } from "cli-progress";
-import colors from "colors";
 
 export class Inspector {
   browser: Browser;
@@ -34,32 +33,15 @@ export class Inspector {
   nBar: SingleBar;
   fBar: SingleBar;
 
-  constructor(b: Browser, c: Config) {
+  constructor(b: Browser, c: Config, nb: SingleBar, fb: SingleBar) {
     this.browser = b;
     this.config = c;
     this.data = [];
-    this.nBar = new SingleBar(
-      {
-        format:
-          "Page Normalization |" +
-          colors.cyan("{bar}") +
-          "| {percentage}% || {value}/{total} Web Elements || ETA: {eta}s",
-      },
-      cliProgress.Presets.shades_classic
-    );
-    this.fBar = new SingleBar(
-      {
-        format:
-          "Element Extraction |" +
-          colors.magenta("{bar}") +
-          "| {percentage}% || {value}/{total} Web Elements || ETA: {eta}s",
-      },
-      cliProgress.Presets.shades_classic
-    );
-    this.nBar.start(this.config.elements.length, 0);
+    this.nBar = nb;
+    this.fBar = fb;
   }
 
-  async normalize(): Promise<void> {
+  async normalize() {
     for (let element of this.config.elements) {
       for (let path of element.paths) {
         let elems = await this.browser.findElements(path);
@@ -74,7 +56,7 @@ export class Inspector {
     this.nBar.stop();
   }
 
-  async fetch(): Promise<void> {
+  async fetch() {
     var allElem = await this.browser.findElements("//*[@data-type]");
     this.fBar.start(allElem.length, 0);
 
@@ -92,7 +74,7 @@ export class Inspector {
     this.fBar.stop();
   }
 
-  async addElements(elems: WebElement[]): Promise<void> {
+  async addElements(elems: WebElement[]) {
     for (let elem of elems) {
       var type = await elem.getAttribute("data-type");
 
@@ -141,18 +123,18 @@ export class Inspector {
     }
   }
 
-  async addHeader(elem: WebElement): Promise<void> {
+  async addHeader(elem: WebElement) {
     var rect = await elem.getRect();
     if (rect.height === 0 || rect.width === 0) return;
     this.data.push(new Header(rect.height, rect.width, rect.x, rect.y));
   }
 
-  async addFooter(elem: WebElement): Promise<void> {
+  async addFooter(elem: WebElement) {
     var rect = await elem.getRect();
     this.data.push(new Footer(rect.height, rect.width, rect.x, rect.y));
   }
 
-  async addTitle(elem: WebElement): Promise<void> {
+  async addTitle(elem: WebElement) {
     var rect = await this.getRectangle(elem);
     var fontSize = parseInt(await elem.getCssValue("font-size"), 10);
     var lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
@@ -164,14 +146,14 @@ export class Inspector {
     this.data.push(title);
   }
 
-  async addText(elem: WebElement): Promise<void> {
+  async addText(elem: WebElement) {
     var rect = await this.getRectangle(elem);
     var lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
     var numLines = Math.round(rect.height / lineHeight);
     this.data.push(new Text(rect.height, rect.width, rect.x, rect.y, numLines));
   }
 
-  async addNavLink(elem: WebElement): Promise<void> {
+  async addNavLink(elem: WebElement) {
     var rect = await this.getRectangle(elem);
     var fontSize = parseInt(await elem.getCssValue("font-size"), 10);
     var lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
@@ -181,12 +163,12 @@ export class Inspector {
     this.data.push(new NavLink(rect.height, rect.width, rect.x, rect.y, fontSize, lineHeight, textAlign, text));
   }
 
-  async addImage(elem: WebElement): Promise<void> {
+  async addImage(elem: WebElement) {
     var rect = await elem.getRect();
     this.data.push(new Image(rect.height, rect.width, rect.x, rect.y));
   }
 
-  async addIcon(elem: WebElement): Promise<void> {
+  async addIcon(elem: WebElement) {
     var rect = await elem.getRect();
     var svg = await this.browser.getSVG(elem);
     var svgo = new SVGO({
@@ -204,22 +186,22 @@ export class Inspector {
     this.data.push(new Icon(rect.height, rect.width, rect.x, rect.y, optimizedSvg.data));
   }
 
-  async addTextField(elem: WebElement): Promise<void> {
+  async addTextField(elem: WebElement) {
     var rect = await elem.getRect();
     this.data.push(new TextField(rect.height, rect.width, rect.x, rect.y));
   }
 
-  async addCheckbox(elem: WebElement): Promise<void> {
+  async addCheckbox(elem: WebElement) {
     var rect = await elem.getRect();
     this.data.push(new Checkbox(rect.height, rect.width, rect.x, rect.y));
   }
 
-  async addRadio(elem: WebElement): Promise<void> {
+  async addRadio(elem: WebElement) {
     var rect = await elem.getRect();
     this.data.push(new Radio(rect.height, rect.width, rect.x, rect.y));
   }
 
-  async addButton(elem: WebElement): Promise<void> {
+  async addButton(elem: WebElement) {
     var rect = await elem.getRect();
     var fontSize = parseInt(await elem.getCssValue("font-size"), 10);
     var text = "";
@@ -227,17 +209,17 @@ export class Inspector {
     this.data.push(new Button(rect.height, rect.width, rect.x, rect.y, fontSize, text));
   }
 
-  async addBurguer(elem: WebElement): Promise<void> {
+  async addBurguer(elem: WebElement) {
     var rect = await elem.getRect();
     this.data.push(new Burguer(rect.height, rect.width, rect.x, rect.y));
   }
 
-  async addDropdown(elem: WebElement): Promise<void> {
+  async addDropdown(elem: WebElement) {
     var rect = await elem.getRect();
     this.data.push(new Dropdown(rect.height, rect.width, rect.x, rect.y));
   }
 
-  async setSize(): Promise<void> {
+  async setSize() {
     var html = this.browser.findElement("html");
     var rect = await html.getRect();
     this.size.height = rect.height + 20;

@@ -219,7 +219,7 @@ export class Icon extends Drawable {
     this.svg = s;
   }
 
-  async generate(randomize: boolean, randomOffset: number): Promise<void> {
+  async generate(randomize: boolean, randomOffset: number) {
     var svgo = new SVGO({
       plugins: [{ convertShapeToPath: { convertArcs: true } }, { convertPathData: true }, { mergePaths: true }],
     });
@@ -236,7 +236,7 @@ export class Burguer extends Drawable {
     super(h, w, x, y);
   }
 
-  async generate(randomize: boolean, randomOffset: number): Promise<void> {
+  async generate(randomize: boolean, randomOffset: number) {
     this.lines = [];
     var lineHeight = this.height / 3;
 

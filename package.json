@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && node dist/index.js",
-    "render": "npm run build && node dist/render.js && open generated/wireframe.svg",
+    "start": "npm run build && node dist/index-inspector.js",
+    "render": "npm run build && node dist/index-render.js && open generated/wireframe.svg",
     "image": "npm run build && node dist/image-generator.js && open generated/wireframe.jpg",
     "generate": "node dist/render.js && node dist/image-generator.js && open generated/wireframe.jpg",
+    "pretty": "prettier --write generated/data.json",
     "test-render": "ts-node src/render.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

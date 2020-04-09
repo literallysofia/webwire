@@ -9,7 +9,7 @@ export class Browser {
     this.driver = new Builder().forBrowser(browserName).build();
   }
 
-  async navigate(url: string): Promise<void> {
+  async navigate(url: string) {
     await this.driver.get(url);
     await this.driver
       .manage()
@@ -31,7 +31,7 @@ export class Browser {
     return this.driver.findElements(By.xpath(selector));
   }
 
-  async setDataType(elems: WebElement[], type: string, iconMinWidth: number): Promise<void> {
+  async setDataType(elems: WebElement[], type: string, iconMinWidth: number) {
     for (let elem of elems) {
       let displayed = await elem.isDisplayed();
       let rect = await elem.getRect();
@@ -43,7 +43,7 @@ export class Browser {
     }
   }
 
-  async removeDataType(elems: WebElement[]): Promise<void> {
+  async removeDataType(elems: WebElement[]) {
     for (let elem of elems) {
       let script = "arguments[0].removeAttribute('data-type')";
       await this.driver.executeScript(script, elem);
@@ -55,7 +55,7 @@ export class Browser {
     return await this.driver.executeScript(script, elem);
   }
 
-  async clearCookies(url?: string): Promise<void> {
+  async clearCookies(url?: string) {
     if (url) {
       const currentUrl = await this.driver.getCurrentUrl();
       await this.navigate(url);
@@ -66,7 +66,7 @@ export class Browser {
     }
   }
 
-  async close(): Promise<void> {
+  async close() {
     await this.driver.quit();
   }
 }
