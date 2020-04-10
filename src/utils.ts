@@ -1,6 +1,7 @@
 export enum ElementType {
   Header = "header",
   Footer = "footer",
+  Container = "container",
   Title = "title",
   Text = "text",
   NavLink = "nav-link",

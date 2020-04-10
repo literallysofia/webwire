@@ -36,11 +36,20 @@ export class Browser {
       let displayed = await elem.isDisplayed();
       let rect = await elem.getRect();
       if (type === ElementType.Icon && rect.width > iconMinWidth) return;
-      if (displayed || type === ElementType.Checkbox || type === ElementType.Radio) {
-        let script = "arguments[0].setAttribute('data-type', '" + type + "')";
-        this.driver.executeScript(script, elem);
-      }
+      if (type === ElementType.Container) {
+        let borderBottom = parseInt(await elem.getCssValue("border-bottom-width"), 10);
+        let borderLeft = parseInt(await elem.getCssValue("border-left-width"), 10);
+        let borderRight = parseInt(await elem.getCssValue("border-right-width"), 10);
+        let borderTop = parseInt(await elem.getCssValue("border-top-width"), 10);
+        if (borderBottom > 0 || borderLeft > 0 || borderRight > 0 || borderTop > 0) this.runDataTypeScript(elem, type);
+      } else if (displayed || type === ElementType.Checkbox || type === ElementType.Radio)
+        this.runDataTypeScript(elem, type);
     }
+  }
+
+  async runDataTypeScript(elem: WebElement, type: string) {
+    let script = "arguments[0].setAttribute('data-type', '" + type + "')";
+    await this.driver.executeScript(script, elem);
   }
 
   async removeDataType(elems: WebElement[]) {

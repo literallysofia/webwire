@@ -7,8 +7,7 @@ import { WebElement, IRectangle } from "selenium-webdriver";
 import { ElementType } from "./utils";
 import {
   Drawable,
-  Header,
-  Footer,
+  Container,
   Title,
   Text,
   NavLink,
@@ -79,12 +78,6 @@ export class Inspector {
       var type = await elem.getAttribute("data-type");
 
       switch (type) {
-        case ElementType.Header:
-          await this.addHeader(elem);
-          break;
-        case ElementType.Footer:
-          await this.addFooter(elem);
-          break;
         case ElementType.Title:
           await this.addTitle(elem);
           break;
@@ -119,19 +112,17 @@ export class Inspector {
         case ElementType.Dropdown:
           await this.addDropdown(elem);
           break;
+        default:
+          await this.addContainer(elem);
+          break;
       }
     }
   }
 
-  async addHeader(elem: WebElement) {
+  async addContainer(elem: WebElement) {
     var rect = await elem.getRect();
     if (rect.height === 0 || rect.width === 0) return;
-    this.data.push(new Header(rect.height, rect.width, rect.x, rect.y));
-  }
-
-  async addFooter(elem: WebElement) {
-    var rect = await elem.getRect();
-    this.data.push(new Footer(rect.height, rect.width, rect.x, rect.y));
+    this.data.push(new Container(rect.height, rect.width, rect.x, rect.y));
   }
 
   async addTitle(elem: WebElement) {

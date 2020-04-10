@@ -38,26 +38,8 @@ export abstract class Drawable {
   abstract generate(randomize: boolean, randomOffset: number): void;
 }
 
-export class Header extends Drawable {
-  name = ElementType.Header;
-  lines?: Line[];
-
-  constructor(h: number, w: number, x: number, y: number) {
-    super(h, w, x, y);
-  }
-
-  generate(randomize: boolean, randomOffset: number) {
-    this.lines = [];
-    var points = this.rectPoints(this.height, this.width, this.x, this.y);
-
-    if (randomize) this.mutate(points, randomOffset);
-
-    this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
-  }
-}
-
-export class Footer extends Drawable {
-  name = ElementType.Footer;
+export class Container extends Drawable {
+  name = ElementType.Container;
   lines?: Line[];
 
   constructor(h: number, w: number, x: number, y: number) {

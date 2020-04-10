@@ -1,4 +1,7 @@
 elements:
+  - type: container
+    paths:
+      - //div[text() and *]
   - type: header
     paths:
       - //header

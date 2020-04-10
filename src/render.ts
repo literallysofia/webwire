@@ -9,8 +9,7 @@ import { Data, IElement } from "./data";
 import { Config } from "./config";
 import { ElementType, Line, Paragraph, TextBlock } from "./utils";
 import {
-  Header,
-  Footer,
+  Container,
   Title,
   Text,
   NavLink,
@@ -74,12 +73,6 @@ export class Render {
   async draw() {
     for (let elem of this.data.elements) {
       switch (elem.name) {
-        case ElementType.Header:
-          this.drawHeader(elem);
-          break;
-        case ElementType.Footer:
-          this.drawFooter(elem);
-          break;
         case ElementType.Title:
           this.drawTitle(elem);
           break;
@@ -95,12 +88,6 @@ export class Render {
         case ElementType.Icon:
           await this.drawIcon(elem);
           break;
-        case ElementType.Button:
-          this.drawButton(elem);
-          break;
-        case ElementType.Burguer:
-          this.drawBurguer(elem);
-          break;
         case ElementType.TextField:
           this.drawTextField(elem);
           break;
@@ -110,8 +97,17 @@ export class Render {
         case ElementType.Radio:
           this.drawRadio(elem);
           break;
+        case ElementType.Button:
+          this.drawButton(elem);
+          break;
+        case ElementType.Burguer:
+          this.drawBurguer(elem);
+          break;
         case ElementType.Dropdown:
           this.drawDropdown(elem);
+          break;
+        case ElementType.Container:
+          this.drawContainer(elem);
           break;
       }
       this.bar.increment();
@@ -148,16 +144,10 @@ export class Render {
     return lines;
   }
 
-  drawHeader(elem: IElement) {
-    var header = new Header(elem.height, elem.width, elem.x, elem.y);
-    header.generate(this.config.randomize, this.config.randomOffset);
-    if (header.lines) this.createLines(header.lines);
-  }
-
-  drawFooter(elem: IElement) {
-    var footer = new Footer(elem.height, elem.width, elem.x, elem.y);
-    footer.generate(this.config.randomize, this.config.randomOffset);
-    if (footer.lines) this.createLines(footer.lines);
+  drawContainer(elem: IElement) {
+    var c = new Container(elem.height, elem.width, elem.x, elem.y);
+    c.generate(this.config.randomize, this.config.randomOffset);
+    if (c.lines) this.createLines(c.lines);
   }
 
   drawTitle(elem: IElement) {
