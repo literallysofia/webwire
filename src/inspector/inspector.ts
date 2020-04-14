@@ -4,7 +4,7 @@ import SVGO from "svgo";
 import { Browser } from "./browser";
 import { Config } from "./config";
 import { WebElement, IRectangle } from "selenium-webdriver";
-import { ElementType } from "./utils";
+import { ElementType, capitalize } from "./utils";
 import {
   UIElement,
   Header,
@@ -78,51 +78,8 @@ export class Inspector {
   async addElements(elems: WebElement[]) {
     for await (let elem of elems) {
       let type = await elem.getAttribute("data-type");
-
-      switch (type) {
-        case ElementType.Container:
-          this.addContainer(elem);
-          break;
-        case ElementType.Header:
-          this.addHeader(elem);
-          break;
-        case ElementType.Footer:
-          this.addFooter(elem);
-          break;
-        case ElementType.Title:
-          this.addTitle(elem);
-          break;
-        case ElementType.Link:
-          this.addLink(elem);
-          break;
-        case ElementType.Text:
-          this.addText(elem);
-          break;
-        case ElementType.Image:
-          this.addImage(elem);
-          break;
-        case ElementType.Icon:
-          this.addIcon(elem);
-          break;
-        case ElementType.TextField:
-          this.addTextField(elem);
-          break;
-        case ElementType.Checkbox:
-          this.addCheckbox(elem);
-          break;
-        case ElementType.Radio:
-          this.addRadio(elem);
-          break;
-        case ElementType.Button:
-          this.addButton(elem);
-          break;
-        case ElementType.Burguer:
-          this.addBurguer(elem);
-          break;
-        case ElementType.Dropdown:
-          this.addDropdown(elem);
-          break;
-      }
+      type = capitalize(type);
+      if (Object.getOwnPropertyNames(Inspector.prototype).indexOf(`add${type}`) >= 0) eval(`this.add${type}(elem)`);
     }
   }
 

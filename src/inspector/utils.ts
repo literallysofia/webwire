@@ -7,10 +7,14 @@ export enum ElementType {
   Text = "text",
   Image = "image",
   Icon = "icon",
-  TextField = "text-field",
+  TextField = "textField",
   Checkbox = "checkbox",
   Radio = "radio",
   Button = "button",
   Burguer = "burguer",
   Dropdown = "dropdown"
+}
+
+export function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }

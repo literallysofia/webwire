@@ -53,7 +53,7 @@ elements:
   - type: icon
     paths:
       - //*[name()="svg"]
-  - type: text-field
+  - type: textField
     paths:
       - //input[@type = 'text']
       - //input[@type = 'password']
