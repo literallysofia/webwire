@@ -109,6 +109,12 @@ export class Render {
         case ElementType.Container:
           this.drawContainer(elem);
           break;
+        case ElementType.Header:
+          this.drawContainer(elem);
+          break;
+        case ElementType.Footer:
+          this.drawContainer(elem);
+          break;
       }
       this.bar.increment();
     }

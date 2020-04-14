@@ -46,7 +46,7 @@ export class Inspector {
     for (let element of this.config.elements) {
       for (let path of element.paths) {
         let elems = await this.browser.findElements(path);
-        await this.browser.setDataType(elems, element.type, this.config.iconMinWidth);
+        await this.browser.setDataType(elems, element.type, this.config.iconMaxWidth);
       }
       for (let path of element.ignore) {
         let elems = await this.browser.findElements(path);

@@ -78,4 +78,4 @@ elements:
       - //select
       - //a[contains(@class, 'dropdown-toggle')]
 keepOriginalText: true
-iconMinWidth: 50
+iconMaxWidth: 50

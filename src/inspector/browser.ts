@@ -31,25 +31,45 @@ export class Browser {
     return this.driver.findElements(By.xpath(selector));
   }
 
-  async setDataType(elems: WebElement[], type: string, iconMinWidth: number) {
+  async setDataType(elems: WebElement[], type: string, iconMaxWidth: number) {
     for (let elem of elems) {
-      const displayed = await elem.isDisplayed();
-      const rect = await elem.getRect();
-      if (type === ElementType.Icon && rect.width > iconMinWidth) return;
-      if (type === ElementType.Container) {
-        const borderBottom = parseInt(await elem.getCssValue("border-bottom-width"), 10);
-        const borderLeft = parseInt(await elem.getCssValue("border-left-width"), 10);
-        const borderRight = parseInt(await elem.getCssValue("border-right-width"), 10);
-        const borderTop = parseInt(await elem.getCssValue("border-top-width"), 10);
-        if (borderBottom > 0 || borderLeft > 0 || borderRight > 0 || borderTop > 0) this.runDataTypeScript(elem, type);
-      } else if (displayed || type === ElementType.Checkbox || type === ElementType.Radio)
-        this.runDataTypeScript(elem, type);
+      const isElement = await this.isElement(elem, type, iconMaxWidth);
+      if (isElement) {
+        const script = "arguments[0].setAttribute('data-type', '" + type + "')";
+        await this.driver.executeScript(script, elem);
+      }
     }
   }
 
-  async runDataTypeScript(elem: WebElement, type: string) {
-    const script = "arguments[0].setAttribute('data-type', '" + type + "')";
-    await this.driver.executeScript(script, elem);
+  private async isElement(elem: WebElement, type: string, iconMaxWidth: number): Promise<boolean> {
+    const displayed = await elem.isDisplayed();
+
+    if (type === ElementType.Checkbox || type === ElementType.Radio) return true;
+    else if (type === ElementType.Container) {
+      const isContainer = await this.isContainer(elem);
+      if (isContainer) return true;
+      else return false;
+    } else if (type === ElementType.Icon) {
+      const isIcon = await this.isIcon(elem, iconMaxWidth);
+      if (isIcon) return true;
+      else return false;
+    } else if (displayed) return true;
+    else return false;
+  }
+
+  private async isIcon(elem: WebElement, iconMaxWidth: number): Promise<boolean> {
+    const rect = await elem.getRect();
+    if (rect.width <= iconMaxWidth) return true;
+    else return false;
+  }
+
+  private async isContainer(elem: WebElement): Promise<boolean> {
+    const borderBottom = parseInt(await elem.getCssValue("border-bottom-width"), 10);
+    const borderLeft = parseInt(await elem.getCssValue("border-left-width"), 10);
+    const borderRight = parseInt(await elem.getCssValue("border-right-width"), 10);
+    const borderTop = parseInt(await elem.getCssValue("border-top-width"), 10);
+    if (borderBottom > 0 || borderLeft > 0 || borderRight > 0 || borderTop > 0) return true;
+    else return false;
   }
 
   async removeDataType(elems: WebElement[]) {
