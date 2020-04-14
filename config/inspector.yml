@@ -38,7 +38,7 @@ elements:
       - //a[*[name()="svg"]]
       - //small[ancestor::h1[text()]]
       - //li[.//*[name()="svg"]]
-  - type: nav-link
+  - type: link
     paths:
       - //ul/li/a[text()]
       - //nav//a[text()]
@@ -77,20 +77,5 @@ elements:
     paths:
       - //select
       - //a[contains(@class, 'dropdown-toggle')]
-fonts:
-  - "'Indie Flower', cursive"
-  - "'Kalam', cursive"
-  - "'Amatic SC', cursive"
-  - "'Shadows Into Light', cursive"
-  - "'Caveat', cursive"
-  - "'Caveat Brush', cursive"
-  - "'Nothing You Could Do', cursive"
 keepOriginalText: true
 iconMinWidth: 50
-randomize: true
-randomOffset: 5
-options:
-  roughness: 1.3
-  bowing: 5
-  strokeWidth: 1.5
-  hachureGap: 4

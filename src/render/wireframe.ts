@@ -1,10 +1,10 @@
 import puppeteer from "puppeteer";
 
-class ImageGenerator {
+class Wireframe {
   fpath: string;
 
   constructor(fileName: string) {
-    this.fpath = "file://" + __dirname + "/../generated/" + fileName;
+    this.fpath = "file://" + __dirname + "/../../generated/" + fileName;
   }
 
   async capture() {
@@ -21,5 +21,5 @@ class ImageGenerator {
   }
 }
 
-const generator = new ImageGenerator("wireframe.html");
-generator.capture();
+const wireframe = new Wireframe("wireframe.html");
+wireframe.capture();

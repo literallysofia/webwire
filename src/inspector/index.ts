@@ -1,49 +1,45 @@
 import commandLineArgs from "command-line-args";
 import yaml from "js-yaml";
-import fs from "fs";
+import { readFileSync } from "fs";
 import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
+import { SingleBar, Presets } from "cli-progress";
+import colors from "colors";
 import { Browser } from "./browser";
 import { Config } from "./config";
 import { Inspector } from "./inspector";
-
-import cliProgress, { SingleBar } from "cli-progress";
-import colors from "colors";
 
 const website = commandLineArgs([{ name: "src", alias: "s", type: String, defaultOption: true }]);
 const browser = new Browser("chrome");
 
 async function generateData() {
-  var configFile = fs.readFileSync("./config.yml", "utf8");
-  var jsonConfig = yaml.safeLoad(configFile);
+  const configFile = readFileSync("./config/inspector.yml", "utf8");
+  const jsonConfig = yaml.safeLoad(configFile);
 
-  var jsonConvert: JsonConvert = new JsonConvert();
+  const jsonConvert = new JsonConvert();
   //jsonConvert.operationMode = OperationMode.LOGGING;
   jsonConvert.ignorePrimitiveChecks = false; // don't allow assigning number to string etc.
   jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL; // never allow null
 
-  var nBar = new SingleBar(
+  const nBar = new SingleBar(
     {
       format:
-        "Page Normalization |" +
-        colors.cyan("{bar}") +
-        "| {percentage}% || {value}/{total} Web Elements || ETA: {eta}s",
+        "Page Normalization |" + colors.cyan("{bar}") + "| {percentage}% || {value}/{total} Web Elements || ETA: {eta}s"
     },
-    cliProgress.Presets.shades_classic
+    Presets.shades_classic
   );
 
-  var fBar = new SingleBar(
+  const fBar = new SingleBar(
     {
       format:
         "Element Extraction |" +
         colors.magenta("{bar}") +
-        "| {percentage}% || {value}/{total} Web Elements || ETA: {eta}s",
+        "| {percentage}% || {value}/{total} Web Elements || ETA: {eta}s"
     },
-    cliProgress.Presets.shades_classic
+    Presets.shades_classic
   );
 
-  var config: Config;
   try {
-    config = jsonConvert.deserializeObject(jsonConfig, Config);
+    const config = jsonConvert.deserializeObject(jsonConfig, Config);
     nBar.start(config.elements.length, 0);
 
     const inspector = new Inspector(browser, config, nBar, fBar);

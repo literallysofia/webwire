@@ -1,31 +1,13 @@
 import { JsonObject, JsonProperty } from "json2typescript";
 import { LoremIpsum } from "lorem-ipsum";
 
-@JsonObject("XElement")
-export class XElement {
-  @JsonProperty("type", String)
-  type: string = "";
-
-  @JsonProperty("paths", [String])
-  paths: string[] = [];
-
-  @JsonProperty("ignore", [String], true)
-  ignore: string[] = [];
-}
-
 @JsonObject("Config")
 export class Config {
-  @JsonProperty("elements", [XElement])
-  elements: XElement[] = [];
-
   @JsonProperty("fonts", [String])
   fonts: string[] = [];
 
   @JsonProperty("keepOriginalText", Boolean)
   keepOriginalText: boolean = true;
-
-  @JsonProperty("iconMinWidth", Number)
-  iconMinWidth: number = 50;
 
   @JsonProperty("randomize", Boolean)
   randomize: boolean = false;

@@ -1,11 +1,11 @@
-import fs from "fs";
+import { writeFile, existsSync, mkdirSync } from "fs";
 import xmlserializer from "xmlserializer";
 import { SingleBar } from "cli-progress";
 import rough from "roughjs";
 import { RoughSVG } from "roughjs/bin/svg";
 import svgpath from "svgpath";
 import { JSDOM } from "jsdom";
-import { Data, IElement } from "./data";
+import { Data, UIElement } from "./data";
 import { Config } from "./config";
 import { ElementType, Line, Paragraph, TextBlock } from "./utils";
 import {
@@ -20,13 +20,13 @@ import {
   Dropdown,
   TextField,
   Radio,
-  Checkbox,
+  Checkbox
 } from "./drawable";
 
 /* VARIABLES */
 const { document } = new JSDOM(`...`).window;
 const DOMParser = new JSDOM(`...`).window.DOMParser;
-var namespaceURI = "http://www.w3.org/2000/svg";
+const namespaceURI = "http://www.w3.org/2000/svg";
 
 export class Render {
   data: Data;
@@ -51,14 +51,14 @@ export class Render {
     const style = document.createElementNS(namespaceURI, "style");
     style.setAttribute("type", "text/css");
 
-    var fontFamily = this.config.fontFamily.substr(
+    const fontFamily = this.config.fontFamily.substr(
       this.config.fontFamily.indexOf("'") + 1,
       this.config.fontFamily.lastIndexOf("'") - 1
     );
-    var font = fontFamily.split(" ").join("+");
+    const font = fontFamily.split(" ").join("+");
 
-    var importFont = "@import url('https://fonts.googleapis.com/css2?family=" + font + "&display=swap')";
-    var textnode = document.createTextNode(importFont);
+    const importFont = "@import url('https://fonts.googleapis.com/css2?family=" + font + "&display=swap')";
+    const textnode = document.createTextNode(importFont);
     style.appendChild(textnode);
     defs.appendChild(style);
     svg.append(defs);
@@ -71,7 +71,7 @@ export class Render {
   }
 
   async draw() {
-    for (let elem of this.data.elements) {
+    for await (let elem of this.data.elements) {
       switch (elem.name) {
         case ElementType.Title:
           this.drawTitle(elem);
@@ -86,7 +86,7 @@ export class Render {
           this.drawImage(elem);
           break;
         case ElementType.Icon:
-          await this.drawIcon(elem);
+          this.drawIcon(elem);
           break;
         case ElementType.TextField:
           this.drawTextField(elem);
@@ -122,8 +122,8 @@ export class Render {
   }
 
   getTextLines(words: string[], targetWidth: number, fsize: number): Paragraph[] {
-    var lines: Paragraph[] = [];
-    var line;
+    let lines: Paragraph[] = [];
+    let line;
 
     for (let i = 0, n = words.length; i < n; i++) {
       let lineText: string = (line ? line.text + " " : "") + words[i];
@@ -144,19 +144,28 @@ export class Render {
     return lines;
   }
 
-  drawContainer(elem: IElement) {
-    var c = new Container(elem.height, elem.width, elem.x, elem.y);
+  drawContainer(elem: UIElement) {
+    const c = new Container(elem.height, elem.width, elem.x, elem.y);
     c.generate(this.config.randomize, this.config.randomOffset);
     if (c.lines) this.createLines(c.lines);
   }
 
-  drawTitle(elem: IElement) {
-    var title = new Title(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lineHeight, elem.align, elem.text);
+  drawTitle(elem: UIElement) {
+    const title = new Title(
+      elem.height,
+      elem.width,
+      elem.x,
+      elem.y,
+      elem.fsize,
+      elem.lheight,
+      elem.align,
+      elem.content
+    );
     if (!this.config.keepOriginalText) title.setTextRandom(this.config.getRandomSentence());
     title.generate(this.config.randomize, this.config.randomOffset);
 
     if (title.textBlock) {
-      var lines = this.getTextLines(title.textBlock.words, title.width, title.fsize);
+      let lines = this.getTextLines(title.textBlock.words, title.width, title.fsize);
       while (lines.length > title.height / title.lineHeight) {
         lines.pop();
       }
@@ -164,35 +173,44 @@ export class Render {
     }
   }
 
-  drawText(elem: IElement) {
-    var text = new Text(elem.height, elem.width, elem.x, elem.y, elem.nlines);
+  drawText(elem: UIElement) {
+    const text = new Text(elem.height, elem.width, elem.x, elem.y, elem.nlines);
     text.generate(this.config.randomize, this.config.randomOffset);
     if (text.lines) this.createLines(text.lines);
   }
 
-  drawNavLink(elem: IElement) {
-    var link = new NavLink(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lineHeight, elem.align, elem.text);
+  drawNavLink(elem: UIElement) {
+    const link = new NavLink(
+      elem.height,
+      elem.width,
+      elem.x,
+      elem.y,
+      elem.fsize,
+      elem.lheight,
+      elem.align,
+      elem.content
+    );
     link.generate(this.config.randomize, this.config.randomOffset);
     if (link.textBlock) this.createText(link.textBlock);
   }
 
-  drawImage(elem: IElement) {
-    var image = new Image(elem.height, elem.width, elem.x, elem.y);
+  drawImage(elem: UIElement) {
+    const image = new Image(elem.height, elem.width, elem.x, elem.y);
     image.generate(this.config.randomize, this.config.randomOffset);
     if (image.lines) this.createLines(image.lines);
   }
 
-  async drawIcon(elem: IElement) {
-    var icon = new Icon(elem.height, elem.width, elem.x, elem.y, elem.svg);
+  async drawIcon(elem: UIElement) {
+    const icon = new Icon(elem.height, elem.width, elem.x, elem.y, elem.svg);
     await icon.generate(this.config.randomize, this.config.randomOffset);
-    var parser = new DOMParser();
-    var doc = parser.parseFromString(icon.svg, "image/svg+xml");
-    var svg = doc.firstChild as SVGSVGElement;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(icon.svg, "image/svg+xml");
+    const svg = doc.firstChild as SVGSVGElement;
     this.createIcon(svg, icon.x, icon.y, icon.height, icon.width);
   }
 
-  drawButton(elem: IElement) {
-    var btn = new Button(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.text);
+  drawButton(elem: UIElement) {
+    const btn = new Button(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.content);
     btn.generate(this.config.randomize, this.config.randomOffset);
 
     if (this.config.keepOriginalText && btn.textBlock) {
@@ -201,33 +219,33 @@ export class Render {
     if (btn.lines) this.createLines(btn.lines);
   }
 
-  async drawBurguer(elem: IElement) {
-    var burguer = new Burguer(elem.height, elem.width, elem.x, elem.y);
+  async drawBurguer(elem: UIElement) {
+    const burguer = new Burguer(elem.height, elem.width, elem.x, elem.y);
     burguer.generate(this.config.randomize, this.config.randomOffset);
     if (burguer.lines) this.createLines(burguer.lines);
   }
 
-  drawTextField(elem: IElement) {
-    var tfield = new TextField(elem.height, elem.width, elem.x, elem.y);
-    tfield.generate(this.config.randomize, this.config.randomOffset);
-    if (tfield.lines) this.createLines(tfield.lines);
+  drawTextField(elem: UIElement) {
+    const field = new TextField(elem.height, elem.width, elem.x, elem.y);
+    field.generate(this.config.randomize, this.config.randomOffset);
+    if (field.lines) this.createLines(field.lines);
   }
 
-  drawCheckbox(elem: IElement) {
-    var cbox = new Checkbox(elem.height, elem.width, elem.x, elem.y);
+  drawCheckbox(elem: UIElement) {
+    const cbox = new Checkbox(elem.height, elem.width, elem.x, elem.y);
     cbox.generate(this.config.randomize, this.config.randomOffset);
     if (cbox.lines) this.createLines(cbox.lines);
   }
 
-  drawRadio(elem: IElement) {
-    var radio = new Radio(elem.height, elem.width, elem.x, elem.y);
+  drawRadio(elem: UIElement) {
+    const radio = new Radio(elem.height, elem.width, elem.x, elem.y);
     radio.generate(this.config.randomize, this.config.randomOffset);
     if (radio.ellipse)
       this.createEllipse(radio.ellipse.cx, radio.ellipse.cy, radio.ellipse.width, radio.ellipse.height, true);
   }
 
-  drawDropdown(elem: IElement) {
-    var drop = new Dropdown(elem.height, elem.width, elem.x, elem.y);
+  drawDropdown(elem: UIElement) {
+    const drop = new Dropdown(elem.height, elem.width, elem.x, elem.y);
     drop.generate(this.config.randomize, this.config.randomOffset);
     if (drop.lines) this.createLines(drop.lines);
   }
@@ -271,9 +289,9 @@ export class Render {
   }
 
   createEllipse(cx: number, cy: number, width: number, height: number, dot: boolean) {
-    var shapeNode = this.roughCanvas.ellipse(cx, cy, width, height);
+    const shapeNode = this.roughCanvas.ellipse(cx, cy, width, height);
     if (dot) {
-      var center = this.roughCanvas
+      const center = this.roughCanvas
         .ellipse(cx, cy, width / 2, height / 2, { fill: "black", fillStyle: "solid" })
         .getElementsByTagName("path")[0];
       shapeNode.appendChild(center);
@@ -282,11 +300,11 @@ export class Render {
   }
 
   createIcon(svg: SVGSVGElement, x: number, y: number, height: number, width: number) {
-    var drawnPaths = [];
+    let drawnPaths = [];
     for (let i = 0; i < svg.children.length; i++) {
-      let path = svg.children[i].getAttribute("d");
+      const path = svg.children[i].getAttribute("d");
       if (path) {
-        let svgPath = svgpath(path)
+        const svgPath = svgpath(path)
           .abs()
           .round(1)
           .toString();
@@ -295,7 +313,7 @@ export class Render {
           this.roughCanvas
             .path(svgPath, {
               roughness: 0.3,
-              bowing: 2,
+              bowing: 2
             })
             .getElementsByTagName("path")[0]
         );
@@ -308,7 +326,7 @@ export class Render {
     svg.setAttribute("width", width.toString());
     svg.setAttribute("overflow", "visible");
     svg.innerHTML = "";
-    drawnPaths.forEach((path) => {
+    drawnPaths.forEach(path => {
       path.setAttribute("vector-effect", "non-scaling-stroke");
       svg.appendChild(path);
     });
@@ -316,22 +334,22 @@ export class Render {
   }
 
   export() {
-    var dir = "./generated";
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+    const dir = "./generated";
+    if (!existsSync(dir)) mkdirSync(dir);
 
     //generates svg file
-    var svg = xmlserializer.serializeToString(this.canvas);
-    fs.writeFile(dir + "/wireframe.svg", svg, function(err) {
+    const svg = xmlserializer.serializeToString(this.canvas);
+    writeFile(dir + "/wireframe.svg", svg, function(err) {
       if (err) {
         console.log(err);
       }
     });
 
     //generates html file
-    var doc = document.implementation.createHTMLDocument("Wireframe");
+    const doc = document.implementation.createHTMLDocument("Wireframe");
     doc.body.appendChild(this.canvas);
-    var html = xmlserializer.serializeToString(doc);
-    fs.writeFile(dir + "/wireframe.html", html, function(err) {
+    const html = xmlserializer.serializeToString(doc);
+    writeFile(dir + "/wireframe.html", html, function(err) {
       if (err) {
         console.log(err);
       }

@@ -1,7 +1,7 @@
 import { JsonObject, JsonProperty } from "json2typescript";
 
-@JsonObject("IElement")
-export class IElement {
+@JsonObject("UIElement")
+export class UIElement {
   @JsonProperty("name", String)
   name: string = "";
 
@@ -20,14 +20,14 @@ export class IElement {
   @JsonProperty("fsize", Number, true)
   fsize: number = 0;
 
-  @JsonProperty("lineHeight", Number, true)
-  lineHeight: number = 0;
+  @JsonProperty("lheight", Number, true)
+  lheight: number = 0;
 
   @JsonProperty("align", String, true)
   align: string = "";
 
-  @JsonProperty("text", String, true)
-  text: string = "";
+  @JsonProperty("content", String, true)
+  content: string = "";
 
   @JsonProperty("nlines", Number, true)
   nlines: number = 0;
@@ -53,6 +53,6 @@ export class Data {
     width: 0
   };
 
-  @JsonProperty("elements", [IElement])
-  elements: IElement[] = [];
+  @JsonProperty("elements", [UIElement])
+  elements: UIElement[] = [];
 }
