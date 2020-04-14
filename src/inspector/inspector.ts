@@ -76,55 +76,51 @@ export class Inspector {
   }
 
   async addElements(elems: WebElement[]) {
-    for (let elem of elems) {
+    for await (let elem of elems) {
       let type = await elem.getAttribute("data-type");
 
       switch (type) {
         case ElementType.Container:
-          await this.addContainer(elem);
+          this.addContainer(elem);
           break;
         case ElementType.Header:
-          await this.addHeader(elem);
+          this.addHeader(elem);
           break;
         case ElementType.Footer:
-          await this.addFooter(elem);
+          this.addFooter(elem);
           break;
         case ElementType.Title:
-          await this.addTitle(elem);
+          this.addTitle(elem);
           break;
         case ElementType.Link:
-          if (this.config.keepOriginalText) await this.addNavLink(elem);
-          else await this.addText(elem);
+          this.addLink(elem);
           break;
         case ElementType.Text:
-          await this.addText(elem);
+          this.addText(elem);
           break;
         case ElementType.Image:
-          await this.addImage(elem);
+          this.addImage(elem);
           break;
         case ElementType.Icon:
-          await this.addIcon(elem);
+          this.addIcon(elem);
           break;
         case ElementType.TextField:
-          await this.addTextField(elem);
+          this.addTextField(elem);
           break;
         case ElementType.Checkbox:
-          await this.addCheckbox(elem);
+          this.addCheckbox(elem);
           break;
         case ElementType.Radio:
-          await this.addRadio(elem);
+          this.addRadio(elem);
           break;
         case ElementType.Button:
-          await this.addButton(elem);
+          this.addButton(elem);
           break;
         case ElementType.Burguer:
-          await this.addBurguer(elem);
+          this.addBurguer(elem);
           break;
         case ElementType.Dropdown:
-          await this.addDropdown(elem);
-          break;
-        default:
-          await this.addContainer(elem);
+          this.addDropdown(elem);
           break;
       }
     }
@@ -153,28 +149,39 @@ export class Inspector {
     const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
     const lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
     const textAlign = await elem.getCssValue("text-align");
-    let text = "";
-    if (this.config.keepOriginalText) text = await elem.getText();
 
-    const title = new Title(rect.height, rect.width, rect.x, rect.y, fontSize, lineHeight, textAlign, text);
+    const title = new Title(rect.height, rect.width, rect.x, rect.y, fontSize, lineHeight, textAlign);
+    if (this.config.keepOriginalText) {
+      const text = await elem.getText();
+      title.setContent(text);
+    }
     this.data.push(title);
+  }
+
+  async addLink(elem: WebElement) {
+    if (!this.config.keepOriginalText) {
+      this.addText(elem);
+      return;
+    }
+
+    const rect = await this.getRectangle(elem);
+    const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
+    const lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
+    const textAlign = await elem.getCssValue("text-align");
+
+    const link = new Link(rect.height, rect.width, rect.x, rect.y, fontSize, lineHeight, textAlign);
+    let text = await elem.getText();
+    text = text.split("\n")[0];
+    link.setContent(text);
+
+    this.data.push(link);
   }
 
   async addText(elem: WebElement) {
     const rect = await this.getRectangle(elem);
     const lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
-    const numLines = Math.round(rect.height / lineHeight);
-    this.data.push(new Text(rect.height, rect.width, rect.x, rect.y, numLines));
-  }
-
-  async addNavLink(elem: WebElement) {
-    const rect = await this.getRectangle(elem);
-    const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
-    const lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
-    const textAlign = await elem.getCssValue("text-align");
-    let text = await elem.getText();
-    text = text.split("\n")[0];
-    this.data.push(new Link(rect.height, rect.width, rect.x, rect.y, fontSize, lineHeight, textAlign, text));
+    const nlines = Math.round(rect.height / lineHeight);
+    this.data.push(new Text(rect.height, rect.width, rect.x, rect.y, nlines));
   }
 
   async addImage(elem: WebElement) {
@@ -217,10 +224,14 @@ export class Inspector {
 
   async addButton(elem: WebElement) {
     const rect = await elem.getRect();
-    const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
-    let text = "";
-    if (this.config.keepOriginalText) text = await elem.getText();
-    this.data.push(new Button(rect.height, rect.width, rect.x, rect.y, fontSize, text));
+
+    const btn = new Button(rect.height, rect.width, rect.x, rect.y);
+    if (this.config.keepOriginalText) {
+      const text = await elem.getText();
+      const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
+      btn.setContent(text, fontSize);
+    }
+    this.data.push(btn);
   }
 
   async addBurguer(elem: WebElement) {

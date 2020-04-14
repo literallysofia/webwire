@@ -4,7 +4,7 @@ export enum ElementType {
   Container = "container",
   Title = "title",
   Text = "text",
-  NavLink = "nav-link",
+  NavLink = "link",
   Image = "image",
   Icon = "icon",
   TextField = "text-field",

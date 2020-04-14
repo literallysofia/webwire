@@ -51,13 +51,16 @@ class TextBlock extends UIElement {
   fsize: number;
   lheight: number;
   align: string;
-  content: string;
+  content?: string;
 
-  constructor(h: number, w: number, x: number, y: number, fs: number, lh: number, a: string, c: string) {
+  constructor(h: number, w: number, x: number, y: number, fs: number, lh: number, a: string) {
     super(h, w, x, y);
     this.fsize = fs;
     this.lheight = lh;
     this.align = a;
+  }
+
+  setContent(c: string) {
     this.content = c;
   }
 }
@@ -65,16 +68,16 @@ class TextBlock extends UIElement {
 export class Title extends TextBlock {
   name = ElementType.Title;
 
-  constructor(h: number, w: number, x: number, y: number, fs: number, lh: number, a: string, c: string) {
-    super(h, w, x, y, fs, lh, a, c);
+  constructor(h: number, w: number, x: number, y: number, fs: number, lh: number, a: string) {
+    super(h, w, x, y, fs, lh, a);
   }
 }
 
 export class Link extends TextBlock {
   name = ElementType.Link;
 
-  constructor(h: number, w: number, x: number, y: number, fs: number, lh: number, a: string, c: string) {
-    super(h, w, x, y, fs, lh, a, c);
+  constructor(h: number, w: number, x: number, y: number, fs: number, lh: number, a: string) {
+    super(h, w, x, y, fs, lh, a);
   }
 }
 
@@ -120,13 +123,16 @@ export class Burguer extends UIElement {
 
 export class Button extends UIElement {
   name = ElementType.Button;
-  fsize: number;
-  content: string;
+  fsize?: number;
+  content?: string;
 
-  constructor(h: number, w: number, x: number, y: number, fs: number, c: string) {
+  constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
-    this.fsize = fs;
+  }
+
+  setContent(c: string, fs: number) {
     this.content = c;
+    this.fsize = fs;
   }
 }
 
