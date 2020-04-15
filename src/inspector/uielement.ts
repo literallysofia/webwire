@@ -1,5 +1,3 @@
-import { ElementType } from "./utils";
-
 export abstract class UIElement {
   height: number;
   width: number;
@@ -19,7 +17,7 @@ export abstract class UIElement {
  */
 
 export class Header extends UIElement {
-  name = ElementType.Header;
+  name = "header";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -27,7 +25,7 @@ export class Header extends UIElement {
 }
 
 export class Footer extends UIElement {
-  name = ElementType.Footer;
+  name = "footer";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -35,7 +33,7 @@ export class Footer extends UIElement {
 }
 
 export class Container extends UIElement {
-  name = ElementType.Container;
+  name = "container";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -66,7 +64,7 @@ class TextBlock extends UIElement {
 }
 
 export class Title extends TextBlock {
-  name = ElementType.Title;
+  name = "title";
 
   constructor(h: number, w: number, x: number, y: number, fs: number, lh: number, a: string) {
     super(h, w, x, y, fs, lh, a);
@@ -74,7 +72,7 @@ export class Title extends TextBlock {
 }
 
 export class Link extends TextBlock {
-  name = ElementType.Link;
+  name = "link";
 
   constructor(h: number, w: number, x: number, y: number, fs: number, lh: number, a: string) {
     super(h, w, x, y, fs, lh, a);
@@ -86,7 +84,7 @@ export class Link extends TextBlock {
  */
 
 export class Text extends UIElement {
-  name = ElementType.Text;
+  name = "text";
   nlines: number;
 
   constructor(h: number, w: number, x: number, y: number, l: number) {
@@ -96,7 +94,7 @@ export class Text extends UIElement {
 }
 
 export class Image extends UIElement {
-  name = ElementType.Image;
+  name = "image";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -104,7 +102,7 @@ export class Image extends UIElement {
 }
 
 export class Icon extends UIElement {
-  name = ElementType.Icon;
+  name = "icon";
   svg: string;
 
   constructor(h: number, w: number, x: number, y: number, s: string) {
@@ -114,7 +112,7 @@ export class Icon extends UIElement {
 }
 
 export class Burguer extends UIElement {
-  name = ElementType.Burguer;
+  name = "burguer";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -122,7 +120,7 @@ export class Burguer extends UIElement {
 }
 
 export class Button extends UIElement {
-  name = ElementType.Button;
+  name = "button";
   fsize?: number;
   content?: string;
 
@@ -137,7 +135,7 @@ export class Button extends UIElement {
 }
 
 export class Dropdown extends UIElement {
-  name = ElementType.Dropdown;
+  name = "dropdown";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -145,7 +143,7 @@ export class Dropdown extends UIElement {
 }
 
 export class TextField extends UIElement {
-  name = ElementType.TextField;
+  name = "textField";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -153,7 +151,7 @@ export class TextField extends UIElement {
 }
 
 export class Radio extends UIElement {
-  name = ElementType.Radio;
+  name = "radio";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -161,7 +159,7 @@ export class Radio extends UIElement {
 }
 
 export class Checkbox extends UIElement {
-  name = ElementType.Checkbox;
+  name = "checkbox";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);

@@ -48,11 +48,11 @@ elements:
   - type: image
     paths:
       - //img
-      - //*[name()="svg"]
-      - //*[name()="canvas"]
+      - //*[name()='svg']
+      - //*[name()='canvas']
   - type: icon
     paths:
-      - //*[name()="svg"]
+      - //*[name()="svg" and @width <= 50]
   - type: textField
     paths:
       - //input[@type = 'text']
@@ -78,4 +78,3 @@ elements:
       - //select
       - //a[contains(@class, 'dropdown-toggle')]
 keepOriginalText: true
-iconMaxWidth: 50

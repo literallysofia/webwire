@@ -4,7 +4,7 @@ import SVGO from "svgo";
 import { Browser } from "./browser";
 import { Config } from "./config";
 import { WebElement, IRectangle } from "selenium-webdriver";
-import { ElementType, capitalize } from "./utils";
+import { capitalize } from "./utils";
 import {
   UIElement,
   Header,
@@ -20,16 +20,17 @@ import {
   Dropdown,
   TextField,
   Radio,
-  Checkbox
+  Checkbox,
 } from "./uielement";
 
 export class Inspector {
   browser: Browser;
   config: Config;
   data: UIElement[];
+  elemTypes: string[];
   size = {
     height: 0,
-    width: 0
+    width: 0,
   };
   nBar: SingleBar;
   fBar: SingleBar;
@@ -38,20 +39,24 @@ export class Inspector {
     this.browser = b;
     this.config = c;
     this.data = [];
+    this.elemTypes = [];
     this.nBar = nb;
     this.fBar = fb;
   }
 
   async normalize() {
+    await this.browser.setSVGDimensions();
+
     for (let element of this.config.elements) {
       for (let path of element.paths) {
         let elems = await this.browser.findElements(path);
-        await this.browser.setDataType(elems, element.type, this.config.iconMaxWidth);
+        await this.browser.setDataType(elems, element.type);
       }
       for (let path of element.ignore) {
         let elems = await this.browser.findElements(path);
         await this.browser.removeDataType(elems);
       }
+      this.elemTypes.push(element.type);
       this.nBar.increment();
     }
     this.nBar.stop();
@@ -61,7 +66,7 @@ export class Inspector {
     const elements = await this.browser.findElements("//*[@data-type]");
     this.fBar.start(elements.length, 0);
 
-    for (let type of Object.values(ElementType)) {
+    for (let type of this.elemTypes) {
       let xpath = "//*[@data-type='" + type + "']";
       let foundElements = await this.browser.findElements(xpath);
       await this.addElements(foundElements);
@@ -80,6 +85,10 @@ export class Inspector {
       let type = await elem.getAttribute("data-type");
       type = capitalize(type);
       if (Object.getOwnPropertyNames(Inspector.prototype).indexOf(`add${type}`) >= 0) eval(`this.add${type}(elem)`);
+      else
+        console.error(
+          `\n> ERROR: Method 'add${type}' does not exist.\nPlease fix the type name '${type}' in the configuration file as instructed or create a new method.`
+        );
     }
   }
 
@@ -98,7 +107,14 @@ export class Inspector {
   async addContainer(elem: WebElement) {
     const rect = await elem.getRect();
     if (rect.height === 0 || rect.width === 0) return;
-    this.data.push(new Container(rect.height, rect.width, rect.x, rect.y));
+
+    const borderBottom = parseInt(await elem.getCssValue("border-bottom-width"), 10);
+    const borderLeft = parseInt(await elem.getCssValue("border-left-width"), 10);
+    const borderRight = parseInt(await elem.getCssValue("border-right-width"), 10);
+    const borderTop = parseInt(await elem.getCssValue("border-top-width"), 10);
+    if (borderBottom > 0 || borderLeft > 0 || borderRight > 0 || borderTop > 0) {
+      this.data.push(new Container(rect.height, rect.width, rect.x, rect.y));
+    }
   }
 
   async addTitle(elem: WebElement) {
@@ -155,10 +171,10 @@ export class Inspector {
         {
           removeAttrs: {
             attrs:
-              "(stroke|fill|fill-opacity|data-type|fill-rule|class|stroke-linecap|stroke-linejoin|stroke-width|aria-hidden|rx|ry)"
-          }
-        }
-      ]
+              "(stroke|fill|fill-opacity|data-type|fill-rule|class|stroke-linecap|stroke-linejoin|stroke-width|aria-hidden|rx|ry)",
+          },
+        },
+      ],
     });
     const optimizedSvg = await svgo.optimize(svg);
     this.data.push(new Icon(rect.height, rect.width, rect.x, rect.y, optimizedSvg.data));
@@ -218,7 +234,7 @@ export class Inspector {
       x: rec.x,
       y: rec.y,
       width: rec.width - paddingLeft - paddingRight,
-      height: rec.height - paddingTop - paddingBottom
+      height: rec.height - paddingTop - paddingBottom,
     };
     return rect;
   }
@@ -228,11 +244,11 @@ export class Inspector {
     if (!existsSync(dir)) mkdirSync(dir);
     const json = JSON.stringify({
       size: this.size,
-      elements: this.data
+      elements: this.data,
     });
     writeFile(dir + "/data.json", json, function(err) {
       if (err) {
-        console.log(err);
+        console.error(err);
       } else console.log("\n> Data saved with success!");
     });
   }

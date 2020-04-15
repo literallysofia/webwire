@@ -19,7 +19,4 @@ export class Config {
 
   @JsonProperty("keepOriginalText", Boolean)
   keepOriginalText: boolean = true;
-
-  @JsonProperty("iconMaxWidth", Number)
-  iconMaxWidth: number = 50;
 }

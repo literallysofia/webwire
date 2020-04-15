@@ -47,7 +47,7 @@ async function generateData() {
     await inspector.fetch();
     inspector.export();
   } catch (e) {
-    console.log(<Error>e);
+    console.error(<Error>e);
   }
 }
 
