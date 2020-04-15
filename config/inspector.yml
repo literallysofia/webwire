@@ -1,15 +1,15 @@
 elements:
-  - type: container
+  - type: Container
     paths:
       - //div[text() and *]
-  - type: header
+  - type: Header
     paths:
       - //header
       - //nav[contains(@class, 'navbar')]
-  - type: footer
+  - type: Footer
     paths:
       - //footer
-  - type: title
+  - type: Title
     paths:
       - //h1[text()]
       - //h2[text()]
@@ -17,7 +17,7 @@ elements:
       - //h4[text()]
       - //h5[text()]
       - //h6[text()]
-  - type: text
+  - type: Text
     paths:
       - //p[text()]
       - //a[text()]
@@ -38,42 +38,42 @@ elements:
       - //a[*[name()="svg"]]
       - //small[ancestor::h1[text()]]
       - //li[.//*[name()="svg"]]
-  - type: link
+  - type: Link
     paths:
       - //ul/li/a[text()]
       - //nav//a[text()]
       - //nav//a[contains(@class, 'nav-link')]
     ignore:
       - //ul/li/a[contains(@class, 'dropdown-toggle')]
-  - type: image
+  - type: Image
     paths:
       - //img
       - //*[name()='svg']
       - //*[name()='canvas']
-  - type: icon
+  - type: Icon
     paths:
       - //*[name()="svg" and @width <= 50]
-  - type: textField
+  - type: TextField
     paths:
       - //input[@type = 'text']
       - //input[@type = 'password']
       - //input[@type = 'email']
       - //input[@type = 'search']
       - //input[@type = 'url']
-  - type: checkbox
+  - type: Checkbox
     paths:
       - //input[@type = 'checkbox']
-  - type: radio
+  - type: Radio
     paths:
       - //input[@type = 'radio']
-  - type: button
+  - type: Button
     paths:
       - //button
       - //a[contains(@class, 'btn')]
-  - type: burguer
+  - type: Burguer
     paths:
       - //button[@aria-label = 'Toggle navigation' and contains(@class, 'navbar-toggler')]
-  - type: dropdown
+  - type: Dropdown
     paths:
       - //select
       - //a[contains(@class, 'dropdown-toggle')]

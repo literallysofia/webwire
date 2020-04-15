@@ -4,7 +4,6 @@ import SVGO from "svgo";
 import { Browser } from "./browser";
 import { Config } from "./config";
 import { WebElement, IRectangle } from "selenium-webdriver";
-import { capitalize } from "./utils";
 import {
   UIElement,
   Header,
@@ -27,7 +26,7 @@ export class Inspector {
   browser: Browser;
   config: Config;
   data: UIElement[];
-  elemTypes: string[];
+  types: string[];
   size = {
     height: 0,
     width: 0,
@@ -39,7 +38,7 @@ export class Inspector {
     this.browser = b;
     this.config = c;
     this.data = [];
-    this.elemTypes = [];
+    this.types = [];
     this.nBar = nb;
     this.fBar = fb;
   }
@@ -56,7 +55,7 @@ export class Inspector {
         let elems = await this.browser.findElements(path);
         await this.browser.removeDataType(elems);
       }
-      this.elemTypes.push(element.type);
+      this.types.push(element.type);
       this.nBar.increment();
     }
     this.nBar.stop();
@@ -66,7 +65,7 @@ export class Inspector {
     const elements = await this.browser.findElements("//*[@data-type]");
     this.fBar.start(elements.length, 0);
 
-    for (let type of this.elemTypes) {
+    for (let type of this.types) {
       let xpath = "//*[@data-type='" + type + "']";
       let foundElements = await this.browser.findElements(xpath);
       await this.addElements(foundElements);
@@ -83,7 +82,6 @@ export class Inspector {
   async addElements(elems: WebElement[]) {
     for await (let elem of elems) {
       let type = await elem.getAttribute("data-type");
-      type = capitalize(type);
       if (Object.getOwnPropertyNames(Inspector.prototype).indexOf(`add${type}`) >= 0) eval(`this.add${type}(elem)`);
       else
         console.error(

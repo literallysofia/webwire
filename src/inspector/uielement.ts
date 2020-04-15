@@ -1,4 +1,5 @@
 export abstract class UIElement {
+  abstract name: string;
   height: number;
   width: number;
   x: number;
@@ -17,7 +18,7 @@ export abstract class UIElement {
  */
 
 export class Header extends UIElement {
-  name = "header";
+  name = "Header";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -25,7 +26,7 @@ export class Header extends UIElement {
 }
 
 export class Footer extends UIElement {
-  name = "footer";
+  name = "Footer";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -33,7 +34,7 @@ export class Footer extends UIElement {
 }
 
 export class Container extends UIElement {
-  name = "container";
+  name = "Container";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -45,11 +46,21 @@ export class Container extends UIElement {
  * These ui elements contain real text.
  */
 
-class TextBlock extends UIElement {
+interface TextBlock {
   fsize: number;
   lheight: number;
   align: string;
   content?: string;
+
+  setContent(c: string): void;
+}
+
+export class Title extends UIElement implements TextBlock {
+  name = "Title";
+  fsize: number;
+  lheight: number;
+  align: string;
+  content?: string | undefined;
 
   constructor(h: number, w: number, x: number, y: number, fs: number, lh: number, a: string) {
     super(h, w, x, y);
@@ -63,19 +74,22 @@ class TextBlock extends UIElement {
   }
 }
 
-export class Title extends TextBlock {
-  name = "title";
+export class Link extends UIElement implements TextBlock {
+  name = "Link";
+  fsize: number;
+  lheight: number;
+  align: string;
+  content?: string | undefined;
 
   constructor(h: number, w: number, x: number, y: number, fs: number, lh: number, a: string) {
-    super(h, w, x, y, fs, lh, a);
+    super(h, w, x, y);
+    this.fsize = fs;
+    this.lheight = lh;
+    this.align = a;
   }
-}
 
-export class Link extends TextBlock {
-  name = "link";
-
-  constructor(h: number, w: number, x: number, y: number, fs: number, lh: number, a: string) {
-    super(h, w, x, y, fs, lh, a);
+  setContent(c: string) {
+    this.content = c;
   }
 }
 
@@ -84,7 +98,7 @@ export class Link extends TextBlock {
  */
 
 export class Text extends UIElement {
-  name = "text";
+  name = "Text";
   nlines: number;
 
   constructor(h: number, w: number, x: number, y: number, l: number) {
@@ -94,7 +108,7 @@ export class Text extends UIElement {
 }
 
 export class Image extends UIElement {
-  name = "image";
+  name = "Image";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -102,7 +116,7 @@ export class Image extends UIElement {
 }
 
 export class Icon extends UIElement {
-  name = "icon";
+  name = "Icon";
   svg: string;
 
   constructor(h: number, w: number, x: number, y: number, s: string) {
@@ -112,7 +126,7 @@ export class Icon extends UIElement {
 }
 
 export class Burguer extends UIElement {
-  name = "burguer";
+  name = "Burguer";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -120,7 +134,7 @@ export class Burguer extends UIElement {
 }
 
 export class Button extends UIElement {
-  name = "button";
+  name = "Button";
   fsize?: number;
   content?: string;
 
@@ -135,7 +149,7 @@ export class Button extends UIElement {
 }
 
 export class Dropdown extends UIElement {
-  name = "dropdown";
+  name = "Dropdown";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -143,7 +157,7 @@ export class Dropdown extends UIElement {
 }
 
 export class TextField extends UIElement {
-  name = "textField";
+  name = "TextField";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -151,7 +165,7 @@ export class TextField extends UIElement {
 }
 
 export class Radio extends UIElement {
-  name = "radio";
+  name = "Radio";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
@@ -159,7 +173,7 @@ export class Radio extends UIElement {
 }
 
 export class Checkbox extends UIElement {
-  name = "checkbox";
+  name = "Checkbox";
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
