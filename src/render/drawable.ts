@@ -1,4 +1,4 @@
-import { ElementType, Line, Point, Ellipse, Anchor, TextBlock, t_words, random, p_lerp, p_trans } from "./utils";
+import { Line, Point, Ellipse, Anchor, TextBlock, t_words, random, p_lerp, p_trans } from "./utils";
 import SVGO from "svgo";
 
 export abstract class Drawable {
@@ -39,7 +39,6 @@ export abstract class Drawable {
 }
 
 export class Container extends Drawable {
-  name = ElementType.Container;
   lines?: Line[];
 
   constructor(h: number, w: number, x: number, y: number) {
@@ -57,7 +56,6 @@ export class Container extends Drawable {
 }
 
 export class Title extends Drawable {
-  name = ElementType.Title;
   fsize: number;
   lineHeight: number;
   align: string;
@@ -97,7 +95,6 @@ export class Title extends Drawable {
 }
 
 export class Text extends Drawable {
-  name = ElementType.Text;
   nlines: number;
   lines?: Line[];
 
@@ -130,7 +127,6 @@ export class Text extends Drawable {
 }
 
 export class NavLink extends Drawable {
-  name = ElementType.NavLink;
   fsize: number;
   lineHeight: number;
   align: string;
@@ -160,7 +156,6 @@ export class NavLink extends Drawable {
 }
 
 export class Image extends Drawable {
-  name = ElementType.Image;
   lines?: Line[];
 
   constructor(h: number, w: number, x: number, y: number) {
@@ -193,7 +188,6 @@ export class Image extends Drawable {
 }
 
 export class Icon extends Drawable {
-  name = ElementType.Icon;
   svg: string;
 
   constructor(h: number, w: number, x: number, y: number, s: string) {
@@ -211,7 +205,6 @@ export class Icon extends Drawable {
 }
 
 export class Burguer extends Drawable {
-  name = ElementType.Burguer;
   lines?: Line[];
 
   constructor(h: number, w: number, x: number, y: number) {
@@ -242,7 +235,6 @@ export class Burguer extends Drawable {
 }
 
 export class Button extends Drawable {
-  name = ElementType.Button;
   fsize: number;
   text: string;
   lines?: Line[];
@@ -302,7 +294,6 @@ export class Button extends Drawable {
 }
 
 export class Dropdown extends Drawable {
-  name = ElementType.Dropdown;
   lines?: Line[];
 
   constructor(h: number, w: number, x: number, y: number) {
@@ -329,7 +320,6 @@ export class Dropdown extends Drawable {
 }
 
 export class TextField extends Drawable {
-  name = ElementType.TextField;
   lines?: Line[];
 
   constructor(h: number, w: number, x: number, y: number) {
@@ -347,7 +337,6 @@ export class TextField extends Drawable {
 }
 
 export class Radio extends Drawable {
-  name = ElementType.Radio;
   ellipse?: Ellipse;
 
   constructor(h: number, w: number, x: number, y: number) {
@@ -368,7 +357,6 @@ export class Radio extends Drawable {
 }
 
 export class Checkbox extends Drawable {
-  name = ElementType.Checkbox;
   lines?: Line[];
 
   constructor(h: number, w: number, x: number, y: number) {

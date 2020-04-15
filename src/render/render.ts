@@ -7,7 +7,7 @@ import svgpath from "svgpath";
 import { JSDOM } from "jsdom";
 import { Data, UIElement } from "./data";
 import { Config } from "./config";
-import { ElementType, Line, Paragraph, TextBlock } from "./utils";
+import { Line, Paragraph, TextBlock } from "./utils";
 import {
   Container,
   Title,
@@ -20,7 +20,7 @@ import {
   Dropdown,
   TextField,
   Radio,
-  Checkbox
+  Checkbox,
 } from "./drawable";
 
 /* VARIABLES */
@@ -72,50 +72,12 @@ export class Render {
 
   async draw() {
     for await (let elem of this.data.elements) {
-      switch (elem.name) {
-        case ElementType.Title:
-          this.drawTitle(elem);
-          break;
-        case ElementType.Text:
-          this.drawText(elem);
-          break;
-        case ElementType.NavLink:
-          this.drawNavLink(elem);
-          break;
-        case ElementType.Image:
-          this.drawImage(elem);
-          break;
-        case ElementType.Icon:
-          this.drawIcon(elem);
-          break;
-        case ElementType.TextField:
-          this.drawTextField(elem);
-          break;
-        case ElementType.Checkbox:
-          this.drawCheckbox(elem);
-          break;
-        case ElementType.Radio:
-          this.drawRadio(elem);
-          break;
-        case ElementType.Button:
-          this.drawButton(elem);
-          break;
-        case ElementType.Burguer:
-          this.drawBurguer(elem);
-          break;
-        case ElementType.Dropdown:
-          this.drawDropdown(elem);
-          break;
-        case ElementType.Container:
-          this.drawContainer(elem);
-          break;
-        case ElementType.Header:
-          this.drawContainer(elem);
-          break;
-        case ElementType.Footer:
-          this.drawContainer(elem);
-          break;
-      }
+      if (Object.getOwnPropertyNames(Render.prototype).indexOf(`draw${elem.name}`) >= 0)
+        eval(`this.draw${elem.name}(elem)`);
+      else
+        console.error(
+          `\n> ERROR: Method 'draw${elem.name}' does not exist.\nPlease fix the type name '${elem.name}' in the configuration file as instructed or create a new method.`
+        );
       this.bar.increment();
     }
     this.bar.stop();
@@ -148,6 +110,18 @@ export class Render {
       }
     }
     return lines;
+  }
+
+  drawHeader(elem: UIElement) {
+    const c = new Container(elem.height, elem.width, elem.x, elem.y);
+    c.generate(this.config.randomize, this.config.randomOffset);
+    if (c.lines) this.createLines(c.lines);
+  }
+
+  drawFooter(elem: UIElement) {
+    const c = new Container(elem.height, elem.width, elem.x, elem.y);
+    c.generate(this.config.randomize, this.config.randomOffset);
+    if (c.lines) this.createLines(c.lines);
   }
 
   drawContainer(elem: UIElement) {
@@ -185,7 +159,7 @@ export class Render {
     if (text.lines) this.createLines(text.lines);
   }
 
-  drawNavLink(elem: UIElement) {
+  drawLink(elem: UIElement) {
     const link = new NavLink(
       elem.height,
       elem.width,
@@ -319,7 +293,7 @@ export class Render {
           this.roughCanvas
             .path(svgPath, {
               roughness: 0.3,
-              bowing: 2
+              bowing: 2,
             })
             .getElementsByTagName("path")[0]
         );
@@ -332,7 +306,7 @@ export class Render {
     svg.setAttribute("width", width.toString());
     svg.setAttribute("overflow", "visible");
     svg.innerHTML = "";
-    drawnPaths.forEach(path => {
+    drawnPaths.forEach((path) => {
       path.setAttribute("vector-effect", "non-scaling-stroke");
       svg.appendChild(path);
     });

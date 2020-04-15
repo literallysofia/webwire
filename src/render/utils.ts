@@ -1,20 +1,3 @@
-export enum ElementType {
-  Header = "header",
-  Footer = "footer",
-  Container = "container",
-  Title = "title",
-  Text = "text",
-  NavLink = "link",
-  Image = "image",
-  Icon = "icon",
-  TextField = "textField",
-  Checkbox = "checkbox",
-  Radio = "radio",
-  Button = "button",
-  Burguer = "burguer",
-  Dropdown = "dropdown",
-}
-
 export declare type Point = [number, number];
 export declare type Line = Point[];
 
