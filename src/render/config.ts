@@ -5,11 +5,8 @@ export class Config {
   @JsonProperty("fonts", [String])
   fonts: string[] = [];
 
-  @JsonProperty("randomize", Boolean)
-  randomize: boolean = false;
-
   @JsonProperty("randomOffset", Number)
-  randomOffset: number = 1;
+  randomOffset: number = 0;
 
   @JsonProperty("options")
   options = { roughness: 1, bowing: 5, strokeWidth: 1.5, hachureGap: 4 };

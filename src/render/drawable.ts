@@ -23,7 +23,7 @@ export abstract class Drawable {
     return [p1, p2, p3, p4];
   }
 
-  mutate(points: Point[], offset: number, value?: number) {
+  mutatePoints(points: Point[], offset: number, value?: number) {
     if (value) {
       offset *= value;
     }
@@ -35,46 +35,69 @@ export abstract class Drawable {
     }
   }
 
-  abstract generate(randomize: boolean, randomOffset: number): void;
+  mutateCoords(offset: number) {
+    this.x += Math.random() * offset * 3 - offset;
+    this.y += Math.random() * offset * 2 - offset;
+  }
+
+  abstract generate(randomOffset: number): void;
 }
 
+/*
+ * CONTAINER
+ */
 export class Container extends Drawable {
-  lines?: Line[];
+  lines?: Line[] | undefined;
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
   }
 
-  generate(randomize: boolean, randomOffset: number) {
+  generate(randomOffset: number) {
     this.lines = [];
     let points = this.rectPoints(this.height, this.width, this.x, this.y);
-
-    if (randomize) this.mutate(points, randomOffset);
-
+    this.mutatePoints(points, randomOffset);
     this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
   }
 }
 
-export class Title extends Drawable {
+/*
+ * TEXT BLOCKS SUCH AS TITLES, LINKS AND BUTTONS
+ * These ui elements contain real text.
+ */
+
+interface DrawableText {
   fsize: number;
-  lineHeight: number;
+  lheight: number;
   align: string;
   content: string;
-  textBlock?: TextBlock;
+  textBlock?: TextBlock | undefined;
 
-  constructor(h: number, w: number, x: number, y: number, fs: number, lheight: number, a: string, c: string) {
+  mutateSize(offset: number): void;
+}
+
+export class Title extends Drawable implements DrawableText {
+  fsize: number;
+  lheight: number;
+  align: string;
+  content: string;
+  textBlock?: TextBlock | undefined;
+
+  constructor(h: number, w: number, x: number, y: number, fsize: number, lheight: number, align: string, content: string) {
     super(h, w, x, y);
-    this.fsize = fs;
-    this.lineHeight = lheight;
-    this.align = a;
-    this.content = c;
+    this.fsize = fsize;
+    this.lheight = lheight;
+    this.align = align;
+    this.content = content;
   }
 
-  generate(randomize: boolean, randomOffset: number) {
-    if (randomize) {
-      this.x += Math.random() * randomOffset * 3 - randomOffset;
-      this.y += Math.random() * randomOffset * 2 - randomOffset;
-    }
+  mutateSize(offset: number) {
+    this.fsize += Math.random() * offset;
+  }
+
+  generate(randomOffset: number) {
+    this.mutateCoords(randomOffset);
+    this.mutateSize(randomOffset);
 
     let anchor = Anchor.Start;
     let x = this.x;
@@ -86,62 +109,32 @@ export class Title extends Drawable {
       x = this.x + this.width;
     }
 
-    this.textBlock = new TextBlock(x, this.y, this.fsize, this.lineHeight, anchor, t_words(this.content));
+    this.textBlock = new TextBlock(x, this.y, this.fsize, this.lheight, anchor, t_words(this.content));
   }
 }
 
-export class Text extends Drawable {
-  nlines: number;
-  lines?: Line[];
-
-  constructor(h: number, w: number, x: number, y: number, l: number) {
-    super(h, w, x, y);
-    this.nlines = l;
-  }
-
-  generate(randomize: boolean, randomOffset: number) {
-    this.lines = [];
-    const lineHeight = this.height / this.nlines;
-
-    for (let i = 0; i < this.nlines; i++) {
-      const nPoints = Math.floor((Math.random() * this.width) / 30 + 4);
-      let line: Point[] = [];
-
-      for (let j = 0; j < nPoints; j++) {
-        let frac = j / (nPoints - 1);
-        let x = this.x + this.width * frac; // x position
-        let xdeg = (Math.PI / 2) * x; // frequency
-        // amplitude * sin(frequency) + offset
-        let y = random(2, lineHeight / 2) * Math.sin(xdeg) + (this.y + lineHeight * i + lineHeight / 2);
-
-        line.push([x, y]);
-      }
-      if (randomize) this.mutate(line, randomOffset);
-      this.lines.push(line);
-    }
-  }
-}
-
-export class Link extends Drawable {
+export class Link extends Drawable implements DrawableText {
   fsize: number;
-  lineHeight: number;
+  lheight: number;
   align: string;
   content: string;
-  textBlock?: TextBlock;
+  textBlock?: TextBlock | undefined;
 
-  constructor(h: number, w: number, x: number, y: number, fs: number, lheight: number, a: string, c: string) {
+  constructor(h: number, w: number, x: number, y: number, fsize: number, lheight: number, align: string, content: string) {
     super(h, w, x, y);
-    this.fsize = fs;
-    this.lineHeight = lheight;
-    this.align = a;
-    this.content = c;
+    this.fsize = fsize;
+    this.lheight = lheight;
+    this.align = align;
+    this.content = content;
   }
 
-  generate(randomize: boolean, randomOffset: number) {
-    if (randomize) {
-      this.x += Math.random() * randomOffset * 3 - randomOffset;
-      this.y += Math.random() * randomOffset * 2 - randomOffset;
-    }
+  mutateSize(offset: number): void {
+    this.fsize += Math.random() * offset;
+  }
+
+  generate(randomOffset: number) {
+    this.mutateCoords(randomOffset);
+    this.mutateSize(randomOffset);
 
     let anchor = Anchor.Start;
     let x = this.x;
@@ -152,102 +145,15 @@ export class Link extends Drawable {
       anchor = Anchor.End;
       x = this.x + this.width;
     }
-    this.textBlock = new TextBlock(x, this.y, this.fsize, this.lineHeight, anchor, t_words(this.content));
-  }
-}
-
-export class Image extends Drawable {
-  lines?: Line[];
-
-  constructor(h: number, w: number, x: number, y: number) {
-    super(h, w, x, y);
-  }
-
-  generate(randomize: boolean, randomOffset: number) {
-    this.lines = [];
-    let points = this.rectPoints(this.height, this.width, this.x, this.y);
-
-    if (randomize) this.mutate(points, randomOffset);
-
-    let cross: Point[] = [];
-    cross.push(
-      p_lerp(points[0], points[2], random(0.0, 0.2)),
-      p_lerp(points[2], points[0], random(0.0, 0.2)),
-      p_lerp(points[1], points[3], random(0.0, 0.2)),
-      p_lerp(points[3], points[1], random(0.0, 0.2))
-    );
-
-    if (randomize) this.mutate(cross, randomOffset);
-
-    this.lines.push([points[0], points[1]]);
-    this.lines.push([points[1], points[2]]);
-    this.lines.push([points[2], points[3]]);
-    this.lines.push([points[3], points[0]]);
-    this.lines.push([cross[0], cross[1]]);
-    this.lines.push([cross[3], cross[2]]);
-  }
-}
-
-export class Icon extends Drawable {
-  svg: string;
-
-  constructor(h: number, w: number, x: number, y: number, s: string) {
-    super(h, w, x, y);
-    this.svg = s;
-  }
-
-  async generate() {
-    const svgo = new SVGO({
-      plugins: [{ convertShapeToPath: { convertArcs: true } }, { convertPathData: true }, { mergePaths: true }],
-    });
-    const optimizedSvg = await svgo.optimize(this.svg);
-    this.svg = optimizedSvg.data;
-  }
-}
-
-export class Burguer extends Drawable {
-  lines?: Line[];
-
-  constructor(h: number, w: number, x: number, y: number) {
-    super(h, w, x, y);
-  }
-
-  async generate(randomize: boolean, randomOffset: number) {
-    this.lines = [];
-    const lineHeight = this.height / 3;
-
-    for (let i = 0; i < 3; i++) {
-      const nPoints = Math.floor((Math.random() * this.width) / 30 + 4);
-      let line: Point[] = [];
-
-      for (let j = 0; j < nPoints; j++) {
-        let frac = j / (nPoints - 1);
-        let x = this.x + this.width * frac; // x position
-        let xdeg = Math.PI * x; // frequency
-        // amplitude * sin(frequency) + offset
-        let y = Math.sin(xdeg) + (this.y + lineHeight * i + lineHeight / 2);
-
-        line.push([x, y]);
-      }
-      if (randomize) this.mutate(line, randomOffset, 0.3);
-      this.lines.push(line);
-    }
+    this.textBlock = new TextBlock(x, this.y, this.fsize, this.lheight, anchor, t_words(this.content));
   }
 }
 
 export class Button extends Drawable {
-  fsize: number;
-  content?: string;
-  lines?: Line[];
-  textBlock?: TextBlock;
+  lines?: Line[] | undefined;
 
-  constructor(h: number, w: number, x: number, y: number, fs: number) {
+  constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
-    this.fsize = fs;
-  }
-
-  setContent(c: string) {
-    this.content = c;
   }
 
   private getTextLine(): Point[] {
@@ -268,47 +174,195 @@ export class Button extends Drawable {
     return line;
   }
 
-  generate(randomize: boolean, randomOffset: number) {
+  generate(randomOffset: number) {
     this.lines = [];
     let points = this.rectPoints(this.height, this.width, this.x, this.y);
-
-    if (randomize) this.mutate(points, randomOffset);
+    this.mutatePoints(points, randomOffset);
 
     this.lines.push([points[0], points[1]]);
     this.lines.push([points[1], points[2]]);
     this.lines.push([points[2], points[3]]);
     this.lines.push([points[3], points[0]]);
 
-    if (this.content) {
-      if (randomize) this.fsize += Math.random() * randomOffset;
-      const x = this.x + this.width / 2;
-      const lineHeight = this.fsize + this.fsize / 2;
-      this.textBlock = new TextBlock(x, this.y, this.fsize, lineHeight, Anchor.Middle, t_words(this.content));
-    } else {
-      let textLine = this.getTextLine();
-      if (randomize) this.mutate(textLine, randomOffset);
-      this.lines.push(textLine);
+    let textLine = this.getTextLine();
+    this.mutatePoints(textLine, randomOffset);
+    this.lines.push(textLine);
+  }
+}
+
+export class TextButton extends Button implements DrawableText {
+  fsize: number;
+  lheight: number;
+  align: string;
+  content: string;
+  textBlock?: TextBlock | undefined;
+
+  constructor(h: number, w: number, x: number, y: number, fs: number, c: string) {
+    super(h, w, x, y);
+    this.fsize = fs;
+    this.lheight = this.fsize + this.fsize / 2;
+    this.align = "center";
+    this.content = c;
+  }
+
+  mutateSize(offset: number) {
+    this.fsize += Math.random() * offset;
+  }
+
+  generate(randomOffset: number) {
+    this.lines = [];
+    let points = this.rectPoints(this.height, this.width, this.x, this.y);
+    this.mutatePoints(points, randomOffset);
+
+    this.lines.push([points[0], points[1]]);
+    this.lines.push([points[1], points[2]]);
+    this.lines.push([points[2], points[3]]);
+    this.lines.push([points[3], points[0]]);
+
+    this.mutateCoords(randomOffset);
+    this.mutateSize(randomOffset);
+    const x = this.x + this.width / 2;
+
+    this.textBlock = new TextBlock(x, this.y, this.fsize, this.lheight, Anchor.Middle, t_words(this.content));
+  }
+}
+
+/*
+ * TEXT PARAGRAPH
+ */
+
+export class Text extends Drawable {
+  nlines: number;
+  lines?: Line[] | undefined;
+
+  constructor(h: number, w: number, x: number, y: number, nlines: number) {
+    super(h, w, x, y);
+    this.nlines = nlines;
+  }
+
+  generate(randomOffset: number) {
+    this.lines = [];
+    const lineHeight = this.height / this.nlines;
+
+    for (let i = 0; i < this.nlines; i++) {
+      const nPoints = Math.floor((Math.random() * this.width) / 30 + 4);
+      let line: Point[] = [];
+
+      for (let j = 0; j < nPoints; j++) {
+        let frac = j / (nPoints - 1);
+        let x = this.x + this.width * frac; // x position
+        let xdeg = (Math.PI / 2) * x; // frequency
+        // amplitude * sin(frequency) + offset
+        let y = random(2, lineHeight / 2) * Math.sin(xdeg) + (this.y + lineHeight * i + lineHeight / 2);
+
+        line.push([x, y]);
+      }
+      this.mutatePoints(line, randomOffset);
+      this.lines.push(line);
     }
   }
 }
 
-export class Dropdown extends Drawable {
-  lines?: Line[];
+/*
+ * IMAGES AND ICONS
+ */
+
+export class Image extends Drawable {
+  lines?: Line[] | undefined;
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
   }
 
-  generate(randomize: boolean, randomOffset: number) {
+  generate(randomOffset: number) {
     this.lines = [];
     let points = this.rectPoints(this.height, this.width, this.x, this.y);
+    this.mutatePoints(points, randomOffset);
 
-    if (randomize) this.mutate(points, randomOffset);
+    let cross: Point[] = [];
+    cross.push(
+      p_lerp(points[0], points[2], random(0.0, 0.2)),
+      p_lerp(points[2], points[0], random(0.0, 0.2)),
+      p_lerp(points[1], points[3], random(0.0, 0.2)),
+      p_lerp(points[3], points[1], random(0.0, 0.2))
+    );
+    this.mutatePoints(cross, randomOffset);
+
+    this.lines.push([points[0], points[1]]);
+    this.lines.push([points[1], points[2]]);
+    this.lines.push([points[2], points[3]]);
+    this.lines.push([points[3], points[0]]);
+    this.lines.push([cross[0], cross[1]]);
+    this.lines.push([cross[3], cross[2]]);
+  }
+}
+
+export class Icon extends Drawable {
+  svg: string;
+
+  constructor(h: number, w: number, x: number, y: number, svg: string) {
+    super(h, w, x, y);
+    this.svg = svg;
+  }
+
+  async generate() {
+    const svgo = new SVGO({
+      plugins: [{ convertShapeToPath: { convertArcs: true } }, { convertPathData: true }, { mergePaths: true }],
+    });
+    const optimizedSvg = await svgo.optimize(this.svg);
+    this.svg = optimizedSvg.data;
+  }
+}
+
+/*
+ * BURGUER BUTTON AND DROPDOWN
+ */
+
+export class Burguer extends Drawable {
+  lines?: Line[] | undefined;
+
+  constructor(h: number, w: number, x: number, y: number) {
+    super(h, w, x, y);
+  }
+
+  async generate(randomOffset: number) {
+    this.lines = [];
+    const lineHeight = this.height / 3;
+
+    for (let i = 0; i < 3; i++) {
+      const nPoints = Math.floor((Math.random() * this.width) / 30 + 4);
+      let line: Point[] = [];
+
+      for (let j = 0; j < nPoints; j++) {
+        let frac = j / (nPoints - 1);
+        let x = this.x + this.width * frac; // x position
+        let xdeg = Math.PI * x; // frequency
+        // amplitude * sin(frequency) + offset
+        let y = Math.sin(xdeg) + (this.y + lineHeight * i + lineHeight / 2);
+
+        line.push([x, y]);
+      }
+      this.mutatePoints(line, randomOffset, 0.3);
+      this.lines.push(line);
+    }
+  }
+}
+
+export class Dropdown extends Drawable {
+  lines?: Line[] | undefined;
+
+  constructor(h: number, w: number, x: number, y: number) {
+    super(h, w, x, y);
+  }
+
+  generate(randomOffset: number) {
+    this.lines = [];
+    let points = this.rectPoints(this.height, this.width, this.x, this.y);
+    this.mutatePoints(points, randomOffset);
 
     let divider = [];
     divider.push(p_trans(points[1], -random(20, 40), 0), p_trans(points[2], -random(20, 40), 0));
-
-    if (randomize) this.mutate(divider, randomOffset);
+    this.mutatePoints(divider, randomOffset);
 
     this.lines.push([points[0], points[1]]);
     this.lines.push([points[1], points[2]]);
@@ -318,65 +372,58 @@ export class Dropdown extends Drawable {
   }
 }
 
+/*
+ * INPUTS
+ */
+
 export class TextField extends Drawable {
-  lines?: Line[];
+  lines?: Line[] | undefined;
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
   }
 
-  generate(randomize: boolean, randomOffset: number) {
+  generate(randomOffset: number) {
     this.lines = [];
     let points = this.rectPoints(this.height, this.width, this.x, this.y);
-    if (randomize) this.mutate(points, randomOffset);
+    this.mutatePoints(points, randomOffset);
     this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
   }
 }
 
 export class Radio extends Drawable {
-  ellipse?: Ellipse;
+  ellipse?: Ellipse | undefined;
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
   }
 
-  generate(randomize: boolean, randomOffset: number) {
+  generate(randomOffset: number) {
+    this.mutateCoords(randomOffset);
     let cx = this.x + this.width / 2;
     let cy = this.y + this.height / 2;
-
-    if (randomize) {
-      cx += Math.random() * randomOffset * 2 - randomOffset;
-      cy += Math.random() * randomOffset * 2 - randomOffset;
-    }
-
     this.ellipse = { cx: cx, cy: cy, height: this.height, width: this.width };
   }
 }
 
 export class Checkbox extends Drawable {
-  lines?: Line[];
+  lines?: Line[] | undefined;
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);
   }
 
-  generate(randomize: boolean, randomOffset: number) {
+  generate(randomOffset: number) {
     this.lines = [];
     let points = this.rectPoints(this.height, this.width, this.x, this.y);
-
-    if (randomize) this.mutate(points, randomOffset, 0.3);
+    this.mutatePoints(points, randomOffset, 0.3);
 
     let checkmark = [];
     const point1 = p_trans(points[0], random(-this.width / 2, 0), random(0, this.height / 2));
     const point2 = p_trans(points[2], -this.width / 2, random(0, -this.height / 4));
     const point3 = p_trans(points[1], random(-this.width / 4, this.width / 4), random(0, -this.height / 4));
 
-    checkmark.push(
-      p_lerp(point1, point2, 0),
-      p_lerp(point2, point1, 0),
-      p_lerp(point2, point3, 0),
-      p_lerp(point3, point2, 0)
-    );
+    checkmark.push(p_lerp(point1, point2, 0), p_lerp(point2, point1, 0), p_lerp(point2, point3, 0), p_lerp(point3, point2, 0));
 
     this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
     this.lines.push([checkmark[0], checkmark[1]]);

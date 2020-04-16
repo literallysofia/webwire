@@ -8,7 +8,7 @@
     "start": "npm run build && node dist/inspector/index.js",
     "render": "npm run build && node dist/render/index.js && open generated/wireframe.svg",
     "jpg": "npm run build && node dist/render/wireframe.js && open generated/wireframe.jpg",
-    "generate": "node dist/render/index.js && node dist/render/wireframe.js && open generated/wireframe.jpg",
+    "gen": "node dist/render/index.js && node dist/render/wireframe.js && open generated/wireframe.jpg",
     "pretty": "prettier --write generated/data.json",
     "test-render": "ts-node src/render.ts",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -7,21 +7,8 @@ import svgpath from "svgpath";
 import { JSDOM } from "jsdom";
 import { Data, UIElement } from "./data";
 import { Config } from "./config";
-import { Line, Paragraph, TextBlock, random_sentence } from "./utils";
-import {
-  Container,
-  Title,
-  Text,
-  Link,
-  Image,
-  Icon,
-  Button,
-  Burguer,
-  Dropdown,
-  TextField,
-  Radio,
-  Checkbox,
-} from "./drawable";
+import { Line, Paragraph, Ellipse, TextBlock, random_sentence } from "./utils";
+import { Container, Title, Text, Link, Image, Icon, Button, TextButton, Burguer, Dropdown, TextField, Radio, Checkbox } from "./drawable";
 
 /* VARIABLES */
 const { document } = new JSDOM(`...`).window;
@@ -51,10 +38,7 @@ export class Render {
     const style = document.createElementNS(namespaceURI, "style");
     style.setAttribute("type", "text/css");
 
-    const fontFamily = this.config.fontFamily.substr(
-      this.config.fontFamily.indexOf("'") + 1,
-      this.config.fontFamily.lastIndexOf("'") - 1
-    );
+    const fontFamily = this.config.fontFamily.substr(this.config.fontFamily.indexOf("'") + 1, this.config.fontFamily.lastIndexOf("'") - 1);
     const font = fontFamily.split(" ").join("+");
 
     const importFont = "@import url('https://fonts.googleapis.com/css2?family=" + font + "&display=swap')";
@@ -101,8 +85,7 @@ export class Render {
 
   async draw() {
     for await (let elem of this.data.elements) {
-      if (Object.getOwnPropertyNames(Render.prototype).indexOf(`draw${elem.name}`) >= 0)
-        eval(`this.draw${elem.name}(elem)`);
+      if (Object.getOwnPropertyNames(Render.prototype).indexOf(`draw${elem.name}`) >= 0) eval(`this.draw${elem.name}(elem)`);
       else
         console.error(
           `\n> ERROR: Method 'draw${elem.name}' does not exist.\nPlease fix the type name '${elem.name}' in the configuration file as instructed or create a new method.`
@@ -113,20 +96,16 @@ export class Render {
   }
 
   drawHeader(elem: UIElement) {
-    const c = new Container(elem.height, elem.width, elem.x, elem.y);
-    c.generate(this.config.randomize, this.config.randomOffset);
-    if (c.lines) this.createLines(c.lines);
+    this.drawContainer(elem);
   }
 
   drawFooter(elem: UIElement) {
-    const c = new Container(elem.height, elem.width, elem.x, elem.y);
-    c.generate(this.config.randomize, this.config.randomOffset);
-    if (c.lines) this.createLines(c.lines);
+    this.drawContainer(elem);
   }
 
   drawContainer(elem: UIElement) {
     const c = new Container(elem.height, elem.width, elem.x, elem.y);
-    c.generate(this.config.randomize, this.config.randomOffset);
+    c.generate(this.config.randomOffset);
     if (c.lines) this.createLines(c.lines);
   }
 
@@ -136,11 +115,11 @@ export class Render {
     else content = random_sentence();
 
     const title = new Title(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lheight, elem.align, content);
-    title.generate(this.config.randomize, this.config.randomOffset);
+    title.generate(this.config.randomOffset);
 
     if (title.textBlock) {
       let lines = this.getParagraphs(title.textBlock.words, title.width, title.fsize);
-      while (lines.length > title.height / title.lineHeight) {
+      while (lines.length > title.height / title.lheight) {
         lines.pop();
       }
       this.createText(title.textBlock, lines);
@@ -149,30 +128,21 @@ export class Render {
 
   drawText(elem: UIElement) {
     const text = new Text(elem.height, elem.width, elem.x, elem.y, elem.nlines);
-    text.generate(this.config.randomize, this.config.randomOffset);
+    text.generate(this.config.randomOffset);
     if (text.lines) this.createLines(text.lines);
   }
 
   drawLink(elem: UIElement) {
     if (elem.content) {
-      const link = new Link(
-        elem.height,
-        elem.width,
-        elem.x,
-        elem.y,
-        elem.fsize,
-        elem.lheight,
-        elem.align,
-        elem.content
-      );
-      link.generate(this.config.randomize, this.config.randomOffset);
+      const link = new Link(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lheight, elem.align, elem.content);
+      link.generate(this.config.randomOffset);
       if (link.textBlock) this.createText(link.textBlock);
     }
   }
 
   drawImage(elem: UIElement) {
     const image = new Image(elem.height, elem.width, elem.x, elem.y);
-    image.generate(this.config.randomize, this.config.randomOffset);
+    image.generate(this.config.randomOffset);
     if (image.lines) this.createLines(image.lines);
   }
 
@@ -186,42 +156,45 @@ export class Render {
   }
 
   drawButton(elem: UIElement) {
-    const btn = new Button(elem.height, elem.width, elem.x, elem.y, elem.fsize);
-    if (elem.content) btn.setContent(elem.content);
-    btn.generate(this.config.randomize, this.config.randomOffset);
-
-    if (btn.textBlock) this.createText(btn.textBlock);
-    if (btn.lines) this.createLines(btn.lines);
+    if (elem.content) {
+      const btn = new TextButton(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.content);
+      btn.generate(this.config.randomOffset);
+      if (btn.lines) this.createLines(btn.lines);
+      if (btn.textBlock) this.createText(btn.textBlock);
+    } else {
+      const btn = new Button(elem.height, elem.width, elem.x, elem.y);
+      btn.generate(this.config.randomOffset);
+      if (btn.lines) this.createLines(btn.lines);
+    }
   }
 
   drawBurguer(elem: UIElement) {
     const burguer = new Burguer(elem.height, elem.width, elem.x, elem.y);
-    burguer.generate(this.config.randomize, this.config.randomOffset);
+    burguer.generate(this.config.randomOffset);
     if (burguer.lines) this.createLines(burguer.lines);
   }
 
   drawTextField(elem: UIElement) {
     const field = new TextField(elem.height, elem.width, elem.x, elem.y);
-    field.generate(this.config.randomize, this.config.randomOffset);
+    field.generate(this.config.randomOffset);
     if (field.lines) this.createLines(field.lines);
   }
 
   drawCheckbox(elem: UIElement) {
     const cbox = new Checkbox(elem.height, elem.width, elem.x, elem.y);
-    cbox.generate(this.config.randomize, this.config.randomOffset);
+    cbox.generate(this.config.randomOffset);
     if (cbox.lines) this.createLines(cbox.lines);
   }
 
   drawRadio(elem: UIElement) {
     const radio = new Radio(elem.height, elem.width, elem.x, elem.y);
-    radio.generate(this.config.randomize, this.config.randomOffset);
-    if (radio.ellipse)
-      this.createEllipse(radio.ellipse.cx, radio.ellipse.cy, radio.ellipse.width, radio.ellipse.height, true);
+    radio.generate(this.config.randomOffset);
+    if (radio.ellipse) this.createEllipse(radio.ellipse, true);
   }
 
   drawDropdown(elem: UIElement) {
     const drop = new Dropdown(elem.height, elem.width, elem.x, elem.y);
-    drop.generate(this.config.randomize, this.config.randomOffset);
+    drop.generate(this.config.randomOffset);
     if (drop.lines) this.createLines(drop.lines);
   }
 
@@ -263,12 +236,10 @@ export class Render {
     this.canvas.appendChild(g);
   }
 
-  createEllipse(cx: number, cy: number, width: number, height: number, dot: boolean) {
-    const shapeNode = this.roughCanvas.ellipse(cx, cy, width, height);
+  createEllipse(ellipse: Ellipse, dot: boolean) {
+    const shapeNode = this.roughCanvas.ellipse(ellipse.cx, ellipse.cy, ellipse.width, ellipse.height);
     if (dot) {
-      const center = this.roughCanvas
-        .ellipse(cx, cy, width / 2, height / 2, { fill: "black", fillStyle: "solid" })
-        .getElementsByTagName("path")[0];
+      const center = this.roughCanvas.ellipse(ellipse.cx, ellipse.cy, ellipse.width / 2, ellipse.height / 2, { fill: "black", fillStyle: "solid" }).getElementsByTagName("path")[0];
       shapeNode.appendChild(center);
     }
     this.canvas.appendChild(shapeNode);

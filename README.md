@@ -17,7 +17,7 @@ Please, make sure you have node, npm, and typescript installed.
 ```bash
 $ npm install
 $ npm start <url>
-$ npm run generate
+$ npm run gen
 ```
 
 **Examples**

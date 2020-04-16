@@ -6,7 +6,6 @@ fonts:
   - "'Caveat', cursive"
   - "'Caveat Brush', cursive"
   - "'Nothing You Could Do', cursive"
-randomize: true
 randomOffset: 5
 options:
   roughness: 1.3
