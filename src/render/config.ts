@@ -6,9 +6,6 @@ export class Config {
   @JsonProperty("fonts", [String])
   fonts: string[] = [];
 
-  @JsonProperty("keepOriginalText", Boolean)
-  keepOriginalText: boolean = true;
-
   @JsonProperty("randomize", Boolean)
   randomize: boolean = false;
 

@@ -27,7 +27,7 @@ export class UIElement {
   align: string = "";
 
   @JsonProperty("content", String, true)
-  content: string = "";
+  content: string | undefined = undefined;
 
   @JsonProperty("nlines", Number, true)
   nlines: number = 0;
@@ -50,7 +50,7 @@ export class Data {
   @JsonProperty("size", Size)
   size: Size = {
     height: 0,
-    width: 0
+    width: 0,
   };
 
   @JsonProperty("elements", [UIElement])

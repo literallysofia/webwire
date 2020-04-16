@@ -12,7 +12,7 @@ import {
   Container,
   Title,
   Text,
-  NavLink,
+  Link,
   Image,
   Icon,
   Button,
@@ -131,17 +131,11 @@ export class Render {
   }
 
   drawTitle(elem: UIElement) {
-    const title = new Title(
-      elem.height,
-      elem.width,
-      elem.x,
-      elem.y,
-      elem.fsize,
-      elem.lheight,
-      elem.align,
-      elem.content
-    );
-    if (!this.config.keepOriginalText) title.setTextRandom(this.config.getRandomSentence());
+    let content: string;
+    if (elem.content) content = elem.content;
+    else content = this.config.getRandomSentence();
+
+    const title = new Title(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lheight, elem.align, content);
     title.generate(this.config.randomize, this.config.randomOffset);
 
     if (title.textBlock) {
@@ -160,16 +154,10 @@ export class Render {
   }
 
   drawLink(elem: UIElement) {
-    const link = new NavLink(
-      elem.height,
-      elem.width,
-      elem.x,
-      elem.y,
-      elem.fsize,
-      elem.lheight,
-      elem.align,
-      elem.content
-    );
+    let content = "";
+    if (elem.content) content = elem.content;
+
+    const link = new Link(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lheight, elem.align, content);
     link.generate(this.config.randomize, this.config.randomOffset);
     if (link.textBlock) this.createText(link.textBlock);
   }
@@ -190,10 +178,11 @@ export class Render {
   }
 
   drawButton(elem: UIElement) {
-    const btn = new Button(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.content);
+    const btn = new Button(elem.height, elem.width, elem.x, elem.y, elem.fsize);
+    if (elem.content) btn.setContent(elem.content);
     btn.generate(this.config.randomize, this.config.randomOffset);
 
-    if (this.config.keepOriginalText && btn.textBlock) {
+    if (btn.textBlock) {
       this.createText(btn.textBlock);
     }
     if (btn.lines) this.createLines(btn.lines);

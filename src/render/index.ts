@@ -37,10 +37,10 @@ async function render() {
       render.export();
       console.log("\n> Wireframe rendered with success!");
     } catch (e) {
-      console.log(<Error>e);
+      console.error(<Error>e);
     }
   } catch (e) {
-    console.log(<Error>e);
+    console.error(<Error>e);
   }
 }
 

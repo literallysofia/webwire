@@ -59,20 +59,20 @@ export class Title extends Drawable {
   fsize: number;
   lineHeight: number;
   align: string;
-  text: string;
+  content: string;
   textBlock?: TextBlock;
 
-  constructor(h: number, w: number, x: number, y: number, fs: number, lheight: number, a: string, t: string) {
+  constructor(h: number, w: number, x: number, y: number, fs: number, lheight: number, a: string, c: string) {
     super(h, w, x, y);
     this.fsize = fs;
     this.lineHeight = lheight;
     this.align = a;
-    this.text = t;
+    this.content = c;
   }
 
-  setTextRandom(t: string) {
-    this.text = t;
-  }
+  /*   setContent(c: string) {
+    this.content = c;
+  } */
 
   generate(randomize: boolean, randomOffset: number) {
     if (randomize) {
@@ -90,7 +90,7 @@ export class Title extends Drawable {
       x = this.x + this.width;
     }
 
-    this.textBlock = new TextBlock(x, this.y, this.fsize, this.lineHeight, anchor, t_words(this.text));
+    this.textBlock = new TextBlock(x, this.y, this.fsize, this.lineHeight, anchor, t_words(this.content));
   }
 }
 
@@ -126,7 +126,7 @@ export class Text extends Drawable {
   }
 }
 
-export class NavLink extends Drawable {
+export class Link extends Drawable {
   fsize: number;
   lineHeight: number;
   align: string;
@@ -236,14 +236,17 @@ export class Burguer extends Drawable {
 
 export class Button extends Drawable {
   fsize: number;
-  text: string;
+  content?: string;
   lines?: Line[];
   textBlock?: TextBlock;
 
-  constructor(h: number, w: number, x: number, y: number, fs: number, t: string) {
+  constructor(h: number, w: number, x: number, y: number, fs: number) {
     super(h, w, x, y);
     this.fsize = fs;
-    this.text = t;
+  }
+
+  setContent(c: string) {
+    this.content = c;
   }
 
   private getTextLine(): Point[] {
@@ -267,7 +270,9 @@ export class Button extends Drawable {
   private getTextBlock(fs: number): TextBlock {
     var x = this.x + this.width / 2;
     var lineHeight = this.fsize + this.fsize / 2;
-    return new TextBlock(x, this.y, fs, lineHeight, Anchor.Middle, t_words(this.text));
+    if(this.content)
+    return new TextBlock(x, this.y, fs, lineHeight, Anchor.Middle, t_words(this.content));
+    else return new TextBlock(x, this.y, fs, lineHeight, Anchor.Middle, t_words(""));
   }
 
   generate(randomize: boolean, randomOffset: number) {
@@ -281,7 +286,7 @@ export class Button extends Drawable {
     this.lines.push([points[2], points[3]]);
     this.lines.push([points[3], points[0]]);
 
-    if (this.text === "") {
+    if (!this.content) {
       let textLine = this.getTextLine();
       if (randomize) this.mutate(textLine, randomOffset);
       this.lines.push(textLine);
