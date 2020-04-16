@@ -7,7 +7,7 @@ import svgpath from "svgpath";
 import { JSDOM } from "jsdom";
 import { Data, UIElement } from "./data";
 import { Config } from "./config";
-import { Line, Paragraph, TextBlock } from "./utils";
+import { Line, Paragraph, TextBlock, random_sentence } from "./utils";
 import {
   Container,
   Title,
@@ -70,26 +70,13 @@ export class Render {
     this.canvas.setAttribute("width", this.data.size.width.toString());
   }
 
-  async draw() {
-    for await (let elem of this.data.elements) {
-      if (Object.getOwnPropertyNames(Render.prototype).indexOf(`draw${elem.name}`) >= 0)
-        eval(`this.draw${elem.name}(elem)`);
-      else
-        console.error(
-          `\n> ERROR: Method 'draw${elem.name}' does not exist.\nPlease fix the type name '${elem.name}' in the configuration file as instructed or create a new method.`
-        );
-      this.bar.increment();
-    }
-    this.bar.stop();
-  }
-
-  measureWidth(text: string, fsize: number) {
+  private measureWidth(text: string, fsize: number) {
     const context = document.createElement("canvas").getContext("2d") as CanvasRenderingContext2D;
     context.font = fsize + "px Arial";
     return context.measureText(text).width;
   }
 
-  getTextLines(words: string[], targetWidth: number, fsize: number): Paragraph[] {
+  private getParagraphs(words: string[], targetWidth: number, fsize: number): Paragraph[] {
     let lines: Paragraph[] = [];
     let line;
 
@@ -110,6 +97,19 @@ export class Render {
       }
     }
     return lines;
+  }
+
+  async draw() {
+    for await (let elem of this.data.elements) {
+      if (Object.getOwnPropertyNames(Render.prototype).indexOf(`draw${elem.name}`) >= 0)
+        eval(`this.draw${elem.name}(elem)`);
+      else
+        console.error(
+          `\n> ERROR: Method 'draw${elem.name}' does not exist.\nPlease fix the type name '${elem.name}' in the configuration file as instructed or create a new method.`
+        );
+      this.bar.increment();
+    }
+    this.bar.stop();
   }
 
   drawHeader(elem: UIElement) {
@@ -133,13 +133,13 @@ export class Render {
   drawTitle(elem: UIElement) {
     let content: string;
     if (elem.content) content = elem.content;
-    else content = this.config.getRandomSentence();
+    else content = random_sentence();
 
     const title = new Title(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lheight, elem.align, content);
     title.generate(this.config.randomize, this.config.randomOffset);
 
     if (title.textBlock) {
-      let lines = this.getTextLines(title.textBlock.words, title.width, title.fsize);
+      let lines = this.getParagraphs(title.textBlock.words, title.width, title.fsize);
       while (lines.length > title.height / title.lineHeight) {
         lines.pop();
       }
@@ -154,12 +154,20 @@ export class Render {
   }
 
   drawLink(elem: UIElement) {
-    let content = "";
-    if (elem.content) content = elem.content;
-
-    const link = new Link(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lheight, elem.align, content);
-    link.generate(this.config.randomize, this.config.randomOffset);
-    if (link.textBlock) this.createText(link.textBlock);
+    if (elem.content) {
+      const link = new Link(
+        elem.height,
+        elem.width,
+        elem.x,
+        elem.y,
+        elem.fsize,
+        elem.lheight,
+        elem.align,
+        elem.content
+      );
+      link.generate(this.config.randomize, this.config.randomOffset);
+      if (link.textBlock) this.createText(link.textBlock);
+    }
   }
 
   drawImage(elem: UIElement) {
@@ -170,7 +178,7 @@ export class Render {
 
   async drawIcon(elem: UIElement) {
     const icon = new Icon(elem.height, elem.width, elem.x, elem.y, elem.svg);
-    await icon.generate(this.config.randomize, this.config.randomOffset);
+    await icon.generate();
     const parser = new DOMParser();
     const doc = parser.parseFromString(icon.svg, "image/svg+xml");
     const svg = doc.firstChild as SVGSVGElement;
@@ -182,13 +190,11 @@ export class Render {
     if (elem.content) btn.setContent(elem.content);
     btn.generate(this.config.randomize, this.config.randomOffset);
 
-    if (btn.textBlock) {
-      this.createText(btn.textBlock);
-    }
+    if (btn.textBlock) this.createText(btn.textBlock);
     if (btn.lines) this.createLines(btn.lines);
   }
 
-  async drawBurguer(elem: UIElement) {
+  drawBurguer(elem: UIElement) {
     const burguer = new Burguer(elem.height, elem.width, elem.x, elem.y);
     burguer.generate(this.config.randomize, this.config.randomOffset);
     if (burguer.lines) this.createLines(burguer.lines);

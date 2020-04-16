@@ -1,5 +1,4 @@
 import { JsonObject, JsonProperty } from "json2typescript";
-import { LoremIpsum } from "lorem-ipsum";
 
 @JsonObject("Config")
 export class Config {
@@ -20,16 +19,6 @@ export class Config {
   setFontFamily() {
     var index = Math.floor(Math.random() * Math.floor(this.fonts.length));
     this.fontFamily = this.fonts[index];
-  }
-
-  getRandomSentence(): string {
-    var lorem = new LoremIpsum({
-      wordsPerSentence: {
-        max: 15,
-        min: 1
-      }
-    });
-    return lorem.generateSentences(1);
   }
 }
 

@@ -1,3 +1,5 @@
+import { LoremIpsum } from "lorem-ipsum";
+
 export declare type Point = [number, number];
 export declare type Line = Point[];
 
@@ -35,6 +37,16 @@ export class TextBlock {
     this.anchor = a;
     this.words = words;
   }
+}
+
+export function random_sentence(): string {
+  var lorem = new LoremIpsum({
+    wordsPerSentence: {
+      max: 15,
+      min: 1,
+    },
+  });
+  return lorem.generateSentences(1);
 }
 
 export function t_words(text: string): string[] {
