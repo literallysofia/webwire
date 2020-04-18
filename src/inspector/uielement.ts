@@ -50,7 +50,7 @@ interface TextBlock {
   fsize: number;
   lheight: number;
   align: string;
-  content?: string;
+  content?: string | undefined;
 
   setContent(c: string): void;
 }
@@ -135,8 +135,8 @@ export class Burguer extends UIElement {
 
 export class Button extends UIElement {
   name = "Button";
-  fsize?: number;
-  content?: string;
+  fsize?: number | undefined;
+  content?: string | undefined;
 
   constructor(h: number, w: number, x: number, y: number) {
     super(h, w, x, y);

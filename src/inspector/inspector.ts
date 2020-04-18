@@ -4,23 +4,7 @@ import SVGO from "svgo";
 import { Browser } from "./browser";
 import { Config } from "./config";
 import { WebElement, IRectangle } from "selenium-webdriver";
-import {
-  UIElement,
-  Header,
-  Footer,
-  Container,
-  Title,
-  Link,
-  Text,
-  Image,
-  Icon,
-  Button,
-  Burguer,
-  Dropdown,
-  TextField,
-  Radio,
-  Checkbox,
-} from "./uielement";
+import { UIElement, Header, Footer, Container, Title, Link, Text, Image, Icon, Button, Burguer, Dropdown, TextField, Radio, Checkbox } from "./uielement";
 
 export class Inspector {
   browser: Browser;
@@ -83,10 +67,7 @@ export class Inspector {
     for await (let elem of elems) {
       let type = await elem.getAttribute("data-type");
       if (Object.getOwnPropertyNames(Inspector.prototype).indexOf(`add${type}`) >= 0) eval(`this.add${type}(elem)`);
-      else
-        console.error(
-          `\n> ERROR: Method 'add${type}' does not exist.\nPlease fix the type name '${type}' in the configuration file as instructed or create a new method.`
-        );
+      else console.error(`\n> ERROR: Method 'add${type}' does not exist.\nPlease fix the type name '${type}' in the configuration file as instructed or create a new method.`);
     }
   }
 
@@ -168,8 +149,7 @@ export class Inspector {
         { cleanupAttrs: true },
         {
           removeAttrs: {
-            attrs:
-              "(stroke|fill|fill-opacity|data-type|fill-rule|class|stroke-linecap|stroke-linejoin|stroke-width|aria-hidden|rx|ry)",
+            attrs: "(stroke|fill|fill-opacity|data-type|fill-rule|class|stroke-linecap|stroke-linejoin|stroke-width|aria-hidden|rx|ry)",
           },
         },
       ],
