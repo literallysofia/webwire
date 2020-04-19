@@ -23,10 +23,8 @@ export abstract class Drawable {
     return [p1, p2, p3, p4];
   }
 
-  mutatePoints(points: Point[], offset: number, value?: number) {
-    if (value) {
-      offset *= value;
-    }
+  mutatePoints(points: Point[], offset: number, area: number) {
+    if (area <= offset * 1000) offset = Math.ceil((area / (offset * 1000)) * offset);
 
     for (let i in points) {
       const point = points[i];
@@ -36,8 +34,9 @@ export abstract class Drawable {
   }
 
   mutateCoords(offset: number) {
-    this.x += Math.random() * offset * 3 - offset;
-    this.y += Math.random() * offset * 2 - offset;
+    offset = random(0, offset);
+    this.x += Math.random() * offset * 2 - offset;
+    this.y += Math.random() * offset - offset;
   }
 
   abstract generate(randomOffset: number): void;
@@ -56,7 +55,7 @@ export class Container extends Drawable {
   generate(randomOffset: number) {
     this.lines = [];
     let points = this.rectPoints(this.height, this.width, this.x, this.y);
-    this.mutatePoints(points, randomOffset);
+    this.mutatePoints(points, randomOffset, this.height * this.width);
     this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
   }
 }
@@ -177,7 +176,7 @@ export class Button extends Drawable {
   generate(randomOffset: number) {
     this.lines = [];
     let points = this.rectPoints(this.height, this.width, this.x, this.y);
-    this.mutatePoints(points, randomOffset);
+    this.mutatePoints(points, randomOffset, this.height * this.width);
 
     this.lines.push([points[0], points[1]]);
     this.lines.push([points[1], points[2]]);
@@ -185,7 +184,7 @@ export class Button extends Drawable {
     this.lines.push([points[3], points[0]]);
 
     let textLine = this.getTextLine();
-    this.mutatePoints(textLine, randomOffset);
+    this.mutatePoints(textLine, randomOffset, this.height * this.width);
     this.lines.push(textLine);
   }
 }
@@ -212,7 +211,7 @@ export class TextButton extends Button implements DrawableText {
   generate(randomOffset: number) {
     this.lines = [];
     let points = this.rectPoints(this.height, this.width, this.x, this.y);
-    this.mutatePoints(points, randomOffset);
+    this.mutatePoints(points, randomOffset, this.height * this.width);
 
     this.lines.push([points[0], points[1]]);
     this.lines.push([points[1], points[2]]);
@@ -257,7 +256,7 @@ export class Text extends Drawable {
 
         line.push([x, y]);
       }
-      this.mutatePoints(line, randomOffset);
+      this.mutatePoints(line, randomOffset, this.height * this.width);
       this.lines.push(line);
     }
   }
@@ -277,7 +276,7 @@ export class Image extends Drawable {
   generate(randomOffset: number) {
     this.lines = [];
     let points = this.rectPoints(this.height, this.width, this.x, this.y);
-    this.mutatePoints(points, randomOffset);
+    this.mutatePoints(points, randomOffset, this.height * this.width);
 
     let cross: Point[] = [];
     cross.push(
@@ -286,7 +285,7 @@ export class Image extends Drawable {
       p_lerp(points[1], points[3], random(0.0, 0.2)),
       p_lerp(points[3], points[1], random(0.0, 0.2))
     );
-    this.mutatePoints(cross, randomOffset);
+    this.mutatePoints(cross, randomOffset, this.height * this.width);
 
     this.lines.push([points[0], points[1]]);
     this.lines.push([points[1], points[2]]);
@@ -342,7 +341,7 @@ export class Burguer extends Drawable {
 
         line.push([x, y]);
       }
-      this.mutatePoints(line, randomOffset, 0.3);
+      this.mutatePoints(line, randomOffset, this.height * this.width);
       this.lines.push(line);
     }
   }
@@ -358,11 +357,11 @@ export class Dropdown extends Drawable {
   generate(randomOffset: number) {
     this.lines = [];
     let points = this.rectPoints(this.height, this.width, this.x, this.y);
-    this.mutatePoints(points, randomOffset);
+    this.mutatePoints(points, randomOffset, this.height * this.width);
 
     let divider = [];
     divider.push(p_trans(points[1], -random(20, 40), 0), p_trans(points[2], -random(20, 40), 0));
-    this.mutatePoints(divider, randomOffset);
+    this.mutatePoints(divider, randomOffset, this.height * this.width);
 
     this.lines.push([points[0], points[1]]);
     this.lines.push([points[1], points[2]]);
@@ -386,7 +385,7 @@ export class TextField extends Drawable {
   generate(randomOffset: number) {
     this.lines = [];
     let points = this.rectPoints(this.height, this.width, this.x, this.y);
-    this.mutatePoints(points, randomOffset);
+    this.mutatePoints(points, randomOffset, this.height * this.width);
     this.lines.push([points[0], points[1]], [points[1], points[2]], [points[2], points[3]], [points[3], points[0]]);
   }
 }
@@ -416,7 +415,7 @@ export class Checkbox extends Drawable {
   generate(randomOffset: number) {
     this.lines = [];
     let points = this.rectPoints(this.height, this.width, this.x, this.y);
-    this.mutatePoints(points, randomOffset, 0.3);
+    this.mutatePoints(points, randomOffset, this.height * this.width);
 
     let checkmark = [];
     const point1 = p_trans(points[0], random(-this.width / 2, 0), random(0, this.height / 2));
