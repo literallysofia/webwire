@@ -11,12 +11,12 @@ elements:
       - //footer
   - type: Title
     paths:
-      - //h1[text()]
-      - //h2[text()]
-      - //h3[text()]
-      - //h4[text()]
-      - //h5[text()]
-      - //h6[text()]
+      - //h1[.//text()]
+      - //h2[.//text()]
+      - //h3[.//text()]
+      - //h4[.//text()]
+      - //h5[.//text()]
+      - //h6[.//text()]
   - type: Text
     paths:
       - //p[text()]
@@ -38,6 +38,7 @@ elements:
       - //a[*[name()="svg"]]
       - //small[ancestor::h1[text()]]
       - //li[.//*[name()="svg"]]
+      - //a[ancestor::h1 or ancestor::h2 or ancestor::h3 or ancestor::h4 or ancestor::h5 or ancestor::h6]
   - type: Link
     paths:
       - //ul/li/a[text()]

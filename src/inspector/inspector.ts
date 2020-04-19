@@ -99,8 +99,10 @@ export class Inspector {
   async addTitle(elem: WebElement) {
     const rect = await this.getRectangle(elem);
     const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
-    const lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
+    let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
     const textAlign = await elem.getCssValue("text-align");
+
+    if (isNaN(lineHeight)) lineHeight = Math.round(fontSize * 1.2);
 
     const title = new Title(rect.height, rect.width, rect.x, rect.y, fontSize, lineHeight, textAlign);
     if (this.config.keepOriginalText) {
@@ -118,8 +120,10 @@ export class Inspector {
 
     const rect = await this.getRectangle(elem);
     const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
-    const lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
+    let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
     const textAlign = await elem.getCssValue("text-align");
+
+    if (isNaN(lineHeight)) lineHeight = Math.round(fontSize * 1.2);
 
     const link = new Link(rect.height, rect.width, rect.x, rect.y, fontSize, lineHeight, textAlign);
     let text = await elem.getText();
@@ -131,7 +135,9 @@ export class Inspector {
 
   async addText(elem: WebElement) {
     const rect = await this.getRectangle(elem);
-    const lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
+    const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
+    let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
+    if (isNaN(lineHeight)) lineHeight = fontSize * 1.2;
     const nlines = Math.round(rect.height / lineHeight);
     this.data.push(new Text(rect.height, rect.width, rect.x, rect.y, nlines));
   }
