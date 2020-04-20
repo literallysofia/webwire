@@ -33,7 +33,7 @@ export class Inspector {
     for (let element of this.config.elements) {
       for (let path of element.paths) {
         let elems = await this.browser.findElements(path);
-        await this.browser.setDataType(elems, element.type);
+        await this.browser.setDataType(elems, element.type, element.css);
       }
       for (let path of element.ignore) {
         let elems = await this.browser.findElements(path);
@@ -73,27 +73,17 @@ export class Inspector {
 
   async addHeader(elem: WebElement) {
     const rect = await elem.getRect();
-    if (rect.height === 0 || rect.width === 0) return;
     this.data.push(new Header(rect.height, rect.width, rect.x, rect.y));
   }
 
   async addFooter(elem: WebElement) {
     const rect = await elem.getRect();
-    if (rect.height === 0 || rect.width === 0) return;
     this.data.push(new Footer(rect.height, rect.width, rect.x, rect.y));
   }
 
   async addContainer(elem: WebElement) {
     const rect = await elem.getRect();
-    if (rect.height === 0 || rect.width === 0) return;
-
-    const borderBottom = parseInt(await elem.getCssValue("border-bottom-width"), 10);
-    const borderLeft = parseInt(await elem.getCssValue("border-left-width"), 10);
-    const borderRight = parseInt(await elem.getCssValue("border-right-width"), 10);
-    const borderTop = parseInt(await elem.getCssValue("border-top-width"), 10);
-    if (borderBottom > 0 || borderLeft > 0 || borderRight > 0 || borderTop > 0) {
-      this.data.push(new Container(rect.height, rect.width, rect.x, rect.y));
-    }
+    this.data.push(new Container(rect.height, rect.width, rect.x, rect.y));
   }
 
   async addTitle(elem: WebElement) {

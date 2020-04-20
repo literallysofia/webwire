@@ -2,13 +2,40 @@ elements:
   - type: Container
     paths:
       - //div[text() and *]
+    css:
+      - property: border-bottom-width
+        condition: greater
+        value: 0
+      - property: border-left-width
+        condition: greater
+        value: 0
+      - property: border-right-width
+        condition: greater
+        value: 0
+      - property: border-top-width
+        condition: greater
+        value: 0
   - type: Header
     paths:
       - //header
       - //nav[contains(@class, 'navbar')]
+    css:
+      - property: height
+        condition: greater
+        value: 0
+      - property: width
+        condition: greater
+        value: 0
   - type: Footer
     paths:
       - //footer
+    css:
+      - property: height
+        condition: greater
+        value: 0
+      - property: width
+        condition: greater
+        value: 0
   - type: Title
     paths:
       - //h1[.//text()]

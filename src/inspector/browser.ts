@@ -1,5 +1,7 @@
 import "chromedriver";
 import { Builder, ThenableWebDriver, WebElement, By, WebElementPromise } from "selenium-webdriver";
+import { CSS } from "./config";
+import { conditions } from "./utils";
 
 export class Browser {
   private driver: ThenableWebDriver;
@@ -41,11 +43,24 @@ export class Browser {
     }
   }
 
-  async setDataType(elems: WebElement[], type: string) {
+  async validateCSS(elem: WebElement, css: CSS[]): Promise<boolean> {
+    let results: boolean[] = [];
+    for (let c of css) {
+      const propertyValue = parseInt(await elem.getCssValue(c.property), 10);
+      if (!isNaN(propertyValue) && conditions.has(c.condition)) {
+        results.push(conditions.get(c.condition)?.call(this, propertyValue, c.value));
+      } else results.push(false);
+    }
+    if (!results.includes(false) || results.length === 0) return true;
+    else return false;
+  }
+
+  async setDataType(elems: WebElement[], type: string, css: CSS[]) {
     for (let elem of elems) {
       const displayed = await elem.isDisplayed();
       const tag = await elem.getTagName();
-      if (displayed || tag === "input") {
+      const cssValidated = await this.validateCSS(elem, css);
+      if ((displayed && cssValidated) || (tag === "input" && cssValidated)) {
         const script = `arguments[0].setAttribute('data-type', '${type}')`;
         await this.driver.executeScript(script, elem);
       }
