@@ -59,11 +59,25 @@ export class Browser {
     else return false;
   }
 
+  async evalExpression(elem: WebElement, exp: string) {
+    "use strict";
+
+    const cssProxy = new cssProxy({}, {
+      get: async function(target: any, prop: string): Promise<number> {
+        let property = prop.replace(/_/g, "-");
+        return parseInt(await elem.getCssValue(property), 10);
+      }
+    });
+    return new Function("css", "return " + exp)(cssProxy);
+  }
+
   async setDataType(elems: WebElement[], type: string, css: CSS[]) {
     for (let elem of elems) {
       const displayed = await elem.isDisplayed();
       const tag = await elem.getTagName();
       const cssValidated = await this.validateCSS(elem, css);
+
+      console.log(await this.evalExpression(elem, "css.border_bottom_width > 0"));
 
       if ((displayed && cssValidated) || (tag === "input" && cssValidated)) {
         const script = `arguments[0].setAttribute('data-type', '${type}')`;
