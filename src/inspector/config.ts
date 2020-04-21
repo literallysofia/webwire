@@ -1,5 +1,14 @@
 import { JsonObject, JsonProperty } from "json2typescript";
 
+@JsonObject("Window")
+class Window {
+  @JsonProperty("height", Number)
+  height: number = 1080;
+
+  @JsonProperty("width", Number)
+  width: number = 1920;
+}
+
 @JsonObject("CSS")
 export class CSS {
   @JsonProperty("property", String)
@@ -34,4 +43,13 @@ export class Config {
 
   @JsonProperty("keepOriginalText", Boolean)
   keepOriginalText: boolean = true;
+
+  @JsonProperty("browser", String)
+  browser: string = "chrome";
+
+  @JsonProperty("headless", Boolean)
+  headless: boolean = true;
+
+  @JsonProperty("window", Window)
+  window: Window = new Window();
 }

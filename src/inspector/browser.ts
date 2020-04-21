@@ -1,21 +1,25 @@
 import "chromedriver";
 import { Builder, ThenableWebDriver, WebElement, By, WebElementPromise } from "selenium-webdriver";
+import { Options } from "selenium-webdriver/chrome";
 import { CSS } from "./config";
 import { conditions } from "./utils";
 
 export class Browser {
   private driver: ThenableWebDriver;
 
-  constructor(browserName: string) {
-    this.driver = new Builder().forBrowser(browserName).build();
+  constructor(browser: string, headless: boolean, height: number, width: number) {
+    let options = new Options();
+    if (headless) options.headless();
+    options.windowSize({ width: width, height: height });
+
+    this.driver = new Builder()
+      .forBrowser(browser)
+      .setChromeOptions(options)
+      .build();
   }
 
   async navigate(url: string) {
     await this.driver.get(url);
-    await this.driver
-      .manage()
-      .window()
-      .maximize();
 
     //remove css and jquery animations
     const script =
@@ -60,6 +64,7 @@ export class Browser {
       const displayed = await elem.isDisplayed();
       const tag = await elem.getTagName();
       const cssValidated = await this.validateCSS(elem, css);
+
       if ((displayed && cssValidated) || (tag === "input" && cssValidated)) {
         const script = `arguments[0].setAttribute('data-type', '${type}')`;
         await this.driver.executeScript(script, elem);

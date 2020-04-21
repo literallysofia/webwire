@@ -106,3 +106,8 @@ elements:
       - //select
       - //a[contains(@class, 'dropdown-toggle')]
 keepOriginalText: true
+browser: chrome
+headless: false
+window:
+  height: 960
+  width: 1536
