@@ -16,7 +16,7 @@ export interface Ellipse {
   width: number;
 }
 
-export interface Paragraph {
+export interface TextLine {
   width: number;
   text: string;
 }

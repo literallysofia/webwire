@@ -227,7 +227,7 @@ export class TextButton extends Button implements DrawableText {
 }
 
 /*
- * TEXT PARAGRAPH
+ * TEXT LINES
  */
 
 export class Text extends Drawable {
@@ -259,6 +259,34 @@ export class Text extends Drawable {
       this.mutatePoints(line, randomOffset, this.height * this.width);
       this.lines.push(line);
     }
+  }
+}
+
+/*
+ * TEXT PARAGRAPH
+ */
+
+export class Paragraph extends Drawable {
+  lines?: Line[] | undefined;
+
+  constructor(h: number, w: number, x: number, y: number) {
+    super(h, w, x, y);
+  }
+
+  generate(randomOffset: number) {
+    this.lines = [];
+    let points = this.rectPoints(this.height, this.width, this.x, this.y);
+    this.mutatePoints(points, randomOffset, this.height * this.width);
+
+    let cross: Point[] = [];
+    cross.push(p_lerp(points[0], points[2], random(0.0, 0.2)), p_lerp(points[2], points[0], random(0.0, 0.2)));
+    this.mutatePoints(cross, randomOffset, this.height * this.width);
+
+    this.lines.push([points[0], points[1]]);
+    this.lines.push([points[1], points[2]]);
+    this.lines.push([points[2], points[3]]);
+    this.lines.push([points[3], points[0]]);
+    this.lines.push([cross[0], cross[1]]);
   }
 }
 

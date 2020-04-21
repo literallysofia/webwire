@@ -7,8 +7,8 @@ import svgpath from "svgpath";
 import { JSDOM } from "jsdom";
 import { Data, UIElement } from "./data";
 import { Config } from "./config";
-import { Line, Paragraph, Ellipse, TextBlock, random_sentence } from "./utils";
-import { Container, Title, Text, Link, Image, Icon, Button, TextButton, Burguer, Dropdown, TextField, Radio, Checkbox } from "./drawable";
+import { Line, TextLine, Ellipse, TextBlock, random_sentence } from "./utils";
+import { Container, Title, Text, Paragraph, Link, Image, Icon, Button, TextButton, Burguer, Dropdown, TextField, Radio, Checkbox } from "./drawable";
 
 /* VARIABLES */
 const { document } = new JSDOM(`...`).window;
@@ -60,8 +60,8 @@ export class Render {
     return context.measureText(text).width;
   }
 
-  private getParagraphs(words: string[], targetWidth: number, fsize: number): Paragraph[] {
-    let lines: Paragraph[] = [];
+  private getTextLines(words: string[], targetWidth: number, fsize: number): TextLine[] {
+    let lines: TextLine[] = [];
     let line;
 
     for (let i = 0, n = words.length; i < n; i++) {
@@ -121,7 +121,7 @@ export class Render {
     title.generate(this.config.randomOffset);
 
     if (title.textBlock) {
-      let lines = this.getParagraphs(title.textBlock.words, title.width, title.fsize);
+      let lines = this.getTextLines(title.textBlock.words, title.width, title.fsize);
       while (lines.length > title.height / title.lheight) {
         lines.pop();
       }
@@ -130,6 +130,9 @@ export class Render {
   }
 
   drawText(elem: UIElement) {
+    /* let text;
+    if (elem.nlines > 1) text = new Paragraph(elem.height, elem.width, elem.x, elem.y);
+    else text = new Text(elem.height, elem.width, elem.x, elem.y, elem.nlines); */
     const text = new Text(elem.height, elem.width, elem.x, elem.y, elem.nlines);
     text.generate(this.config.randomOffset);
     if (text.lines) this.createLines(text.lines);
@@ -201,7 +204,7 @@ export class Render {
     if (drop.lines) this.createLines(drop.lines);
   }
 
-  createText(tb: TextBlock, lines?: Paragraph[]) {
+  createText(tb: TextBlock, lines?: TextLine[]) {
     const g = document.createElementNS(namespaceURI, "g");
     const text = document.createElementNS(namespaceURI, "text");
     text.setAttribute("x", tb.x);
