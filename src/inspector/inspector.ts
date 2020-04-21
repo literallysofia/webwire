@@ -56,10 +56,6 @@ export class Inspector {
       if (foundElements.length > 0) this.fBar.increment(foundElements.length);
     }
     await this.setSize();
-    for (let elem of this.data) {
-      elem.x += 10;
-      elem.y += 10;
-    }
     this.fBar.stop();
   }
 
@@ -194,8 +190,8 @@ export class Inspector {
   async setSize() {
     const html = this.browser.findElement("html");
     const rect = await html.getRect();
-    this.size.height = rect.height + 20;
-    this.size.width = rect.width + 20;
+    this.size.height = rect.height;
+    this.size.width = rect.width;
   }
 
   async getRectangle(elem: WebElement): Promise<IRectangle> {

@@ -50,8 +50,8 @@ export class Render {
   }
 
   setCanvasSize() {
-    this.canvas.setAttribute("height", this.data.size.height.toString());
-    this.canvas.setAttribute("width", this.data.size.width.toString());
+    this.canvas.setAttribute("height", (this.data.size.height + 20).toString());
+    this.canvas.setAttribute("width", (this.data.size.width + 20).toString());
   }
 
   private measureWidth(text: string, fsize: number) {
@@ -85,6 +85,9 @@ export class Render {
 
   async draw() {
     for await (let elem of this.data.elements) {
+      elem.x += 10;
+      elem.y += 10;
+
       if (Object.getOwnPropertyNames(Render.prototype).indexOf(`draw${elem.name}`) >= 0) eval(`this.draw${elem.name}(elem)`);
       else
         console.error(
