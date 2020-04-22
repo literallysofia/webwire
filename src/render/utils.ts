@@ -9,13 +9,6 @@ export enum Anchor {
   End = "end",
 }
 
-export interface Ellipse {
-  cx: number;
-  cy: number;
-  height: number;
-  width: number;
-}
-
 export interface TextLine {
   width: number;
   text: string;
@@ -28,22 +21,26 @@ export interface IRectangle {
   width: number;
 }
 
-export class TextBlock {
-  x: string;
-  y: string;
-  fontSize: string;
-  lineHeight: string;
+export interface Ellipse {
+  cx: number;
+  cy: number;
+  height: number;
+  width: number;
+}
+
+export interface TextInfo {
+  fsize: number;
+  lheight: number;
+  align: string;
+}
+
+export interface TextBlock {
+  x: number;
+  y: number;
+  fsize: number;
+  lheigth: number;
   anchor: string;
   words: string[];
-
-  constructor(x: number, y: number, fsize: number, lheight: number, a: string, words: string[]) {
-    this.x = x.toString();
-    this.y = y.toString();
-    this.fontSize = fsize.toString();
-    this.lineHeight = lheight.toString();
-    this.anchor = a;
-    this.words = words;
-  }
 }
 
 export function random_sentence(): string {
