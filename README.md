@@ -2,6 +2,8 @@
 
 Thesis project for the Master in Informatics and Computer Engineering (MIEIC).
 
+[![BCH compliance](https://bettercodehub.com/edge/badge/literallysofia/feup-diss?branch=master&token=fe9608ed80cf9ba6a124bf6fe3c5f8eff18316c5)](https://bettercodehub.com/)
+
 **Author:** Sofia Silva
 
 **Institution:** Faculty of Engineering of the University of Porto (FEUP)

@@ -9,18 +9,6 @@ class Window {
   width: number = 1920;
 }
 
-@JsonObject("CSS")
-export class CSS {
-  @JsonProperty("property", String)
-  property: string = "";
-
-  @JsonProperty("condition", String)
-  condition: string = "";
-
-  @JsonProperty("value", Number)
-  value: number = 0;
-}
-
 @JsonObject("Element")
 class Element {
   @JsonProperty("type", String)
@@ -32,8 +20,8 @@ class Element {
   @JsonProperty("ignore", [String], true)
   ignore: string[] = [];
 
-  @JsonProperty("css", [CSS], true)
-  css: CSS[] = [];
+  @JsonProperty("css", String, true)
+  css: string = "";
 }
 
 @JsonObject("Config")

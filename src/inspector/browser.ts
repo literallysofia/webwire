@@ -1,8 +1,6 @@
 import "chromedriver";
 import { Builder, ThenableWebDriver, WebElement, By, WebElementPromise } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome";
-import { CSS } from "./config";
-import { conditions } from "./utils";
 
 export class Browser {
   private driver: ThenableWebDriver;
@@ -47,39 +45,33 @@ export class Browser {
     }
   }
 
-  async validateCSS(elem: WebElement, css: CSS[]): Promise<boolean> {
-    let results: boolean[] = [];
-    for (let c of css) {
-      const propertyValue = parseInt(await elem.getCssValue(c.property), 10);
-      if (!isNaN(propertyValue) && conditions.has(c.condition)) {
-        results.push(conditions.get(c.condition)?.call(this, propertyValue, c.value));
-      } else results.push(false);
-    }
-    if (!results.includes(false) || results.length === 0) return true;
-    else return false;
+  async evalExpression(elem: WebElement, exp: string): Promise<boolean> {
+    const AsyncFunction = Object.getPrototypeOf(async function() {}).constructor;
+    const awaitifyExpression = (exp: string) => exp.replace(/(css\.[a-zA-Z_])/g, "await $1");
+
+    const cssProxy = new Proxy(
+      {},
+      {
+        async get(_, prop: string) {
+          const cssValue = await elem.getCssValue(prop.replace(/_/g, "-"));
+          //console.log(`Element Property ${prop}, Selenium gives ${cssValue} and parsed is ${parseInt(cssValue, 10)}\n`);
+          return isNaN(parseInt(cssValue, 10)) ? cssValue : parseInt(cssValue, 10);
+        },
+      }
+    );
+
+    return new AsyncFunction("css", `return ${awaitifyExpression(exp)}`)(cssProxy);
   }
 
-  async evalExpression(elem: WebElement, exp: string): Promise<string | number> {
-    const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
-    const awaitifyExpression = (exp: string) => exp.replace(/(css\.[a-zA-Z_])/g, 'await $1')
-    const cssProxy = new Proxy({}, { get(_, prop: string) { 
-      const cssValue = elem.getCssValue(prop.replace(/_/g, "-"))
-      return cssValue.then((v: string) => {
-        // console.log(`Element Property ${prop}, Selenium gives ${v} and parsed is ${parseInt(v, 10)}\n`)
-        return isNaN(parseInt(v, 10)) ? v : parseInt(v, 10)
-      })
-    }})
-
-    return new AsyncFunction('css', `return ${awaitifyExpression(exp)}`)(cssProxy)
-  }
-
-  async setDataType(elems: WebElement[], type: string, css: CSS[]) {
+  async setDataType(elems: WebElement[], type: string, css: string) {
     for (let elem of elems) {
       const displayed = await elem.isDisplayed();
       const tag = await elem.getTagName();
-      const cssValidated = await this.validateCSS(elem, css);
 
-      console.log(await this.evalExpression(elem, 'css.width > 50'));
+      let cssValidated: boolean;
+      if (css === "") cssValidated = true;
+      else cssValidated = await this.evalExpression(elem, css);
+      //console.log(cssValidated);
 
       if ((displayed && cssValidated) || (tag === "input" && cssValidated)) {
         const script = `arguments[0].setAttribute('data-type', '${type}')`;
