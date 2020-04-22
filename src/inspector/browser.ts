@@ -59,16 +59,18 @@ export class Browser {
     else return false;
   }
 
-  async evalExpression(elem: WebElement, exp: string) {
-    "use strict";
+  async evalExpression(elem: WebElement, exp: string): Promise<string | number> {
+    const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
+    const awaitifyExpression = (exp: string) => exp.replace(/(css\.[a-zA-Z_])/g, 'await $1')
+    const cssProxy = new Proxy({}, { get(_, prop: string) { 
+      const cssValue = elem.getCssValue(prop.replace(/_/g, "-"))
+      return cssValue.then((v: string) => {
+        // console.log(`Element Property ${prop}, Selenium gives ${v} and parsed is ${parseInt(v, 10)}\n`)
+        return isNaN(parseInt(v, 10)) ? v : parseInt(v, 10)
+      })
+    }})
 
-    const cssProxy = new cssProxy({}, {
-      get: async function(target: any, prop: string): Promise<number> {
-        let property = prop.replace(/_/g, "-");
-        return parseInt(await elem.getCssValue(property), 10);
-      }
-    });
-    return new Function("css", "return " + exp)(cssProxy);
+    return new AsyncFunction('css', `return ${awaitifyExpression(exp)}`)(cssProxy)
   }
 
   async setDataType(elems: WebElement[], type: string, css: CSS[]) {
@@ -77,7 +79,7 @@ export class Browser {
       const tag = await elem.getTagName();
       const cssValidated = await this.validateCSS(elem, css);
 
-      console.log(await this.evalExpression(elem, "css.border_bottom_width > 0"));
+      console.log(await this.evalExpression(elem, 'css.width > 50'));
 
       if ((displayed && cssValidated) || (tag === "input" && cssValidated)) {
         const script = `arguments[0].setAttribute('data-type', '${type}')`;
