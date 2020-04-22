@@ -21,6 +21,13 @@ export interface TextLine {
   text: string;
 }
 
+export interface IRectangle {
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+}
+
 export class TextBlock {
   x: string;
   y: string;

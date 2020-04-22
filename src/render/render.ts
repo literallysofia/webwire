@@ -107,7 +107,8 @@ export class Render {
   }
 
   drawContainer(elem: UIElement) {
-    const c = new Container(elem.height, elem.width, elem.x, elem.y);
+    const rect = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
+    const c = new Container(rect);
     c.generate(this.config.randomOffset);
     if (c.lines) this.createLines(c.lines);
   }
@@ -117,7 +118,8 @@ export class Render {
     if (elem.content) content = elem.content;
     else content = random_sentence();
 
-    const title = new Title(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lheight, elem.align, content);
+    const rect = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
+    const title = new Title(rect, elem.fsize, elem.lheight, elem.align, content);
     title.generate(this.config.randomOffset);
 
     if (title.textBlock) {
@@ -133,27 +135,31 @@ export class Render {
     /* let text;
     if (elem.nlines > 1) text = new Paragraph(elem.height, elem.width, elem.x, elem.y);
     else text = new Text(elem.height, elem.width, elem.x, elem.y, elem.nlines); */
-    const text = new Text(elem.height, elem.width, elem.x, elem.y, elem.nlines);
+    const rect = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
+    const text = new Text(rect, elem.nlines);
     text.generate(this.config.randomOffset);
     if (text.lines) this.createLines(text.lines);
   }
 
   drawLink(elem: UIElement) {
     if (elem.content) {
-      const link = new Link(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.lheight, elem.align, elem.content);
+      const rect = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
+      const link = new Link(rect, elem.fsize, elem.lheight, elem.align, elem.content);
       link.generate(this.config.randomOffset);
       if (link.textBlock) this.createText(link.textBlock);
     }
   }
 
   drawImage(elem: UIElement) {
-    const image = new Image(elem.height, elem.width, elem.x, elem.y);
+    const rect = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
+    const image = new Image(rect);
     image.generate(this.config.randomOffset);
     if (image.lines) this.createLines(image.lines);
   }
 
   async drawIcon(elem: UIElement) {
-    const icon = new Icon(elem.height, elem.width, elem.x, elem.y, elem.svg);
+    const rect = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
+    const icon = new Icon(rect, elem.svg);
     await icon.generate();
     const parser = new DOMParser();
     const doc = parser.parseFromString(icon.svg, "image/svg+xml");
@@ -162,44 +168,51 @@ export class Render {
   }
 
   drawButton(elem: UIElement) {
+    const rect = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
+
     if (elem.content) {
-      const btn = new TextButton(elem.height, elem.width, elem.x, elem.y, elem.fsize, elem.content);
+      const btn = new TextButton(rect, elem.fsize, elem.content);
       btn.generate(this.config.randomOffset);
       if (btn.lines) this.createLines(btn.lines);
       if (btn.textBlock) this.createText(btn.textBlock);
     } else {
-      const btn = new Button(elem.height, elem.width, elem.x, elem.y);
+      const btn = new Button(rect);
       btn.generate(this.config.randomOffset);
       if (btn.lines) this.createLines(btn.lines);
     }
   }
 
   drawBurguer(elem: UIElement) {
-    const burguer = new Burguer(elem.height, elem.width, elem.x, elem.y);
+    const rect = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
+    const burguer = new Burguer(rect);
     burguer.generate(this.config.randomOffset);
     if (burguer.lines) this.createLines(burguer.lines);
   }
 
   drawTextField(elem: UIElement) {
-    const field = new TextField(elem.height, elem.width, elem.x, elem.y);
+    const rect = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
+    const field = new TextField(rect);
     field.generate(this.config.randomOffset);
     if (field.lines) this.createLines(field.lines);
   }
 
   drawCheckbox(elem: UIElement) {
-    const cbox = new Checkbox(elem.height, elem.width, elem.x, elem.y);
+    const rect = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
+    const cbox = new Checkbox(rect);
     cbox.generate(this.config.randomOffset);
     if (cbox.lines) this.createLines(cbox.lines);
   }
 
   drawRadio(elem: UIElement) {
-    const radio = new Radio(elem.height, elem.width, elem.x, elem.y);
+    const rect = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
+    const radio = new Radio(rect);
     radio.generate(this.config.randomOffset);
     if (radio.ellipse) this.createEllipse(radio.ellipse, true);
   }
 
   drawDropdown(elem: UIElement) {
-    const drop = new Dropdown(elem.height, elem.width, elem.x, elem.y);
+    const rect = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
+    const drop = new Dropdown(rect);
     drop.generate(this.config.randomOffset);
     if (drop.lines) this.createLines(drop.lines);
   }

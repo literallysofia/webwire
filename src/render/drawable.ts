@@ -1,17 +1,17 @@
-import { Line, Point, Ellipse, Anchor, TextBlock, t_words, random, p_lerp, p_trans } from "./utils";
+import { Line, Point, IRectangle, Ellipse, Anchor, TextBlock, t_words, random, p_lerp, p_trans } from "./utils";
 import SVGO from "svgo";
 
 export abstract class Drawable {
-  height: number;
-  width: number;
   x: number;
   y: number;
+  height: number;
+  width: number;
 
-  constructor(h: number, w: number, x: number, y: number) {
-    this.height = h;
-    this.width = w;
-    this.x = x;
-    this.y = y;
+  constructor(rect: IRectangle) {
+    this.x = rect.x;
+    this.y = rect.y;
+    this.height = rect.height;
+    this.width = rect.width;
   }
 
   rectPoints(h: number, w: number, x: number, y: number): Point[] {
@@ -48,8 +48,8 @@ export abstract class Drawable {
 export class Container extends Drawable {
   lines?: Line[] | undefined;
 
-  constructor(h: number, w: number, x: number, y: number) {
-    super(h, w, x, y);
+  constructor(rect: IRectangle) {
+    super(rect);
   }
 
   generate(randomOffset: number) {
@@ -82,8 +82,8 @@ export class Title extends Drawable implements DrawableText {
   content: string;
   textBlock?: TextBlock | undefined;
 
-  constructor(h: number, w: number, x: number, y: number, fsize: number, lheight: number, align: string, content: string) {
-    super(h, w, x, y);
+  constructor(rect: IRectangle, fsize: number, lheight: number, align: string, content: string) {
+    super(rect);
     this.fsize = fsize;
     this.lheight = lheight;
     this.align = align;
@@ -119,8 +119,8 @@ export class Link extends Drawable implements DrawableText {
   content: string;
   textBlock?: TextBlock | undefined;
 
-  constructor(h: number, w: number, x: number, y: number, fsize: number, lheight: number, align: string, content: string) {
-    super(h, w, x, y);
+  constructor(rect: IRectangle, fsize: number, lheight: number, align: string, content: string) {
+    super(rect);
     this.fsize = fsize;
     this.lheight = lheight;
     this.align = align;
@@ -151,8 +151,8 @@ export class Link extends Drawable implements DrawableText {
 export class Button extends Drawable {
   lines?: Line[] | undefined;
 
-  constructor(h: number, w: number, x: number, y: number) {
-    super(h, w, x, y);
+  constructor(rect: IRectangle) {
+    super(rect);
   }
 
   private getTextLine(): Point[] {
@@ -196,8 +196,8 @@ export class TextButton extends Button implements DrawableText {
   content: string;
   textBlock?: TextBlock | undefined;
 
-  constructor(h: number, w: number, x: number, y: number, fs: number, c: string) {
-    super(h, w, x, y);
+  constructor(rect: IRectangle, fs: number, c: string) {
+    super(rect);
     this.fsize = fs;
     this.lheight = this.fsize + this.fsize / 2;
     this.align = "center";
@@ -234,8 +234,8 @@ export class Text extends Drawable {
   nlines: number;
   lines?: Line[] | undefined;
 
-  constructor(h: number, w: number, x: number, y: number, nlines: number) {
-    super(h, w, x, y);
+  constructor(rect: IRectangle, nlines: number) {
+    super(rect);
     this.nlines = nlines;
   }
 
@@ -269,8 +269,8 @@ export class Text extends Drawable {
 export class Paragraph extends Drawable {
   lines?: Line[] | undefined;
 
-  constructor(h: number, w: number, x: number, y: number) {
-    super(h, w, x, y);
+  constructor(rect: IRectangle) {
+    super(rect);
   }
 
   generate(randomOffset: number) {
@@ -297,8 +297,8 @@ export class Paragraph extends Drawable {
 export class Image extends Drawable {
   lines?: Line[] | undefined;
 
-  constructor(h: number, w: number, x: number, y: number) {
-    super(h, w, x, y);
+  constructor(rect: IRectangle) {
+    super(rect);
   }
 
   generate(randomOffset: number) {
@@ -327,8 +327,8 @@ export class Image extends Drawable {
 export class Icon extends Drawable {
   svg: string;
 
-  constructor(h: number, w: number, x: number, y: number, svg: string) {
-    super(h, w, x, y);
+  constructor(rect: IRectangle, svg: string) {
+    super(rect);
     this.svg = svg;
   }
 
@@ -348,8 +348,8 @@ export class Icon extends Drawable {
 export class Burguer extends Drawable {
   lines?: Line[] | undefined;
 
-  constructor(h: number, w: number, x: number, y: number) {
-    super(h, w, x, y);
+  constructor(rect: IRectangle) {
+    super(rect);
   }
 
   async generate(randomOffset: number) {
@@ -378,8 +378,8 @@ export class Burguer extends Drawable {
 export class Dropdown extends Drawable {
   lines?: Line[] | undefined;
 
-  constructor(h: number, w: number, x: number, y: number) {
-    super(h, w, x, y);
+  constructor(rect: IRectangle) {
+    super(rect);
   }
 
   generate(randomOffset: number) {
@@ -406,8 +406,8 @@ export class Dropdown extends Drawable {
 export class TextField extends Drawable {
   lines?: Line[] | undefined;
 
-  constructor(h: number, w: number, x: number, y: number) {
-    super(h, w, x, y);
+  constructor(rect: IRectangle) {
+    super(rect);
   }
 
   generate(randomOffset: number) {
@@ -421,8 +421,8 @@ export class TextField extends Drawable {
 export class Radio extends Drawable {
   ellipse?: Ellipse | undefined;
 
-  constructor(h: number, w: number, x: number, y: number) {
-    super(h, w, x, y);
+  constructor(rect: IRectangle) {
+    super(rect);
   }
 
   generate(randomOffset: number) {
@@ -436,8 +436,8 @@ export class Radio extends Drawable {
 export class Checkbox extends Drawable {
   lines?: Line[] | undefined;
 
-  constructor(h: number, w: number, x: number, y: number) {
-    super(h, w, x, y);
+  constructor(rect: IRectangle) {
+    super(rect);
   }
 
   generate(randomOffset: number) {
