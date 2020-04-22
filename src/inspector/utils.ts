@@ -19,3 +19,10 @@ function equals(a: number, b: number): boolean {
 function not_equal(a: number, b: number): boolean {
   return a !== b;
 }
+
+export interface IRectangle {
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+}

@@ -3,13 +3,14 @@ import { SingleBar } from "cli-progress";
 import SVGO from "svgo";
 import { Browser } from "./browser";
 import { Config } from "./config";
-import { WebElement, IRectangle } from "selenium-webdriver";
-import { UIElement, Header, Footer, Container, Title, Link, Text, Image, Icon, Button, Burguer, Dropdown, TextField, Radio, Checkbox } from "./uielement";
+import { WebElement } from "selenium-webdriver";
+import { IRectangle } from "./utils";
+import { IElement, Header, Footer, Container, Title, Link, Text, Image, Icon, Button, Burguer, Dropdown, TextField, Radio, Checkbox } from "./ielement";
 
 export class Inspector {
   browser: Browser;
   config: Config;
-  data: UIElement[];
+  data: IElement[];
   types: string[];
   size = {
     height: 0,
@@ -18,13 +19,13 @@ export class Inspector {
   nBar: SingleBar;
   fBar: SingleBar;
 
-  constructor(b: Browser, c: Config, nb: SingleBar, fb: SingleBar) {
-    this.browser = b;
-    this.config = c;
+  constructor(browser: Browser, config: Config, nbar: SingleBar, fbar: SingleBar) {
+    this.browser = browser;
+    this.config = config;
     this.data = [];
     this.types = [];
-    this.nBar = nb;
-    this.fBar = fb;
+    this.nBar = nbar;
+    this.fBar = fbar;
   }
 
   async normalize() {
@@ -69,17 +70,17 @@ export class Inspector {
 
   async addHeader(elem: WebElement) {
     const rect = await elem.getRect();
-    this.data.push(new Header(rect.height, rect.width, rect.x, rect.y));
+    this.data.push(new Header(rect));
   }
 
   async addFooter(elem: WebElement) {
     const rect = await elem.getRect();
-    this.data.push(new Footer(rect.height, rect.width, rect.x, rect.y));
+    this.data.push(new Footer(rect));
   }
 
   async addContainer(elem: WebElement) {
     const rect = await elem.getRect();
-    this.data.push(new Container(rect.height, rect.width, rect.x, rect.y));
+    this.data.push(new Container(rect));
   }
 
   async addTitle(elem: WebElement) {
@@ -90,7 +91,7 @@ export class Inspector {
 
     if (isNaN(lineHeight)) lineHeight = Math.round(fontSize * 1.2);
 
-    const title = new Title(rect.height, rect.width, rect.x, rect.y, fontSize, lineHeight, textAlign);
+    const title = new Title(rect, fontSize, lineHeight, textAlign);
     if (this.config.keepOriginalText) {
       const text = await elem.getText();
       title.setContent(text);
@@ -111,7 +112,7 @@ export class Inspector {
 
     if (isNaN(lineHeight)) lineHeight = Math.round(fontSize * 1.2);
 
-    const link = new Link(rect.height, rect.width, rect.x, rect.y, fontSize, lineHeight, textAlign);
+    const link = new Link(rect, fontSize, lineHeight, textAlign);
     let text = await elem.getText();
     text = text.split("\n")[0];
     link.setContent(text);
@@ -125,12 +126,12 @@ export class Inspector {
     let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
     if (isNaN(lineHeight)) lineHeight = fontSize * 1.2;
     const nlines = Math.round(rect.height / lineHeight);
-    this.data.push(new Text(rect.height, rect.width, rect.x, rect.y, nlines));
+    this.data.push(new Text(rect, nlines));
   }
 
   async addImage(elem: WebElement) {
     const rect = await elem.getRect();
-    this.data.push(new Image(rect.height, rect.width, rect.x, rect.y));
+    this.data.push(new Image(rect));
   }
 
   async addIcon(elem: WebElement) {
@@ -147,28 +148,28 @@ export class Inspector {
       ],
     });
     const optimizedSvg = await svgo.optimize(svg);
-    this.data.push(new Icon(rect.height, rect.width, rect.x, rect.y, optimizedSvg.data));
+    this.data.push(new Icon(rect, optimizedSvg.data));
   }
 
   async addTextField(elem: WebElement) {
     const rect = await elem.getRect();
-    this.data.push(new TextField(rect.height, rect.width, rect.x, rect.y));
+    this.data.push(new TextField(rect));
   }
 
   async addCheckbox(elem: WebElement) {
     const rect = await elem.getRect();
-    this.data.push(new Checkbox(rect.height, rect.width, rect.x, rect.y));
+    this.data.push(new Checkbox(rect));
   }
 
   async addRadio(elem: WebElement) {
     const rect = await elem.getRect();
-    this.data.push(new Radio(rect.height, rect.width, rect.x, rect.y));
+    this.data.push(new Radio(rect));
   }
 
   async addButton(elem: WebElement) {
     const rect = await elem.getRect();
 
-    const btn = new Button(rect.height, rect.width, rect.x, rect.y);
+    const btn = new Button(rect);
     if (this.config.keepOriginalText) {
       const text = await elem.getText();
       const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
@@ -179,12 +180,12 @@ export class Inspector {
 
   async addBurguer(elem: WebElement) {
     const rect = await elem.getRect();
-    this.data.push(new Burguer(rect.height, rect.width, rect.x, rect.y));
+    this.data.push(new Burguer(rect));
   }
 
   async addDropdown(elem: WebElement) {
     const rect = await elem.getRect();
-    this.data.push(new Dropdown(rect.height, rect.width, rect.x, rect.y));
+    this.data.push(new Dropdown(rect));
   }
 
   async setSize() {

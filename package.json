@@ -1,5 +1,5 @@
 {
-  "name": "wireit",
+  "name": "webwire",
   "version": "1.0.0",
   "description": "A tool for automatic wireframe generation from websites.",
   "main": "index.js",
