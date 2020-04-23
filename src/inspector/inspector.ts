@@ -5,7 +5,7 @@ import { Browser } from "./browser";
 import { Config } from "./config";
 import { WebElement } from "selenium-webdriver";
 import { IRectangle } from "./utils";
-import { IElement, Header, Footer, Container, Title, Link, Text, Image, Icon, Button, Burguer, Dropdown, TextField, Radio, Checkbox } from "./ielement";
+import { IElement, Button, Icon, Text, RealText } from "./ielement";
 
 export class Inspector {
   browser: Browser;
@@ -63,35 +63,71 @@ export class Inspector {
   async addElements(elems: WebElement[]) {
     for await (let elem of elems) {
       let type = await elem.getAttribute("data-type");
-      if (Object.getOwnPropertyNames(Inspector.prototype).indexOf(`add${type}`) >= 0) eval(`this.add${type}(elem)`);
-      else console.error(`\n> ERROR: Method 'add${type}' does not exist.\nPlease fix the type name '${type}' in the configuration file as instructed or create a new method.`);
+      if (Object.getOwnPropertyNames(Inspector.prototype).indexOf(`create${type}`) >= 0) eval(`this.create${type}(elem)`);
+      else console.error(`\n> ERROR: Method 'create${type}' does not exist.\nPlease fix the type name '${type}' in the configuration file as instructed or create a new method.`);
     }
   }
 
-  async addHeader(elem: WebElement) {
-    const rect = await elem.getRect();
-    this.data.push(new Header(rect));
+  async createHeader(elem: WebElement) {
+    await this.addElement("Header", elem);
   }
 
-  async addFooter(elem: WebElement) {
-    const rect = await elem.getRect();
-    this.data.push(new Footer(rect));
+  async createFooter(elem: WebElement) {
+    await this.addElement("Footer", elem);
   }
 
-  async addContainer(elem: WebElement) {
-    const rect = await elem.getRect();
-    this.data.push(new Container(rect));
+  async createContainer(elem: WebElement) {
+    await this.addElement("Container", elem);
   }
 
-  async addTitle(elem: WebElement) {
-    const rect = await this.getRectangle(elem);
+  async createImage(elem: WebElement) {
+    await this.addElement("Image", elem);
+  }
+
+  async createTextField(elem: WebElement) {
+    await this.addElement("TextField", elem);
+  }
+
+  async createCheckbox(elem: WebElement) {
+    await this.addElement("Checkbox", elem);
+  }
+
+  async createRadio(elem: WebElement) {
+    await this.addElement("Radio", elem);
+  }
+
+  async createBurguer(elem: WebElement) {
+    await this.addElement("Burguer", elem);
+  }
+
+  async createDropdown(elem: WebElement) {
+    await this.addElement("Dropdown", elem);
+  }
+
+  async createButton(elem: WebElement) {
+    if (this.config.keepOriginalText) {
+      const rect = await elem.getRect();
+      const text = await elem.getText();
+      const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
+      const btn = new Button("Button", rect, text, fontSize);
+      this.data.push(btn);
+    } else this.addElement("Button", elem);
+  }
+
+  async addElement(name: string, elem: WebElement) {
+    const rect = await elem.getRect();
+    this.data.push(new IElement(name, rect));
+  }
+
+  async createTitle(elem: WebElement) {
+    const rect = await this.rectWithoutPadding(elem);
     const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
     let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
     const textAlign = await elem.getCssValue("text-align");
 
     if (isNaN(lineHeight)) lineHeight = Math.round(fontSize * 1.2);
 
-    const title = new Title(rect, fontSize, lineHeight, textAlign);
+    const title = new RealText("Title", rect, fontSize, lineHeight, textAlign);
     if (this.config.keepOriginalText) {
       const text = await elem.getText();
       title.setContent(text);
@@ -99,20 +135,20 @@ export class Inspector {
     this.data.push(title);
   }
 
-  async addLink(elem: WebElement) {
+  async createLink(elem: WebElement) {
     if (!this.config.keepOriginalText) {
-      this.addText(elem);
+      this.createText(elem);
       return;
     }
 
-    const rect = await this.getRectangle(elem);
+    const rect = await this.rectWithoutPadding(elem);
     const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
     let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
     const textAlign = await elem.getCssValue("text-align");
 
     if (isNaN(lineHeight)) lineHeight = Math.round(fontSize * 1.2);
 
-    const link = new Link(rect, fontSize, lineHeight, textAlign);
+    const link = new RealText("Link", rect, fontSize, lineHeight, textAlign);
     let text = await elem.getText();
     text = text.split("\n")[0];
     link.setContent(text);
@@ -120,21 +156,16 @@ export class Inspector {
     this.data.push(link);
   }
 
-  async addText(elem: WebElement) {
-    const rect = await this.getRectangle(elem);
+  async createText(elem: WebElement) {
+    const rect = await this.rectWithoutPadding(elem);
     const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
     let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
     if (isNaN(lineHeight)) lineHeight = fontSize * 1.2;
     const nlines = Math.round(rect.height / lineHeight);
-    this.data.push(new Text(rect, nlines));
+    this.data.push(new Text("Text", rect, nlines));
   }
 
-  async addImage(elem: WebElement) {
-    const rect = await elem.getRect();
-    this.data.push(new Image(rect));
-  }
-
-  async addIcon(elem: WebElement) {
+  async createIcon(elem: WebElement) {
     const rect = await elem.getRect();
     const svg = await this.browser.getSVG(elem);
     const svgo = new SVGO({
@@ -148,44 +179,7 @@ export class Inspector {
       ],
     });
     const optimizedSvg = await svgo.optimize(svg);
-    this.data.push(new Icon(rect, optimizedSvg.data));
-  }
-
-  async addTextField(elem: WebElement) {
-    const rect = await elem.getRect();
-    this.data.push(new TextField(rect));
-  }
-
-  async addCheckbox(elem: WebElement) {
-    const rect = await elem.getRect();
-    this.data.push(new Checkbox(rect));
-  }
-
-  async addRadio(elem: WebElement) {
-    const rect = await elem.getRect();
-    this.data.push(new Radio(rect));
-  }
-
-  async addButton(elem: WebElement) {
-    const rect = await elem.getRect();
-
-    const btn = new Button(rect);
-    if (this.config.keepOriginalText) {
-      const text = await elem.getText();
-      const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
-      btn.setContent(text, fontSize);
-    }
-    this.data.push(btn);
-  }
-
-  async addBurguer(elem: WebElement) {
-    const rect = await elem.getRect();
-    this.data.push(new Burguer(rect));
-  }
-
-  async addDropdown(elem: WebElement) {
-    const rect = await elem.getRect();
-    this.data.push(new Dropdown(rect));
+    this.data.push(new Icon("Icon", rect, optimizedSvg.data));
   }
 
   async setSize() {
@@ -195,7 +189,7 @@ export class Inspector {
     this.size.width = rect.width;
   }
 
-  async getRectangle(elem: WebElement): Promise<IRectangle> {
+  async rectWithoutPadding(elem: WebElement): Promise<IRectangle> {
     const rec = await elem.getRect();
     const paddingTop = parseInt(await elem.getCssValue("padding-top"), 10);
     const paddingBottom = parseInt(await elem.getCssValue("padding-bottom"), 10);
