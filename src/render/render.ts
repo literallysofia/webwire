@@ -7,7 +7,7 @@ import svgpath from "svgpath";
 import { JSDOM } from "jsdom";
 import { Data, UIElement } from "./data";
 import { Config } from "./config";
-import { Line, TextLine, TextInfo, TextBlock, Ellipse, IRectangle, random_sentence } from "./utils";
+import { Line, TextLine, IRectangle, TextBlock, Ellipse, random_sentence } from "./utils";
 import { Button } from "./graphics/button";
 import { ButtonText } from "./graphics/buttontext";
 import { Checkbox } from "./graphics/checkbox";
@@ -118,8 +118,7 @@ export class Render {
   }
 
   drawContainer(elem: UIElement) {
-    const rect: IRectangle = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
-    const c = new Container(rect);
+    const c = new Container(elem);
     c.generate(this.config.randomOffset);
     if (c.lines) this.createLines(c.lines);
   }
@@ -129,10 +128,7 @@ export class Render {
     if (elem.content) content = elem.content;
     else content = random_sentence();
 
-    const rect: IRectangle = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
-    const info: TextInfo = { fsize: elem.fsize, lheight: elem.lheight, align: elem.align };
-
-    const title = new Title(rect, info, content);
+    const title = new Title(elem, elem, content);
     title.generate(this.config.randomOffset);
 
     if (title.textBlock) {
@@ -148,85 +144,73 @@ export class Render {
     /* let text;
     if (elem.nlines > 1) text = new Paragraph(elem.height, elem.width, elem.x, elem.y);
     else text = new Text(elem.height, elem.width, elem.x, elem.y, elem.nlines); */
-    const rect: IRectangle = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
-    const text = new Text(rect, elem.nlines);
+    const text = new Text(elem, elem.nlines);
     text.generate(this.config.randomOffset);
     if (text.lines) this.createLines(text.lines);
   }
 
   drawLink(elem: UIElement) {
     if (elem.content) {
-      const rect: IRectangle = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
-      const info: TextInfo = { fsize: elem.fsize, lheight: elem.lheight, align: elem.align };
-      const link = new Title(rect, info, elem.content);
+      const link = new Title(elem, elem, elem.content);
       link.generate(this.config.randomOffset);
       if (link.textBlock) this.createText(link.textBlock);
     }
   }
 
   drawImage(elem: UIElement) {
-    const rect: IRectangle = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
-    const image = new Image(rect);
+    const image = new Image(elem);
     image.generate(this.config.randomOffset);
     if (image.lines) this.createLines(image.lines);
   }
 
   async drawIcon(elem: UIElement) {
-    const rect: IRectangle = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
-    const icon = new Icon(rect, elem.svg);
+    const icon = new Icon(elem, elem.svg);
     await icon.generate();
     const parser = new DOMParser();
     const doc = parser.parseFromString(icon.svg, "image/svg+xml");
     const svg = doc.firstChild as SVGSVGElement;
-    this.createIcon(svg, rect);
+    this.createIcon(svg, icon);
   }
 
   drawButton(elem: UIElement) {
-    const rect: IRectangle = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
-
     if (elem.content) {
-      const btn = new ButtonText(rect, elem.fsize, elem.content);
+      const btn = new ButtonText(elem, elem.fsize, elem.content);
       btn.generate(this.config.randomOffset);
       if (btn.lines) this.createLines(btn.lines);
       if (btn.textBlock) this.createText(btn.textBlock);
     } else {
-      const btn = new Button(rect);
+      const btn = new Button(elem);
       btn.generate(this.config.randomOffset);
       if (btn.lines) this.createLines(btn.lines);
     }
   }
 
   drawBurguer(elem: UIElement) {
-    const rect: IRectangle = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
-    const burguer = new Burguer(rect);
+    const burguer = new Burguer(elem);
     burguer.generate(this.config.randomOffset);
     if (burguer.lines) this.createLines(burguer.lines);
   }
 
   drawTextField(elem: UIElement) {
-    const rect: IRectangle = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
-    const field = new TextField(rect);
+    const field = new TextField(elem);
     field.generate(this.config.randomOffset);
     if (field.lines) this.createLines(field.lines);
   }
 
   drawCheckbox(elem: UIElement) {
-    const rect: IRectangle = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
-    const cbox = new Checkbox(rect);
+    const cbox = new Checkbox(elem);
     cbox.generate(this.config.randomOffset);
     if (cbox.lines) this.createLines(cbox.lines);
   }
 
   drawRadio(elem: UIElement) {
-    const rect: IRectangle = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
-    const radio = new Radio(rect);
+    const radio = new Radio(elem);
     radio.generate(this.config.randomOffset);
     if (radio.ellipse) this.createEllipse(radio.ellipse, true);
   }
 
   drawDropdown(elem: UIElement) {
-    const rect: IRectangle = { x: elem.x, y: elem.y, height: elem.height, width: elem.width };
-    const drop = new Dropdown(rect);
+    const drop = new Dropdown(elem);
     drop.generate(this.config.randomOffset);
     if (drop.lines) this.createLines(drop.lines);
   }
