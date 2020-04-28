@@ -35,7 +35,8 @@ async function render() {
       const render = new Render(data, config, bar);
       await render.draw();
       render.export();
-      console.log("\n> Wireframe rendered with success!");
+      //TODO: change log
+      //console.log("\n> Wireframe rendered with success!");
     } catch (e) {
       console.error(<Error>e);
     }

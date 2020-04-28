@@ -2,15 +2,14 @@
   "name": "webwire",
   "version": "1.0.0",
   "description": "A tool for automatic wireframe generation from websites.",
-  "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && node dist/inspector/index.js",
-    "render": "npm run build && node dist/render/index.js && open generated/wireframe.svg",
-    "jpg": "npm run build && node dist/render/wireframe.js && open generated/wireframe.jpg",
-    "gen": "node dist/render/index.js && node dist/render/wireframe.js && open generated/wireframe.jpg",
+    "inspector": "node dist/inspector/index.js",
+    "render": "node dist/render/index.js && node dist/render/wireframe.js",
+    "t:inspector": "npm run build && node dist/inspector/index.js",
+    "t:render": "npm run build && node dist/render/index.js && open generated/wireframe.svg",
+    "t:jpg": "npm run build && node dist/render/index.js && node dist/render/wireframe.js && open generated/wireframe.jpg",
     "pretty": "prettier --write generated/data.json",
-    "test-render": "ts-node src/render.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

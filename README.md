@@ -22,6 +22,11 @@ $ npm start <url>
 $ npm run gen
 ```
 
+```bash
+$ npm install
+$ node run
+```
+
 **Examples**
 
 ```bash

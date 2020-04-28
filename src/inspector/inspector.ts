@@ -214,7 +214,8 @@ export class Inspector {
     writeFile(dir + "/data.json", json, function(err) {
       if (err) {
         console.error(err);
-      } else console.log("\n> Data saved with success!");
+      } //else console.log("\n> Data saved with success!");
+      //TODO: change log
     });
   }
 }
