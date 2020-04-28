@@ -1,10 +1,12 @@
 import puppeteer from "puppeteer";
 
-class Wireframe {
+export class Wireframe {
+  id: number;
   fpath: string;
 
-  constructor(fileName: string) {
-    this.fpath = "file://" + __dirname + "/../../generated/" + fileName;
+  constructor(id: number, fileDir: string) {
+    this.id = id;
+    this.fpath = "file://" + __dirname + "/../../" + fileDir;
   }
 
   async capture() {
@@ -12,7 +14,7 @@ class Wireframe {
     let page = await browser.newPage();
     await page.goto(this.fpath, { waitUntil: "networkidle2" });
     await page.screenshot({
-      path: "./generated/wireframe.jpg",
+      path: `./generated/wireframes/wireframe_${this.id}.jpg`,
       type: "jpeg",
       fullPage: true,
     });
@@ -20,6 +22,3 @@ class Wireframe {
     await browser.close();
   }
 }
-
-const wireframe = new Wireframe("wireframe.html");
-wireframe.capture();

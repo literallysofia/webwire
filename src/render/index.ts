@@ -1,18 +1,18 @@
 import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
 import { SingleBar, Presets } from "cli-progress";
-import colors from "colors";
-import yaml from "js-yaml";
-import { readFileSync } from "fs";
+import { green } from "colors";
+import { safeLoad } from "js-yaml";
+import { readFileSync, existsSync, readdirSync } from "fs";
 import { Config } from "./config";
 import { Data } from "./data";
 import { Render } from "./render";
 
-async function render() {
-  const dataFile = readFileSync("./generated/data.json", "utf8");
+async function render(dataDir: string) {
+  const dataFile = readFileSync(dataDir, "utf8");
   const jsonData = JSON.parse(dataFile);
 
   const configFile = readFileSync("./config/render.yml", "utf8");
-  const jsonConfig = yaml.safeLoad(configFile);
+  const jsonConfig = safeLoad(configFile);
 
   const jsonConvert = new JsonConvert();
   //jsonConvert.operationMode = OperationMode.LOGGING;
@@ -21,8 +21,7 @@ async function render() {
 
   const bar = new SingleBar(
     {
-      format:
-        "Render Wireframe |" + colors.green("{bar}") + "| {percentage}% || {value}/{total} Elements || ETA: {eta}s"
+      format: "Render Wireframe |" + green("{bar}") + "| {percentage}% || {value}/{total} Elements || ETA: {eta}s",
     },
     Presets.shades_classic
   );
@@ -45,4 +44,16 @@ async function render() {
   }
 }
 
-render();
+function getDataDir(): string | undefined {
+  const dir = "./generated/data";
+  if (existsSync(dir)) {
+    const files = readdirSync("./generated/data");
+    if (files && files.length > 0) {
+      const name = files[files.length - 1];
+      return `${dir}/${name}`;
+    }
+  }
+}
+
+const dataDir = getDataDir();
+if (dataDir) render(dataDir);

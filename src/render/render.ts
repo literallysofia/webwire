@@ -1,5 +1,5 @@
-import { writeFile, existsSync, mkdirSync } from "fs";
-import xmlserializer from "xmlserializer";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { serializeToString } from "xmlserializer";
 import { SingleBar } from "cli-progress";
 import rough from "roughjs";
 import { RoughSVG } from "roughjs/bin/svg";
@@ -20,6 +20,7 @@ import { Burguer } from "./graphics/burguer";
 import { TextField } from "./graphics/textfield";
 import { Radio } from "./graphics/radio";
 import { Dropdown } from "./graphics/dropdown";
+import { Wireframe } from "./wireframe";
 
 /* VARIABLES */
 const { document } = new JSDOM(`...`).window;
@@ -297,25 +298,28 @@ export class Render {
   }
 
   export() {
-    const dir = "./generated";
-    if (!existsSync(dir)) mkdirSync(dir);
+    const dir = "./generated/wireframes";
+    if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 
     //generates svg file
-    const svg = xmlserializer.serializeToString(this.canvas);
-    writeFile(dir + "/wireframe.svg", svg, function(err) {
-      if (err) {
-        console.log(err);
-      }
-    });
+    try {
+      const svg = serializeToString(this.canvas);
+      writeFileSync(`${dir}/wireframe_${this.data.id}.svg`, svg);
+    } catch (e) {
+      console.error(<Error>e);
+    }
 
-    //generates html file
-    const doc = document.implementation.createHTMLDocument("Wireframe");
-    doc.body.appendChild(this.canvas);
-    const html = xmlserializer.serializeToString(doc);
-    writeFile(dir + "/wireframe.html", html, function(err) {
-      if (err) {
-        console.log(err);
-      }
-    });
+    //generates html file and jpg
+    try {
+      const doc = document.implementation.createHTMLDocument("Wireframe");
+      doc.body.appendChild(this.canvas);
+      const html = serializeToString(doc);
+      const fileDir = `${dir}/wireframe_${this.data.id}.html`;
+      writeFileSync(fileDir, html);
+      const wireframe = new Wireframe(this.data.id, fileDir.substr(1));
+      wireframe.capture();
+    } catch (e) {
+      console.error(<Error>e);
+    }
   }
 }

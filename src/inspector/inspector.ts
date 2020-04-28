@@ -1,5 +1,6 @@
-import { writeFile, existsSync, mkdirSync } from "fs";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { SingleBar } from "cli-progress";
+import { green } from "colors";
 import SVGO from "svgo";
 import { Browser } from "./browser";
 import { Config } from "./config";
@@ -205,17 +206,28 @@ export class Inspector {
   }
 
   export() {
-    const dir = "./generated";
-    if (!existsSync(dir)) mkdirSync(dir);
+    const dir = "./generated/data";
+    if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+
+    let id = 1;
+    let filePath = `${dir}/data_${id}.json`;
+
+    while (existsSync(filePath)) {
+      id++;
+      filePath = `${dir}/data_${id}.json`;
+    }
+
     const json = JSON.stringify({
+      id: id,
       size: this.size,
       elements: this.data,
     });
-    writeFile(dir + "/data.json", json, function(err) {
-      if (err) {
-        console.error(err);
-      } //else console.log("\n> Data saved with success!");
-      //TODO: change log
-    });
+
+    try {
+      writeFileSync(filePath, json);
+      console.log("\n> Data saved at " + green(filePath));
+    } catch (e) {
+      console.error(<Error>e);
+    }
   }
 }

@@ -47,6 +47,9 @@ export class Size {
 
 @JsonObject("Data")
 export class Data {
+  @JsonProperty("id", Number)
+  id: number = 0;
+
   @JsonProperty("size", Size)
   size: Size = {
     height: 0,

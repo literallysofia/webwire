@@ -3,7 +3,7 @@ import yaml from "js-yaml";
 import { readFileSync } from "fs";
 import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
 import { SingleBar, Presets } from "cli-progress";
-import colors from "colors";
+import { cyan, magenta } from "colors";
 import { Browser } from "./browser";
 import { Config } from "./config";
 import { Inspector } from "./inspector";
@@ -21,14 +21,14 @@ async function inspect() {
 
   const nBar = new SingleBar(
     {
-      format: "Page Normalization |" + colors.cyan("{bar}") + "| {percentage}% || {value}/{total} Web Elements || ETA: {eta}s",
+      format: "Page Normalization |" + cyan("{bar}") + "| {percentage}% || {value}/{total} Web Elements || ETA: {eta}s",
     },
     Presets.shades_classic
   );
 
   const fBar = new SingleBar(
     {
-      format: "Element Extraction |" + colors.magenta("{bar}") + "| {percentage}% || {value}/{total} Web Elements || ETA: {eta}s",
+      format: "Element Extraction |" + magenta("{bar}") + "| {percentage}% || {value}/{total} Web Elements || ETA: {eta}s",
     },
     Presets.shades_classic
   );
