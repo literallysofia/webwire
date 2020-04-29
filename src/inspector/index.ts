@@ -1,5 +1,5 @@
 import commandLineArgs from "command-line-args";
-import yaml from "js-yaml";
+import { safeLoad } from "js-yaml";
 import { readFileSync } from "fs";
 import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
 import { SingleBar, Presets } from "cli-progress";
@@ -12,7 +12,7 @@ const website = commandLineArgs([{ name: "src", alias: "s", type: String, defaul
 
 async function inspect() {
   const configFile = readFileSync("./config/inspector.yml", "utf8");
-  const jsonConfig = yaml.safeLoad(configFile);
+  const jsonConfig = safeLoad(configFile);
 
   const jsonConvert = new JsonConvert();
   //jsonConvert.operationMode = OperationMode.LOGGING;

@@ -1,14 +1,17 @@
+import commandLineArgs from "command-line-args";
 import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
 import { SingleBar, Presets } from "cli-progress";
 import { green } from "colors";
 import { safeLoad } from "js-yaml";
-import { readFileSync, existsSync, readdirSync } from "fs";
+import { readFileSync } from "fs";
 import { Config } from "./config";
 import { Data } from "./data";
 import { Render } from "./render";
 
-async function render(dataDir: string) {
-  const dataFile = readFileSync(dataDir, "utf8");
+const data = commandLineArgs([{ name: "src", alias: "s", type: String, defaultOption: true }]);
+
+async function render() {
+  const dataFile = readFileSync(data.src, "utf8");
   const jsonData = JSON.parse(dataFile);
 
   const configFile = readFileSync("./config/render.yml", "utf8");
@@ -44,16 +47,4 @@ async function render(dataDir: string) {
   }
 }
 
-function getDataDir(): string | undefined {
-  const dir = "./generated/data";
-  if (existsSync(dir)) {
-    const files = readdirSync("./generated/data");
-    if (files && files.length > 0) {
-      const name = files[files.length - 1];
-      return `${dir}/${name}`;
-    }
-  }
-}
-
-const dataDir = getDataDir();
-if (dataDir) render(dataDir);
+render();
