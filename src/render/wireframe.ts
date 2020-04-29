@@ -1,20 +1,23 @@
 import puppeteer from "puppeteer";
+import { existsSync, mkdirSync } from "fs";
 
 export class Wireframe {
-  id: number;
-  fpath: string;
+  inFilePath: string;
+  outFilePath: string;
 
   constructor(id: number, fileDir: string) {
-    this.id = id;
-    this.fpath = "file://" + __dirname + "/../../" + fileDir;
+    this.inFilePath = `file://${__dirname}/../..${fileDir}`;
+    const dir = "./generated/images";
+    if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+    this.outFilePath = `${dir}/wireframe_${id}.jpg`;
   }
 
   async capture() {
     let browser = await puppeteer.launch({ headless: true });
     let page = await browser.newPage();
-    await page.goto(this.fpath, { waitUntil: "networkidle2" });
+    await page.goto(this.inFilePath, { waitUntil: "networkidle2" });
     await page.screenshot({
-      path: `./generated/wireframes/wireframe_${this.id}.jpg`,
+      path: this.outFilePath,
       type: "jpeg",
       fullPage: true,
     });

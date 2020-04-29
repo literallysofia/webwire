@@ -36,9 +36,7 @@ async function render() {
       const config = jsonConvert.deserializeObject(jsonConfig, Config);
       const render = new Render(data, config, bar);
       await render.draw();
-      render.export();
-      //TODO: change log
-      //console.log("\n> Wireframe rendered with success!");
+      await render.export();
     } catch (e) {
       console.error(<Error>e);
     }

@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { serializeToString } from "xmlserializer";
+import { green } from "colors";
 import { SingleBar } from "cli-progress";
 import rough from "roughjs";
 import { RoughSVG } from "roughjs/bin/svg";
@@ -297,8 +298,8 @@ export class Render {
     this.canvas.appendChild(svg);
   }
 
-  export() {
-    const dir = "./generated/wireframes";
+  async export() {
+    const dir = "./generated/temp";
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 
     //generates svg file
@@ -317,7 +318,8 @@ export class Render {
       const fileDir = `${dir}/wireframe_${this.data.id}.html`;
       writeFileSync(fileDir, html);
       const wireframe = new Wireframe(this.data.id, fileDir.substr(1));
-      wireframe.capture();
+      await wireframe.capture();
+      console.log("\n> Wireframe saved at " + green(wireframe.outFilePath));
     } catch (e) {
       console.error(<Error>e);
     }

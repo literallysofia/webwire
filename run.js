@@ -16,15 +16,17 @@ function run() {
       execSync(`npm run inspector ${url}`, stdio);
     });
 
+    let counter = 0;
     const dir = "./generated/data";
     if (fs.existsSync(dir)) {
       const files = fs.readdirSync(dir);
       files.forEach((file) => {
         execSync(`npm run render ${dir}/${file}`, stdio);
+        counter++;
       });
     }
 
-    console.log(colors.green("\nGeneration complete!\n") + `+ generated wireframes for ${urls.length} websites\n`);
+    console.log(colors.green("\nGeneration complete!\n") + `+ generated ${counter} wireframes for ${urls.length} websites\n`);
   } catch (e) {
     console.error("> " + e.name + "! " + e.message);
   }
