@@ -1,4 +1,4 @@
-import { IRectangle } from "./utils";
+import { IRectangle, TextProps } from "./utils";
 
 export class IElement {
   name: string;
@@ -16,49 +16,35 @@ export class IElement {
   }
 }
 
-export class Button extends IElement {
-  content: string;
-  fsize: number;
-
-  constructor(name: string, rect: IRectangle, content: string, fsize: number) {
-    super(name, rect);
-    this.content = content;
-    this.fsize = fsize;
-  }
-}
-
 export class Icon extends IElement {
   svg: string;
 
-  constructor(name: string, rect: IRectangle, s: string) {
+  constructor(name: string, rect: IRectangle, svg: string) {
     super(name, rect);
-    this.svg = s;
+    this.svg = svg;
   }
 }
 
 export class Text extends IElement {
   nlines: number;
 
-  constructor(name: string, rect: IRectangle, l: number) {
+  constructor(name: string, rect: IRectangle, nlines: number) {
     super(name, rect);
-    this.nlines = l;
+    this.nlines = nlines;
   }
 }
 
 export class RealText extends IElement {
+  align: string;
+  content: string;
   fsize: number;
   lheight: number;
-  align: string;
-  content?: string | undefined;
 
-  constructor(name: string, rect: IRectangle, fs: number, lh: number, a: string) {
+  constructor(name: string, rect: IRectangle, props: TextProps) {
     super(name, rect);
-    this.fsize = fs;
-    this.lheight = lh;
-    this.align = a;
-  }
-
-  setContent(c: string) {
-    this.content = c;
+    this.align = props.align;
+    this.content = props.content;
+    this.fsize = props.fsize;
+    this.lheight = props.lheight;
   }
 }

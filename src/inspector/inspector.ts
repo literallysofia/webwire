@@ -5,12 +5,13 @@ import SVGO from "svgo";
 import { Browser } from "./browser";
 import { Config } from "./config";
 import { WebElement } from "selenium-webdriver";
-import { IRectangle } from "./utils";
-import { IElement, Button, Icon, Text, RealText } from "./ielement";
+import { IRectangle, TextProps } from "./utils";
+import { IElement, Icon, Text, RealText } from "./ielement";
 
 export class Inspector {
   browser: Browser;
   config: Config;
+  url: string;
   data: IElement[];
   types: string[];
   size = {
@@ -20,13 +21,14 @@ export class Inspector {
   nBar: SingleBar;
   fBar: SingleBar;
 
-  constructor(browser: Browser, config: Config, nbar: SingleBar, fbar: SingleBar) {
+  constructor(browser: Browser, config: Config, url: string, bars: SingleBar[]) {
     this.browser = browser;
     this.config = config;
+    this.url = url;
     this.data = [];
     this.types = [];
-    this.nBar = nbar;
-    this.fBar = fbar;
+    this.nBar = bars[0];
+    this.fBar = bars[1];
   }
 
   async normalize() {
@@ -64,7 +66,8 @@ export class Inspector {
   async addElements(elems: WebElement[]) {
     for await (let elem of elems) {
       let type = await elem.getAttribute("data-type");
-      if (Object.getOwnPropertyNames(Inspector.prototype).indexOf(`create${type}`) >= 0) eval(`this.create${type}(elem)`);
+
+      if (Object.getOwnPropertyNames(Inspector.prototype).indexOf(`create${type}`) >= 0) await eval(`this.create${type}(elem)`);
       else console.error(`\n> ERROR: Method 'create${type}' does not exist.\nPlease fix the type name '${type}' in the configuration file as instructed or create a new method.`);
     }
   }
@@ -105,56 +108,46 @@ export class Inspector {
     await this.addElement("Dropdown", elem);
   }
 
-  async createButton(elem: WebElement) {
-    if (this.config.keepOriginalText) {
-      const rect = await elem.getRect();
-      const text = await elem.getText();
-      const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
-      const btn = new Button("Button", rect, text, fontSize);
-      this.data.push(btn);
-    } else this.addElement("Button", elem);
-  }
-
   async addElement(name: string, elem: WebElement) {
     const rect = await elem.getRect();
-    this.data.push(new IElement(name, rect));
+    const ielement = new IElement(name, rect);
+    this.data.push(ielement);
   }
 
   async createTitle(elem: WebElement) {
     const rect = await this.rectWithoutPadding(elem);
-    const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
-    let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
-    const textAlign = await elem.getCssValue("text-align");
-
-    if (isNaN(lineHeight)) lineHeight = Math.round(fontSize * 1.2);
-
-    const title = new RealText("Title", rect, fontSize, lineHeight, textAlign);
-    if (this.config.keepOriginalText) {
-      const text = await elem.getText();
-      title.setContent(text);
-    }
-    this.data.push(title);
+    await this.addRealText("Title", elem, rect);
   }
 
   async createLink(elem: WebElement) {
-    if (!this.config.keepOriginalText) {
-      this.createText(elem);
-      return;
-    }
-
     const rect = await this.rectWithoutPadding(elem);
+    await this.addRealText("Link", elem, rect);
+  }
+
+  async createButton(elem: WebElement) {
+    const rect = await elem.getRect();
+    await this.addRealText("Button", elem, rect);
+  }
+
+  async addRealText(name: string, elem: WebElement, rect: IRectangle) {
     const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
-    let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
     const textAlign = await elem.getCssValue("text-align");
+    let text = await elem.getText();
+    text = text.split("\n")[0];
+
+    let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
 
     if (isNaN(lineHeight)) lineHeight = Math.round(fontSize * 1.2);
 
-    const link = new RealText("Link", rect, fontSize, lineHeight, textAlign);
-    let text = await elem.getText();
-    text = text.split("\n")[0];
-    link.setContent(text);
+    const info: TextProps = {
+      align: textAlign,
+      content: text,
+      fsize: fontSize,
+      lheight: lineHeight,
+    };
 
-    this.data.push(link);
+    const ielement = new RealText(name, rect, info);
+    this.data.push(ielement);
   }
 
   async createText(elem: WebElement) {
@@ -184,7 +177,7 @@ export class Inspector {
   }
 
   async setSize() {
-    const html = this.browser.findElement("html");
+    const html = await this.browser.findElement("html");
     const rect = await html.getRect();
     this.size.height = rect.height;
     this.size.width = rect.width;
@@ -219,6 +212,7 @@ export class Inspector {
 
     const json = JSON.stringify({
       id: id,
+      url: this.url,
       size: this.size,
       elements: this.data,
     });

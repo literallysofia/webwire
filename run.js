@@ -6,7 +6,7 @@ const del = require("del");
 
 function run() {
   try {
-    //del.sync("./generated");
+    del.sync("./generated");
 
     let input = fs.readFileSync("./sites.txt", "utf-8");
     const urls = input.split("\n");

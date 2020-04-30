@@ -40,11 +40,11 @@ async function inspect() {
 
     nBar.start(config.elements.length, 0);
 
-    const inspector = new Inspector(browser, config, nBar, fBar);
+    const inspector = new Inspector(browser, config, website.src, [nBar, fBar]);
     await inspector.normalize();
     await inspector.fetch();
     inspector.export();
-    browser.close();
+    await browser.close();
   } catch (e) {
     console.error(<Error>e);
   }

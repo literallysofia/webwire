@@ -28,10 +28,11 @@ export interface Ellipse {
   width: number;
 }
 
-export interface TextInfo {
+export interface TextProps {
+  align: string;
+  content: string;
   fsize: number;
   lheight: number;
-  align: string;
 }
 
 export interface TextBlock {

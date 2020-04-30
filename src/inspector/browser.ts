@@ -26,12 +26,12 @@ export class Browser {
     await this.driver.executeScript(script);
   }
 
-  findElement(selector: string): WebElementPromise {
-    return this.driver.findElement(By.tagName(selector));
+  async findElement(selector: string): Promise<WebElement> {
+    return await this.driver.findElement(By.tagName(selector));
   }
 
   async findElements(selector: string): Promise<WebElement[]> {
-    return this.driver.findElements(By.xpath(selector));
+    return await this.driver.findElements(By.xpath(selector));
   }
 
   async setSVGDimensions() {

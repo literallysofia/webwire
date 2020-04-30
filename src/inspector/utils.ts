@@ -4,3 +4,10 @@ export interface IRectangle {
   height: number;
   width: number;
 }
+
+export interface TextProps {
+  align: string;
+  content: string;
+  fsize: number;
+  lheight: number;
+}

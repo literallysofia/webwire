@@ -1,19 +1,19 @@
 import { Drawable, DrawableText } from "./drawable";
-import { IRectangle, TextInfo, Anchor, TextBlock, t_words } from "../utils";
+import { IRectangle, TextProps, Anchor, TextBlock, t_words } from "../utils";
 
 export class Title extends Drawable implements DrawableText {
-  fsize: number;
-  lheight: number;
   align: string;
   content: string;
+  fsize: number;
+  lheight: number;
   textBlock?: TextBlock | undefined;
 
-  constructor(rect: IRectangle, info: TextInfo, content: string) {
+  constructor(rect: IRectangle, props: TextProps) {
     super(rect);
-    this.fsize = info.fsize;
-    this.lheight = info.lheight;
-    this.align = info.align;
-    this.content = content;
+    this.align = props.align;
+    this.content = props.content;
+    this.fsize = props.fsize;
+    this.lheight = props.lheight;
   }
 
   mutateSize(offset: number) {

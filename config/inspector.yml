@@ -83,7 +83,6 @@ elements:
     paths:
       - //select
       - //a[contains(@class, 'dropdown-toggle')]
-keepOriginalText: true
 browser: chrome
 headless: true
 window:

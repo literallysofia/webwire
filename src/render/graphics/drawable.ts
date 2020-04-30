@@ -42,10 +42,10 @@ export abstract class Drawable {
 }
 
 export interface DrawableText {
-  fsize: number;
-  lheight: number;
   align: string;
   content: string;
+  fsize: number;
+  lheight: number;
   textBlock?: TextBlock | undefined;
 
   mutateSize(offset: number): void;

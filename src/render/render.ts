@@ -98,7 +98,7 @@ export class Render {
       elem.x += 10;
       elem.y += 10;
 
-      if (Object.getOwnPropertyNames(Render.prototype).indexOf(`draw${elem.name}`) >= 0) eval(`this.draw${elem.name}(elem)`);
+      if (Object.getOwnPropertyNames(Render.prototype).indexOf(`draw${elem.name}`) >= 0) await eval(`this.draw${elem.name}(elem)`);
       else
         console.error(
           `\n> ERROR: Method 'draw${elem.name}' does not exist.\nPlease fix the type name '${elem.name}' in the configuration file as instructed or create a new method.`
@@ -123,11 +123,9 @@ export class Render {
   }
 
   drawTitle(elem: UIElement) {
-    let content: string;
-    if (elem.content) content = elem.content;
-    else content = random_sentence();
+    if (!this.config.keepOriginalText) elem.content = random_sentence();
 
-    const title = new Title(elem, elem, content);
+    const title = new Title(elem, elem);
     title.generate(this.config.randomOffset);
 
     if (title.textBlock) {
@@ -149,11 +147,11 @@ export class Render {
   }
 
   drawLink(elem: UIElement) {
-    if (elem.content) {
-      const link = new Title(elem, elem, elem.content);
+    if (this.config.keepOriginalText) {
+      const link = new Title(elem, elem);
       link.generate(this.config.randomOffset);
       if (link.textBlock) this.createText(link.textBlock);
-    }
+    } else this.drawText(elem);
   }
 
   drawImage(elem: UIElement) {
@@ -172,8 +170,8 @@ export class Render {
   }
 
   drawButton(elem: UIElement) {
-    if (elem.content) {
-      const btn = new ButtonText(elem, elem.fsize, elem.content);
+    if (this.config.keepOriginalText) {
+      const btn = new ButtonText(elem, elem);
       btn.generate(this.config.randomOffset);
       if (btn.lines) this.createLines(btn.lines);
       if (btn.textBlock) this.createText(btn.textBlock);

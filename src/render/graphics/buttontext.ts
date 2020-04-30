@@ -1,20 +1,20 @@
 import { DrawableText } from "./drawable";
 import { Button } from "./button";
-import { IRectangle, Anchor, TextBlock, t_words } from "../utils";
+import { IRectangle, TextProps, Anchor, TextBlock, t_words } from "../utils";
 
 export class ButtonText extends Button implements DrawableText {
-  fsize: number;
-  lheight: number;
   align: string;
   content: string;
+  fsize: number;
+  lheight: number;
   textBlock?: TextBlock | undefined;
 
-  constructor(rect: IRectangle, fsize: number, c: string) {
+  constructor(rect: IRectangle, props: TextProps) {
     super(rect);
-    this.fsize = fsize;
-    this.lheight = this.fsize + this.fsize / 2;
-    this.align = "center";
-    this.content = c;
+    this.align = props.align;
+    this.content = props.content;
+    this.fsize = props.fsize;
+    this.lheight = props.lheight;
   }
 
   mutateSize(offset: number) {

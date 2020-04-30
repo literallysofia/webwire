@@ -27,10 +27,10 @@ export class UIElement {
   align: string = "";
 
   @JsonProperty("content", String, true)
-  content: string | undefined = undefined;
+  content: string = "";
 
   @JsonProperty("nlines", Number, true)
-  nlines: number = 0;
+  nlines: number = 1;
 
   @JsonProperty("svg", String, true)
   svg: string = "";

@@ -29,9 +29,6 @@ export class Config {
   @JsonProperty("elements", [Element])
   elements: Element[] = [];
 
-  @JsonProperty("keepOriginalText", Boolean)
-  keepOriginalText: boolean = true;
-
   @JsonProperty("browser", String)
   browser: string = "chrome";
 
