@@ -1,6 +1,3 @@
-import { existsSync, mkdirSync, writeFileSync } from "fs";
-import { serializeToString } from "xmlserializer";
-import { green } from "colors";
 import { SingleBar } from "cli-progress";
 import rough from "roughjs";
 import { RoughSVG } from "roughjs/bin/svg";
@@ -9,6 +6,7 @@ import { JSDOM } from "jsdom";
 import { Data, UIElement } from "./data";
 import { Config } from "./config";
 import { Line, TextLine, IRectangle, TextBlock, Ellipse, random_sentence } from "./utils";
+import { Export } from "./export";
 import { Button } from "./graphics/button";
 import { ButtonText } from "./graphics/buttontext";
 import { Checkbox } from "./graphics/checkbox";
@@ -21,7 +19,6 @@ import { Burguer } from "./graphics/burguer";
 import { TextField } from "./graphics/textfield";
 import { Radio } from "./graphics/radio";
 import { Dropdown } from "./graphics/dropdown";
-import { Wireframe } from "./wireframe";
 
 /* VARIABLES */
 const { document } = new JSDOM(`...`).window;
@@ -299,29 +296,12 @@ export class Render {
   }
 
   async export() {
-    const dir = "./generated/temp";
-    if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+    const exporter = new Export(this.data.id);
+    exporter.saveSvg(this.canvas);
 
-    //generates svg file
-    try {
-      const svg = serializeToString(this.canvas);
-      writeFileSync(`${dir}/wireframe_${this.data.id}.svg`, svg);
-    } catch (e) {
-      console.error(<Error>e);
-    }
-
-    //generates html file and jpg
-    try {
-      const doc = document.implementation.createHTMLDocument("Wireframe");
-      doc.body.appendChild(this.canvas);
-      const html = serializeToString(doc);
-      const fileDir = `${dir}/wireframe_${this.data.id}.html`;
-      writeFileSync(fileDir, html);
-      const wireframe = new Wireframe(this.data.id, fileDir.substr(1));
-      await wireframe.capture();
-      console.log("\n> Wireframe saved at " + green(wireframe.outFilePath));
-    } catch (e) {
-      console.error(<Error>e);
-    }
+    const doc = document.implementation.createHTMLDocument("Wireframe");
+    doc.body.appendChild(this.canvas);
+    const htmlPath = exporter.saveHtml(doc);
+    await exporter.saveJpg(htmlPath);
   }
 }
