@@ -8,7 +8,10 @@ import { Config } from "./config";
 import { Data } from "./data";
 import { Render } from "./render";
 
-const data = commandLineArgs([{ name: "src", alias: "s", type: String, defaultOption: true }]);
+const data = commandLineArgs([
+  { name: "src", type: String },
+  { name: "draws", alias: "d", type: Number },
+]);
 
 async function render() {
   const dataFile = readFileSync(data.src, "utf8");

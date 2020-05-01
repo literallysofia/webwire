@@ -5,13 +5,13 @@ import SVGO from "svgo";
 import { Browser } from "./browser";
 import { Config } from "./config";
 import { WebElement } from "selenium-webdriver";
-import { IRectangle, TextProps } from "./utils";
+import { IRectangle, TextProps, Website } from "./utils";
 import { IElement, Icon, Text, RealText } from "./ielement";
 
 export class Inspector {
   browser: Browser;
   config: Config;
-  url: string;
+  website: Website;
   data: IElement[];
   types: string[];
   size = {
@@ -21,10 +21,10 @@ export class Inspector {
   nBar: SingleBar;
   fBar: SingleBar;
 
-  constructor(browser: Browser, config: Config, url: string, bars: SingleBar[]) {
+  constructor(browser: Browser, config: Config, website: Website, bars: SingleBar[]) {
     this.browser = browser;
     this.config = config;
-    this.url = url;
+    this.website = website;
     this.data = [];
     this.types = [];
     this.nBar = bars[0];
@@ -202,17 +202,10 @@ export class Inspector {
     const dir = "./generated/data";
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 
-    let id = 1;
-    let filePath = `${dir}/data_${id}.json`;
-
-    while (existsSync(filePath)) {
-      id++;
-      filePath = `${dir}/data_${id}.json`;
-    }
-
+    const filePath = `${dir}/data_${this.website.id}.json`;
     const json = JSON.stringify({
-      id: id,
-      url: this.url,
+      id: this.website.id,
+      url: this.website.url,
       size: this.size,
       elements: this.data,
     });

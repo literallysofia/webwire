@@ -4,6 +4,7 @@
   "description": "A tool for automatic wireframe generation from websites.",
   "scripts": {
     "build": "tsc",
+    "start": "ts-node run.ts",
     "inspector": "node dist/inspector/index.js",
     "render": "node dist/render/index.js",
     "t:inspector": "npm run build && node dist/inspector/index.js",

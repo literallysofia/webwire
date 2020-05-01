@@ -11,3 +11,8 @@ export interface TextProps {
   fsize: number;
   lheight: number;
 }
+
+export interface Website {
+  id: number;
+  url: string;
+}

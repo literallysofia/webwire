@@ -1,0 +1,18 @@
+{
+  "randomSeed": 89475974,
+  "designers": [
+    {
+      "id": "designer1",
+      "strokeWidth": 3
+    },
+    {
+      "id": "designer2",
+      "keepOriginalText": false,
+      "randomOffset": 0
+    }
+  ],
+  "websites": [
+    { "url": "https://getbootstrap.com/docs/4.4/examples/album/", "sketches": 1 },
+    { "url": "https://getbootstrap.com/docs/4.4/examples/jumbotron/", "designers": ["designer1"], "sketches": 3 }
+  ]
+}
