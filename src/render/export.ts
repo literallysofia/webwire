@@ -5,9 +5,18 @@ import puppeteer from "puppeteer";
 
 export class Export {
   fileId: number;
+  version: number = 1;
 
   constructor(id: number) {
     this.fileId = id;
+
+    while (
+      existsSync(`./generated/images/jpg/wireframe_${this.fileId}_v${this.version}.jpg`) ||
+      existsSync(`./generated/images/svg/wireframe_${this.fileId}_v${this.version}.svg`) ||
+      existsSync(`./generated/temp/wireframe_${this.fileId}_v${this.version}.html`)
+    ) {
+      this.version++;
+    }
   }
 
   saveSvg(svg: SVGSVGElement) {
@@ -16,7 +25,7 @@ export class Export {
 
     try {
       const svgStr = serializeToString(svg);
-      const svgPath = `${dir}/wireframe_${this.fileId}.svg`;
+      const svgPath = `${dir}/wireframe_${this.fileId}_v${this.version}.svg`;
       writeFileSync(svgPath, svgStr);
     } catch (e) {
       console.error(<Error>e);
@@ -29,7 +38,7 @@ export class Export {
 
     try {
       const htmlStr = serializeToString(html);
-      const htmlPath = `${dir}/wireframe_${this.fileId}.html`;
+      const htmlPath = `${dir}/wireframe_${this.fileId}_v${this.version}.html`;
       writeFileSync(htmlPath, htmlStr);
       return htmlPath;
     } catch (e) {
@@ -43,10 +52,10 @@ export class Export {
       if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 
       try {
-        const jpgPath = `${dir}/wireframe_${this.fileId}.jpg`;
+        const jpgPath = `${dir}/wireframe_${this.fileId}_v${this.version}.jpg`;
         const htmlRelPath = `file://${__dirname}/../..${htmlPath.substr(1)}`;
         await this.capture(htmlRelPath, jpgPath);
-        console.log("\n> Wireframe saved at " + green(jpgPath));
+        console.log(`\n> Wireframe saved at ${green(jpgPath)}\n`);
       } catch (e) {
         console.error(<Error>e);
       }

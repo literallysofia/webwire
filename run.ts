@@ -68,7 +68,7 @@ function run() {
     let counter = 0;
     data.websites.forEach((website) => {
       execSync(`npm run inspector -- --id ${website.id} --src ${website.url}`, { stdio: "inherit" });
-      execSync(`npm run render -- --src ./generated/data/data_${website.id}.json -d ${website.sketches}`, { stdio: "inherit" });
+      execSync(`npm run render -- --src ./generated/data/data_${website.id}.json -s ${website.sketches}`, { stdio: "inherit" });
       counter += website.sketches;
     });
 

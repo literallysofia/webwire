@@ -2,7 +2,7 @@
   WebWire
 </h1>
 <p align="center">
-A tool capable of generating images of hand-drawn wireframes from real websites. Built with <a href="https://www.typescriptlang.org" target="_blank">TypeScript</a>, <a href="https://www.selenium.dev" target="_blank">Selenium</a>, <a href="https://pptr.dev" target="_blank">Puppeteer</a>, and <a href="https://roughjs.com" target="_blank">RoughJS</a>
+A tool capable of generating images of hand-drawn wireframes from real websites.<br/>Built with <a href="https://www.typescriptlang.org" target="_blank">TypeScript</a>, <a href="https://www.selenium.dev" target="_blank">Selenium</a>, <a href="https://pptr.dev" target="_blank">Puppeteer</a>, and <a href="https://roughjs.com" target="_blank">RoughJS</a>
 </p>
 <p align="center">
   <strong>Developed by

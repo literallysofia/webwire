@@ -8,13 +8,13 @@ import { Config } from "./config";
 import { Data } from "./data";
 import { Render } from "./render";
 
-const data = commandLineArgs([
+const args = commandLineArgs([
   { name: "src", type: String },
-  { name: "draws", alias: "d", type: Number },
+  { name: "sketches", alias: "s", type: Number },
 ]);
 
 async function render() {
-  const dataFile = readFileSync(data.src, "utf8");
+  const dataFile = readFileSync(args.src, "utf8");
   const jsonData = JSON.parse(dataFile);
 
   const configFile = readFileSync("./config/render.yml", "utf8");
@@ -25,21 +25,24 @@ async function render() {
   jsonConvert.ignorePrimitiveChecks = false; // don't allow assigning number to string etc.
   jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL; // never allow null
 
-  const bar = new SingleBar(
-    {
-      format: "Render Wireframe |" + green("{bar}") + "| {percentage}% || {value}/{total} Elements || ETA: {eta}s",
-    },
-    Presets.shades_classic
-  );
+  let nSketches = args.sketches;
 
   try {
     const data = jsonConvert.deserializeObject(jsonData, Data);
-    bar.start(data.elements.length, 0);
     try {
       const config = jsonConvert.deserializeObject(jsonConfig, Config);
-      const render = new Render(data, config, bar);
-      await render.draw();
-      await render.export();
+
+      for (let i = 0; i < nSketches; i++) {
+        const bar = new SingleBar(
+          {
+            format: "Render Wireframe |" + green("{bar}") + "| {percentage}% || {value}/{total} Elements || ETA: {eta}s",
+          },
+          Presets.shades_classic
+        );
+        const render = new Render(data, config, bar);
+        await render.draw();
+        await render.export();
+      }
     } catch (e) {
       console.error(<Error>e);
     }

@@ -21,11 +21,3 @@ export class Config {
     this.fontFamily = this.fonts[index];
   }
 }
-
-/* const options = {
-  roughness: Math.random() + 0.5,
-  bowing: Math.random() * 5,
-  //strokeWidth: Math.random() * 4 + 1,
-  strokeWidth: 1.5,
-  hachureGap: Math.random() * 4
-}; */

@@ -94,6 +94,7 @@ export class Render {
   }
 
   async draw() {
+    this.bar.start(this.data.elements.length, 0);
     for await (let elem of this.data.elements) {
       elem.x += 10;
       elem.y += 10;
