@@ -6,7 +6,7 @@ A tool capable of generating images of hand-drawn wireframes from real websites.
 </p>
 <p align="center">
   <strong>Developed by
-  <a href="https://github.com/bchiang7/v1" target="_blank">Sofia Silva</a>
+  <a href="https://github.com/literallysofia" target="_blank">Sofia Silva</a>
   </strong>
 </p>
 <p align="center">
