@@ -4,34 +4,46 @@ import { readFileSync } from "fs";
 import { green } from "colors";
 import del from "del";
 
-@JsonObject("Designer")
-export class Designer {
-  @JsonProperty("id", String)
-  id: string = "";
+@JsonObject("Style")
+class Style {
+  @JsonProperty("name", String)
+  name: string = "";
+
+  @JsonProperty("font", String, true)
+  font: string | undefined = undefined;
 
   @JsonProperty("keepOriginalText", Boolean, true)
-  keepOriginalText: boolean = true;
+  keepOriginalText: boolean | undefined = undefined;
 
   @JsonProperty("randomOffset", Number, true)
-  randomOffset: number = 0;
+  randomOffset: number | undefined = undefined;
+
+  @JsonProperty("roughness", Number, true)
+  roughness: number | undefined = undefined;
+
+  @JsonProperty("bowing", Number, true)
+  bowing: number | undefined = undefined;
 
   @JsonProperty("strokeWidth", Number, true)
-  strokeWidth: Number = 1;
+  strokeWidth: Number | undefined = undefined;
+
+  @JsonProperty("hachureGap", Number, true)
+  hachureGap: number | undefined = undefined;
 }
 
 @JsonObject("Website")
-export class Website {
+class Website {
   static _id: number = 1;
   id: number;
 
   @JsonProperty("url", String)
   url: string = "";
 
-  @JsonProperty("designers", [String], true)
-  designers: string[] = [];
+  @JsonProperty("styles", [String], true)
+  styles: string[] = [];
 
-  @JsonProperty("sketches", Number)
-  sketches: number = 1;
+  @JsonProperty("draws", Number)
+  draws: number = 1;
 
   constructor() {
     this.id = Website._id++;
@@ -39,15 +51,31 @@ export class Website {
 }
 
 @JsonObject("Data")
-export class Data {
+class Data {
   @JsonProperty("randomSeed", Number)
   randomSeed: number = 0;
 
-  @JsonProperty("designers", [Designer])
-  designers: Designer[] = [];
+  @JsonProperty("styles", [Style])
+  styles: Style[] = [];
 
   @JsonProperty("websites", [Website])
   websites: Website[] = [];
+}
+
+function renderScript(id: number, style: Style | undefined): string {
+  let script = `npm run render -- --src ./generated/data/data_${id}.json`;
+
+  if (style) {
+    if (style.font !== undefined) script += ` -f ${style.font}`;
+    if (style.keepOriginalText !== undefined) script += ` -t`;
+    if (style.randomOffset !== undefined) script += ` --random ${style.randomOffset}`;
+    if (style.roughness !== undefined) script += ` -r ${style.roughness}`;
+    if (style.bowing !== undefined) script += ` -b ${style.bowing}`;
+    if (style.strokeWidth !== undefined) script += ` -s ${style.strokeWidth}`;
+    if (style.hachureGap !== undefined) script += ` -h ${style.hachureGap}`;
+  }
+
+  return script;
 }
 
 function run() {
@@ -68,8 +96,21 @@ function run() {
     let counter = 0;
     data.websites.forEach((website) => {
       execSync(`npm run inspector -- --id ${website.id} --src ${website.url}`, { stdio: "inherit" });
-      execSync(`npm run render -- --src ./generated/data/data_${website.id}.json -s ${website.sketches}`, { stdio: "inherit" });
-      counter += website.sketches;
+
+      for (let i = 0; i < website.draws; i++) {
+        let style: Style | undefined;
+
+        if (website.styles.length > 0) {
+          const index = Math.floor(Math.random() * Math.floor(website.styles.length));
+          const styleName = website.styles[index];
+          style = data.styles.find((s) => s.name === styleName);
+        }
+
+        const script = renderScript(website.id, style);
+        execSync(script, { stdio: "inherit" });
+      }
+
+      counter += website.draws;
     });
 
     console.log(green("\nGeneration complete!\n") + `+ generated a total of ${counter} wireframes for ${data.websites.length} different websites\n`);

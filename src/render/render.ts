@@ -48,9 +48,7 @@ export class Render {
     const style = document.createElementNS(namespaceURI, "style");
     style.setAttribute("type", "text/css");
 
-    const fontFamily = this.config.fontFamily.substr(this.config.fontFamily.indexOf("'") + 1, this.config.fontFamily.lastIndexOf("'") - 1);
-    const font = fontFamily.split(" ").join("+");
-
+    const font = this.config.fontFamily.split(" ").join("+");
     const importFont = "@import url('https://fonts.googleapis.com/css2?family=" + font + "&display=swap')";
     const textnode = document.createTextNode(importFont);
     style.appendChild(textnode);
@@ -219,7 +217,7 @@ export class Render {
     text.setAttribute("x", tb.x.toString());
     text.setAttribute("y", tb.y.toString());
     text.setAttribute("font-size", tb.fsize.toString());
-    text.setAttribute("font-family", this.config.fontFamily);
+    text.setAttribute("font-family", this.config.fontFamily + ", cursive");
     text.setAttribute("text-anchor", tb.anchor);
 
     if (lines) {

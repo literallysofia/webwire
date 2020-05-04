@@ -1,11 +1,11 @@
 fonts:
-  - "'Indie Flower', cursive"
-  - "'Kalam', cursive"
-  - "'Amatic SC', cursive"
-  - "'Shadows Into Light', cursive"
-  - "'Caveat', cursive"
-  - "'Caveat Brush', cursive"
-  - "'Nothing You Could Do', cursive"
+  - Indie Flower
+  - Kalam
+  - Amatic SC
+  - Shadows Into Light
+  - Caveat
+  - Caveat Brush
+  - Nothing You Could Do
 keepOriginalText: true
 randomOffset: 6
 options:

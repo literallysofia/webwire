@@ -1,18 +1,19 @@
 {
   "randomSeed": 89475974,
-  "designers": [
+  "styles": [
     {
-      "id": "designer1",
+      "name": "style1",
+      "font": "Kalam",
       "strokeWidth": 3
     },
     {
-      "id": "designer2",
+      "name": "style2",
       "keepOriginalText": false,
       "randomOffset": 0
     }
   ],
   "websites": [
-    { "url": "https://getbootstrap.com/docs/4.4/examples/album/", "sketches": 1 },
-    { "url": "https://getbootstrap.com/docs/4.4/examples/jumbotron/", "designers": ["designer1"], "sketches": 3 }
+    { "url": "https://getbootstrap.com/docs/4.4/examples/album/", "draws": 1 },
+    { "url": "https://getbootstrap.com/docs/4.4/examples/jumbotron/", "styles": ["style1", "style2"], "draws": 3 }
   ]
 }

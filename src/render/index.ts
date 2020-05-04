@@ -10,7 +10,13 @@ import { Render } from "./render";
 
 const args = commandLineArgs([
   { name: "src", type: String },
-  { name: "sketches", alias: "s", type: Number },
+  { name: "font", alias: "f", type: String },
+  { name: "text", alias: "t", type: Boolean },
+  { name: "random", type: Number },
+  { name: "roughness", alias: "r", type: Number },
+  { name: "bowing", alias: "b", type: Number },
+  { name: "stroke", alias: "s", type: Number },
+  { name: "hachure", alias: "h", type: Number },
 ]);
 
 async function render() {
@@ -25,24 +31,21 @@ async function render() {
   jsonConvert.ignorePrimitiveChecks = false; // don't allow assigning number to string etc.
   jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL; // never allow null
 
-  let nSketches = args.sketches;
+  console.log(args.src, args.font, args.text, args.random, args.roughness, args.bowing, args.stroke, args.hachure);
 
   try {
     const data = jsonConvert.deserializeObject(jsonData, Data);
     try {
       const config = jsonConvert.deserializeObject(jsonConfig, Config);
-
-      for (let i = 0; i < nSketches; i++) {
-        const bar = new SingleBar(
-          {
-            format: "Render Wireframe |" + green("{bar}") + "| {percentage}% || {value}/{total} Elements || ETA: {eta}s",
-          },
-          Presets.shades_classic
-        );
-        const render = new Render(data, config, bar);
-        await render.draw();
-        await render.export();
-      }
+      const bar = new SingleBar(
+        {
+          format: "Render Wireframe |" + green("{bar}") + "| {percentage}% || {value}/{total} Elements || ETA: {eta}s",
+        },
+        Presets.shades_classic
+      );
+      const render = new Render(data, config, bar);
+      await render.draw();
+      await render.export();
     } catch (e) {
       console.error(<Error>e);
     }
