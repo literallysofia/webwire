@@ -1,4 +1,4 @@
-import { Point, IRectangle, TextBlock, random } from "../utils";
+import { Point, IRectangle, random } from "../utils";
 
 export abstract class Drawable {
   x: number;
@@ -39,14 +39,4 @@ export abstract class Drawable {
   }
 
   abstract generate(randomOffset: number): void;
-}
-
-export interface DrawableText {
-  align: string;
-  content: string;
-  fsize: number;
-  lheight: number;
-  textBlock?: TextBlock | undefined;
-
-  mutateSize(offset: number): void;
 }
