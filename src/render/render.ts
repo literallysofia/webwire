@@ -13,6 +13,7 @@ import { Checkbox } from "./graphics/checkbox";
 import { Container } from "./graphics/container";
 import { Title } from "./graphics/title";
 import { Text } from "./graphics/text";
+import { Paragraph } from "./graphics/paragraph";
 import { Image } from "./graphics/image";
 import { Icon } from "./graphics/icon";
 import { Burguer } from "./graphics/burguer";
@@ -35,12 +36,12 @@ export class Render {
   constructor(data: Data, config: Config, bar: SingleBar) {
     this.data = data;
     this.config = config;
-    if (this.config.fontFamily === "") this.config.setRandomFontFamily();
-    console.log(this.config);
     this.bar = bar;
     this.canvas = this.createSvg();
     this.setCanvasSize();
-    this.roughCanvas = rough.svg(this.canvas, { options: this.config });
+    this.roughCanvas = rough.svg(this.canvas, {
+      options: { roughness: this.config.roughness.value, bowing: this.config.bowing.value, strokeWidth: this.config.strokeWidth.value },
+    });
   }
 
   createSvg(): SVGSVGElement {
@@ -118,7 +119,7 @@ export class Render {
 
   drawContainer(elem: UIElement) {
     const c = new Container(elem);
-    c.generate(this.config.randomOffset);
+    c.generate(this.config.randomOffset.value);
     if (c.lines) this.createLines(c.lines);
   }
 
@@ -126,7 +127,7 @@ export class Render {
     if (!this.config.keepOriginalText) elem.content = random_sentence();
 
     const title = new Title(elem, elem);
-    title.generate(this.config.randomOffset);
+    title.generate(this.config.randomOffset.value);
 
     if (title.textBlock) {
       let lines = this.getTextLines(title.textBlock.words, title.width, title.fsize);
@@ -138,25 +139,27 @@ export class Render {
   }
 
   drawText(elem: UIElement) {
-    /* let text;
-    if (elem.nlines > 1) text = new Paragraph(elem.height, elem.width, elem.x, elem.y);
-    else text = new Text(elem.height, elem.width, elem.x, elem.y, elem.nlines); */
-    const text = new Text(elem, elem.nlines);
-    text.generate(this.config.randomOffset);
+    let text;
+
+    if (this.config.textBlockStyle === "Text") text = new Text(elem, elem.nlines);
+    else if (elem.nlines > 1 && this.config.textBlockStyle === "Paragraph") text = new Paragraph(elem);
+    else text = new Text(elem, elem.nlines);
+
+    text.generate(this.config.randomOffset.value);
     if (text.lines) this.createLines(text.lines);
   }
 
   drawLink(elem: UIElement) {
     if (this.config.keepOriginalText) {
       const link = new Title(elem, elem);
-      link.generate(this.config.randomOffset);
+      link.generate(this.config.randomOffset.value);
       if (link.textBlock) this.createText(link.textBlock);
     } else this.drawText(elem);
   }
 
   drawImage(elem: UIElement) {
     const image = new Image(elem);
-    image.generate(this.config.randomOffset);
+    image.generate(this.config.randomOffset.value);
     if (image.lines) this.createLines(image.lines);
   }
 
@@ -172,43 +175,43 @@ export class Render {
   drawButton(elem: UIElement) {
     if (this.config.keepOriginalText) {
       const btn = new ButtonText(elem, elem);
-      btn.generate(this.config.randomOffset);
+      btn.generate(this.config.randomOffset.value);
       if (btn.lines) this.createLines(btn.lines);
       if (btn.textBlock) this.createText(btn.textBlock);
     } else {
       const btn = new Button(elem);
-      btn.generate(this.config.randomOffset);
+      btn.generate(this.config.randomOffset.value);
       if (btn.lines) this.createLines(btn.lines);
     }
   }
 
   drawBurguer(elem: UIElement) {
     const burguer = new Burguer(elem);
-    burguer.generate(this.config.randomOffset);
+    burguer.generate(this.config.randomOffset.value);
     if (burguer.lines) this.createLines(burguer.lines);
   }
 
   drawTextField(elem: UIElement) {
     const field = new TextField(elem);
-    field.generate(this.config.randomOffset);
+    field.generate(this.config.randomOffset.value);
     if (field.lines) this.createLines(field.lines);
   }
 
   drawCheckbox(elem: UIElement) {
     const cbox = new Checkbox(elem);
-    cbox.generate(this.config.randomOffset);
+    cbox.generate(this.config.randomOffset.value);
     if (cbox.lines) this.createLines(cbox.lines);
   }
 
   drawRadio(elem: UIElement) {
     const radio = new Radio(elem);
-    radio.generate(this.config.randomOffset);
+    radio.generate(this.config.randomOffset.value);
     if (radio.ellipse) this.createEllipse(radio.ellipse, true);
   }
 
   drawDropdown(elem: UIElement) {
     const drop = new Dropdown(elem);
-    drop.generate(this.config.randomOffset);
+    drop.generate(this.config.randomOffset.value);
     if (drop.lines) this.createLines(drop.lines);
   }
 

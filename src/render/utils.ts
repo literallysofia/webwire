@@ -44,6 +44,16 @@ export interface TextBlock {
   words: string[];
 }
 
+export interface Options {
+  font?: string;
+  textBlock?: string;
+  randomOffset?: number;
+  keepOriginalText?: boolean;
+  roughness?: number;
+  bowing?: number;
+  strokeWidth?: number;
+}
+
 export function random_sentence(): string {
   var lorem = new LoremIpsum({
     wordsPerSentence: {

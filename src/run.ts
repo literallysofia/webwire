@@ -12,6 +12,9 @@ class Style {
   @JsonProperty("font", String, true)
   font: string | undefined = undefined;
 
+  @JsonProperty("textblock", String, true)
+  textblock: string | undefined = undefined;
+
   @JsonProperty("keepOriginalText", Boolean, true)
   keepOriginalText: boolean | undefined = undefined;
 
@@ -26,9 +29,6 @@ class Style {
 
   @JsonProperty("strokeWidth", Number, true)
   strokeWidth: Number | undefined = undefined;
-
-  @JsonProperty("hachureGap", Number, true)
-  hachureGap: number | undefined = undefined;
 }
 
 @JsonObject("Website")
@@ -67,12 +67,12 @@ function renderScript(id: number, style: Style | undefined): string {
 
   if (style) {
     if (style.font !== undefined) script += ` -f ${style.font}`;
-    if (style.keepOriginalText !== undefined) script += ` -t`;
+    if (style.textblock !== undefined) script += ` -t ${style.textblock}`;
+    if (style.keepOriginalText !== undefined) script += ` --realtext`;
     if (style.randomOffset !== undefined) script += ` --random ${style.randomOffset}`;
     if (style.roughness !== undefined) script += ` -r ${style.roughness}`;
     if (style.bowing !== undefined) script += ` -b ${style.bowing}`;
     if (style.strokeWidth !== undefined) script += ` -s ${style.strokeWidth}`;
-    if (style.hachureGap !== undefined) script += ` -h ${style.hachureGap}`;
   }
 
   return script;
