@@ -35,11 +35,12 @@ export class Render {
   constructor(data: Data, config: Config, bar: SingleBar) {
     this.data = data;
     this.config = config;
-    this.config.setFontFamily();
+    if (this.config.fontFamily === "") this.config.setRandomFontFamily();
+    console.log(this.config);
     this.bar = bar;
     this.canvas = this.createSvg();
     this.setCanvasSize();
-    this.roughCanvas = rough.svg(this.canvas, { options: this.config.options });
+    this.roughCanvas = rough.svg(this.canvas, { options: this.config });
   }
 
   createSvg(): SVGSVGElement {

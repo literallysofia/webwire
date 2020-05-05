@@ -11,12 +11,21 @@ export class Config {
   @JsonProperty("randomOffset", Number)
   randomOffset: number = 0;
 
-  @JsonProperty("options")
-  options = { roughness: 1, bowing: 5, strokeWidth: 1.5, hachureGap: 4 };
+  @JsonProperty("roughness", Number)
+  roughness: number = 1;
+
+  @JsonProperty("bowing", Number)
+  bowing: number = 5;
+
+  @JsonProperty("strokeWidth", Number)
+  strokeWidth: number = 1.5;
+
+  @JsonProperty("hachureGap", Number)
+  hachureGap: number = 4;
 
   fontFamily: string = "";
 
-  setFontFamily() {
+  setRandomFontFamily() {
     var index = Math.floor(Math.random() * Math.floor(this.fonts.length));
     this.fontFamily = this.fonts[index];
   }

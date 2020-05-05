@@ -91,7 +91,6 @@ function run() {
     jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL;
 
     const data = jsonConvert.deserializeObject(jsonData, Data);
-    execSync("npm run build", { stdio: "inherit" });
 
     let counter = 0;
     data.websites.forEach((website) => {
