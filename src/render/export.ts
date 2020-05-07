@@ -32,40 +32,24 @@ export class Export {
     }
   }
 
-  saveHtml(html: Document): string | undefined {
-    const dir = "./generated/temp";
+  async saveJpg(html: Document) {
+    const dir = "./generated/images/jpg";
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 
     try {
+      const jpgPath = `${dir}/wireframe_${this.fileId}_v${this.version}.jpg`;
       const htmlStr = serializeToString(html);
-      const htmlPath = `${dir}/wireframe_${this.fileId}_v${this.version}.html`;
-      writeFileSync(htmlPath, htmlStr);
-      return htmlPath;
+      await this.capture(htmlStr, jpgPath);
+      console.log(`\n> Wireframe saved at ${green(jpgPath)}\n`);
     } catch (e) {
       console.error(<Error>e);
     }
   }
 
-  async saveJpg(htmlPath: string | undefined) {
-    if (htmlPath) {
-      const dir = "./generated/images/jpg";
-      if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-
-      try {
-        const jpgPath = `${dir}/wireframe_${this.fileId}_v${this.version}.jpg`;
-        const htmlRelPath = `file://${__dirname}/../..${htmlPath.substr(1)}`;
-        await this.capture(htmlRelPath, jpgPath);
-        console.log(`\n> Wireframe saved at ${green(jpgPath)}\n`);
-      } catch (e) {
-        console.error(<Error>e);
-      }
-    } else console.error(red("\n ERROR: ") + "Wireframe JPG was not generated because HTML file is missing.");
-  }
-
-  async capture(inFilePath: string, outFilePath: string) {
+  async capture(html: string, outFilePath: string) {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
-    await page.goto(inFilePath, { waitUntil: "networkidle2" });
+    await page.setContent(html, { waitUntil: "networkidle0" });
     await page.screenshot({
       path: outFilePath,
       type: "jpeg",

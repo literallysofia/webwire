@@ -302,7 +302,6 @@ export class Render {
 
     const doc = document.implementation.createHTMLDocument("Wireframe");
     doc.body.appendChild(this.canvas);
-    const htmlPath = exporter.saveHtml(doc);
-    await exporter.saveJpg(htmlPath);
+    await exporter.saveJpg(doc);
   }
 }
