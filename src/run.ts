@@ -2,6 +2,7 @@ import { JsonConvert, OperationMode, ValueCheckingMode, JsonObject, JsonProperty
 import { execSync } from "child_process";
 import { readFileSync } from "fs";
 import { green } from "colors";
+import seedrandom from "seedrandom";
 import del from "del";
 
 @JsonObject("Style")
@@ -52,8 +53,8 @@ class Website {
 
 @JsonObject("Data")
 class Data {
-  @JsonProperty("randomSeed", Number)
-  randomSeed: number = 0;
+  @JsonProperty("randomSeed", String)
+  randomSeed: string = "";
 
   @JsonProperty("styles", [Style])
   styles: Style[] = [];
@@ -62,8 +63,8 @@ class Data {
   websites: Website[] = [];
 }
 
-function renderScript(id: number, style: Style | undefined): string {
-  let script = `npm run render -- --src ./generated/data/data_${id}.json`;
+function renderScript(id: number, seed: string, style: Style | undefined): string {
+  let script = `npm run render -- --src ./generated/data/data_${id}.json --seed ${seed}`;
 
   if (style) {
     if (style.font !== undefined) script += ` -f ${style.font}`;
@@ -91,6 +92,7 @@ function run() {
     jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL;
 
     const data = jsonConvert.deserializeObject(jsonData, Data);
+    seedrandom(data.randomSeed, { global: true });
 
     let counter = 0;
     data.websites.forEach((website) => {
@@ -105,7 +107,7 @@ function run() {
           style = data.styles.find((s) => s.name === styleName);
         }
 
-        const script = renderScript(website.id, style);
+        const script = renderScript(website.id, data.randomSeed, style);
         execSync(script, { stdio: "inherit" });
       }
 

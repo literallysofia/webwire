@@ -1,15 +1,17 @@
 import commandLineArgs from "command-line-args";
 import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
 import { SingleBar, Presets } from "cli-progress";
-import { green } from "colors";
+import { green, underline } from "colors";
 import { safeLoad } from "js-yaml";
 import { readFileSync } from "fs";
+import seedrandom from "seedrandom";
 import { Config } from "./config";
 import { Data } from "./data";
 import { Render } from "./render";
 
 const args = commandLineArgs([
   { name: "src", type: String },
+  { name: "seed", type: String },
   { name: "font", alias: "f", type: String },
   { name: "textblock", alias: "t", type: String },
   { name: "realtext", type: Boolean },
@@ -20,6 +22,8 @@ const args = commandLineArgs([
 ]);
 
 async function render() {
+  if (args.seed !== undefined) seedrandom(args.seed, { global: true });
+
   const dataFile = readFileSync(args.src, "utf8");
   const jsonData = JSON.parse(dataFile);
 
