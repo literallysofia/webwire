@@ -11,10 +11,24 @@
       "name": "style2",
       "keepOriginalText": false,
       "randomOffset": 0
+    },
+    {
+      "name": "style3",
+      "roughness": 1.5,
+      "bowing": 5,
+      "strokeWidth": 2
     }
   ],
   "websites": [
     { "url": "https://getbootstrap.com/docs/4.4/examples/album/", "draws": 1 },
-    { "url": "https://getbootstrap.com/docs/4.4/examples/jumbotron/", "styles": ["style1", "style2"], "draws": 2 }
+    { "url": "https://getbootstrap.com/docs/4.4/examples/jumbotron/", "styles": ["style1", "style2"], "draws": 2 },
+    { "url": "https://getbootstrap.com/docs/4.4/examples/checkout/", "styles": ["style3"], "draws": 1 },
+    { "url": "https://getbootstrap.com/docs/4.4/examples/blog/", "styles": ["style1"], "draws": 2 },
+    { "url": "https://getbootstrap.com/docs/4.4/examples/cover/", "styles": ["style1"], "draws": 1 },
+    { "url": "https://getbootstrap.com/docs/4.4/examples/sign-in/", "styles": ["style1", "style2", "style3"], "draws": 6 },
+    { "url": "https://getbootstrap.com/docs/4.4/examples/carousel/", "styles": ["style1", "style3"], "draws": 4 },
+    { "url": "https://getbootstrap.com/docs/4.4/examples/pricing/", "styles": ["style1"], "draws": 2 },
+    { "url": "https://getbootstrap.com/docs/4.4/examples/product/", "draws": 1 },
+    { "url": "https://getbootstrap.com", "styles": ["style1", "style2", "style3"], "draws": 4 }
   ]
 }
