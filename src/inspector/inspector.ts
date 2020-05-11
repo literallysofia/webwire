@@ -116,25 +116,23 @@ export class Inspector {
 
   async createTitle(elem: WebElement) {
     const rect = await this.rectWithoutPadding(elem);
-    await this.addRealText("Title", elem, rect);
+    await this.createRealText("Title", elem, rect);
   }
 
   async createLink(elem: WebElement) {
     const rect = await this.rectWithoutPadding(elem);
-    await this.addRealText("Link", elem, rect);
+    await this.createRealText("Link", elem, rect);
   }
 
   async createButton(elem: WebElement) {
     const rect = await elem.getRect();
-    await this.addRealText("Button", elem, rect);
+    await this.createRealText("Button", elem, rect);
   }
 
-  async addRealText(name: string, elem: WebElement, rect: IRectangle) {
+  async createRealText(name: string, elem: WebElement, rect: IRectangle) {
     const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
     const textAlign = await elem.getCssValue("text-align");
-    let text = await elem.getText();
-    text = text.split("\n")[0];
-
+    const text = await elem.getText();
     let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
 
     if (isNaN(lineHeight)) lineHeight = Math.round(fontSize * 1.2);

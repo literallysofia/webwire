@@ -66,7 +66,7 @@ export class Render {
 
   private measureWidth(text: string, fsize: number) {
     const context = document.createElement("canvas").getContext("2d") as CanvasRenderingContext2D;
-    context.font = fsize + "px Arial";
+    context.font = fsize - 1 + "px Arial";
     return context.measureText(text).width;
   }
 
@@ -228,14 +228,17 @@ export class Render {
       for (let line of lines) {
         const tspan = document.createElementNS(namespaceURI, "tspan");
         tspan.setAttribute("x", tb.x.toString());
-        tspan.setAttribute("dy", tb.lheigth.toString());
+        tspan.setAttribute("alignment-baseline", tb.baseline);
         tspan.textContent = line.text;
+
+        if (text.hasChildNodes()) tspan.setAttribute("dy", tb.lheigth.toString());
         text.appendChild(tspan);
       }
     } else {
       const tspan = document.createElementNS(namespaceURI, "tspan");
       tspan.setAttribute("x", tb.x.toString());
-      tspan.setAttribute("dy", tb.lheigth.toString());
+      tspan.setAttribute("y", tb.y.toString());
+      tspan.setAttribute("alignment-baseline", tb.baseline);
       tspan.textContent = tb.words.join(" ");
       text.appendChild(tspan);
     }

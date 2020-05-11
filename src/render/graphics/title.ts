@@ -8,7 +8,7 @@ export class Title extends DrawableText {
 
   generate(randomOffset: number) {
     this.mutateCoords(randomOffset);
-    this.mutateSize(randomOffset);
+    //this.mutateSize(randomOffset);
 
     let anchor = Anchor.Start;
     let x = this.x;
@@ -26,6 +26,7 @@ export class Title extends DrawableText {
       fsize: this.fsize,
       lheigth: this.lheight,
       anchor: anchor,
+      baseline: "hanging",
       words: t_words(this.content),
     };
   }

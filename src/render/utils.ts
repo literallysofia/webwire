@@ -41,6 +41,7 @@ export interface TextBlock {
   fsize: number;
   lheigth: number;
   anchor: string;
+  baseline: string;
   words: string[];
 }
 
