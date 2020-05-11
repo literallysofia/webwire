@@ -132,7 +132,8 @@ export class Inspector {
   async createRealText(name: string, elem: WebElement, rect: IRectangle) {
     const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
     const textAlign = await elem.getCssValue("text-align");
-    const text = await elem.getText();
+    let text = await elem.getText();
+    text = text.split("\n")[0];
     let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
 
     if (isNaN(lineHeight)) lineHeight = Math.round(fontSize * 1.2);
@@ -153,7 +154,8 @@ export class Inspector {
     const fontSize = parseInt(await elem.getCssValue("font-size"), 10);
     let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
     if (isNaN(lineHeight)) lineHeight = fontSize * 1.2;
-    const nlines = Math.round(rect.height / lineHeight);
+    let nlines = Math.floor(rect.height / lineHeight);
+    if (nlines < 1) nlines = 1;
     this.data.push(new Text("Text", rect, nlines));
   }
 
