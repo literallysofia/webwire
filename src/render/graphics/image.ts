@@ -14,11 +14,14 @@ export class Image extends Drawable {
     this.mutatePoints(points, randomOffset, this.height * this.width);
 
     let cross: Point[] = [];
+    let tMax = 0.2;
+    if (randomOffset === 0) tMax = 0;
+
     cross.push(
-      p_lerp(points[0], points[2], random(0.0, 0.2)),
-      p_lerp(points[2], points[0], random(0.0, 0.2)),
-      p_lerp(points[1], points[3], random(0.0, 0.2)),
-      p_lerp(points[3], points[1], random(0.0, 0.2))
+      p_lerp(points[0], points[2], random(0.0, tMax)),
+      p_lerp(points[2], points[0], random(0.0, tMax)),
+      p_lerp(points[1], points[3], random(0.0, tMax)),
+      p_lerp(points[3], points[1], random(0.0, tMax))
     );
     this.mutatePoints(cross, randomOffset, this.height * this.width);
 

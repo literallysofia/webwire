@@ -1,7 +1,7 @@
 elements:
   - type: Container
     paths:
-      - //div[text() and *]
+      - //div[text()]
     css: css.border_bottom_width > 0 && css.border_left_width > 0 && css.border_right_width > 0 && css.border_top_width > 0
   - type: Header
     paths:
@@ -16,7 +16,7 @@ elements:
     paths:
       - //p[text()]
       - //a[text()]
-      - //strong[text()]
+      - //strong[text() and not(ancestor::p[text()])]
       - //small[text()]
       - //div[contains(@class, 'text-muted')]
       - //ul/li[text() and not(./*)]

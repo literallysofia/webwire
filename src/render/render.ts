@@ -164,12 +164,10 @@ export class Render {
   }
 
   async drawIcon(elem: UIElement) {
-    const icon = new Icon(elem, elem.svg);
-    await icon.generate();
     const parser = new DOMParser();
-    const doc = parser.parseFromString(icon.svg, "image/svg+xml");
-    const svg = doc.firstChild as SVGSVGElement;
-    this.createIcon(svg, icon);
+    const icon = new Icon(elem, elem.svg, parser);
+    await icon.generate();
+    this.createIcon(icon.getSvg(), icon);
   }
 
   drawButton(elem: UIElement) {

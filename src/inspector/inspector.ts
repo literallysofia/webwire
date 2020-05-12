@@ -167,12 +167,12 @@ export class Inspector {
         { cleanupAttrs: true },
         {
           removeAttrs: {
-            attrs: "(stroke|fill|fill-opacity|data-type|fill-rule|class|stroke-linecap|stroke-linejoin|stroke-width|aria-hidden|rx|ry)",
+            attrs: "(stroke|fill|fill-opacity|data-type|fill-rule|class|stroke-linecap|stroke-linejoin|stroke-width|aria-hidden|rx|ry|preserveAspectRatio|aria-label)",
           },
         },
       ],
     });
-    const optimizedSvg = await svgo.optimize(svg);
+    const optimizedSvg = await svgo.optimize(svg.replace(/<text[^>]*>.*?<\/text>/g, ""));
     this.data.push(new Icon("Icon", rect, optimizedSvg.data));
   }
 
