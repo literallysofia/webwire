@@ -190,8 +190,8 @@ export class Inspector {
     const paddingLeft = parseInt(await elem.getCssValue("padding-left"), 10);
     const paddingRight = parseInt(await elem.getCssValue("padding-right"), 10);
     const rect: IRectangle = {
-      x: rec.x,
-      y: rec.y,
+      x: rec.x + paddingLeft,
+      y: rec.y + paddingTop,
       width: rec.width - paddingLeft - paddingRight,
       height: rec.height - paddingTop - paddingBottom,
     };

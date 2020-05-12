@@ -10,6 +10,7 @@ export class Title extends DrawableText {
     this.mutateCoords(randomOffset);
     //this.mutateSize(randomOffset);
 
+    const y = this.y + this.height / 2;
     let anchor = Anchor.Start;
     let x = this.x;
     if (this.align === "center") {
@@ -22,11 +23,11 @@ export class Title extends DrawableText {
 
     this.textBlock = {
       x: x,
-      y: this.y,
+      y: y,
       fsize: this.fsize,
       lheigth: this.lheight,
       anchor: anchor,
-      baseline: "hanging",
+      baseline: "middle",
       words: t_words(this.content),
     };
   }

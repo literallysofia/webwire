@@ -237,7 +237,6 @@ export class Render {
     } else {
       const tspan = document.createElementNS(namespaceURI, "tspan");
       tspan.setAttribute("x", tb.x.toString());
-      tspan.setAttribute("y", tb.y.toString());
       tspan.setAttribute("alignment-baseline", tb.baseline);
       tspan.textContent = tb.words.join(" ");
       text.appendChild(tspan);
