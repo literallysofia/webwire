@@ -189,11 +189,15 @@ export class Inspector {
     const paddingBottom = parseInt(await elem.getCssValue("padding-bottom"), 10);
     const paddingLeft = parseInt(await elem.getCssValue("padding-left"), 10);
     const paddingRight = parseInt(await elem.getCssValue("padding-right"), 10);
+    const borderTop = parseInt(await elem.getCssValue("border-top-width"), 10);
+    const borderBottom = parseInt(await elem.getCssValue("border-bottom-width"), 10);
+    const borderLeft = parseInt(await elem.getCssValue("border-left-width"), 10);
+    const borderRight = parseInt(await elem.getCssValue("border-right-width"), 10);
     const rect: IRectangle = {
       x: rec.x + paddingLeft,
       y: rec.y + paddingTop,
-      width: rec.width - paddingLeft - paddingRight,
-      height: rec.height - paddingTop - paddingBottom,
+      width: rec.width - paddingLeft - paddingRight + borderLeft + borderRight,
+      height: rec.height - paddingTop - paddingBottom + borderTop + borderBottom,
     };
     return rect;
   }

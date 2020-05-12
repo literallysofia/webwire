@@ -17,8 +17,8 @@ elements:
       - //p[text()]
       - //a[text()]
       - //strong[text() and not(ancestor::p[text()])]
-      - //small[text()]
-      - //div[contains(@class, 'text-muted')]
+      - //small[text() and not(./*)]
+      - //div[contains(@class, 'text-muted') and not(./*) and text()]
       - //ul/li[text() and not(./*)]
       - //ul/li[not(normalize-space(text())='') and ./*]
       - //label[text()]
@@ -80,6 +80,8 @@ elements:
       - //input[@type = 'email']
       - //input[@type = 'search']
       - //input[@type = 'url']
+      - //input[@type = 'tel']
+      - //textarea
   - type: Checkbox
     paths:
       - //input[@type = 'checkbox']
