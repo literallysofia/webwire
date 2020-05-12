@@ -67,7 +67,7 @@ function renderScript(id: number, seed: string, style: Style | undefined): strin
   let script = `npm run render -- --src ./generated/data/data_${id}.json --seed ${seed}`;
 
   if (style) {
-    if (style.font !== undefined) script += ` -f ${style.font}`;
+    if (style.font !== undefined) script += ` -f "${style.font}"`;
     if (style.textblock !== undefined) script += ` -t ${style.textblock}`;
     if (style.keepOriginalText !== undefined) script += ` --realtext`;
     if (style.randomOffset !== undefined) script += ` --random ${style.randomOffset}`;
