@@ -92,15 +92,16 @@ export class Browser {
     return await this.driver.executeScript(script, elem);
   }
 
-  async clearCookies(url?: string) {
-    if (url) {
-      const currentUrl = await this.driver.getCurrentUrl();
-      await this.navigate(url);
-      await this.driver.manage().deleteAllCookies();
-      await this.navigate(currentUrl);
-    } else {
-      await this.driver.manage().deleteAllCookies();
-    }
+  async getDocumentHeight(): Promise<number> {
+    const script =
+      "const body = document.body; const html = document.documentElement; return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);";
+    return await this.driver.executeScript(script);
+  }
+
+  async getDocumentWidth(): Promise<number> {
+    const script =
+      "const body = document.body; const html = document.documentElement; return Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);";
+    return await this.driver.executeScript(script);
   }
 
   async close() {

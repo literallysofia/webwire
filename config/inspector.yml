@@ -14,6 +14,7 @@ elements:
     css: css.height > 0 && css.width > 0
   - type: Text
     paths:
+      - //div[text() and not(./*)]
       - //p[text()]
       - //a[text()]
       - //strong[text() and not(ancestor::p[text()])]
@@ -21,8 +22,11 @@ elements:
       - //div[contains(@class, 'text-muted') and not(./*) and text()]
       - //ul/li[text() and not(./*)]
       - //ul/li[not(normalize-space(text())='') and ./*]
+      - //ul/li[i/following-sibling::text()[not(normalize-space(.)='')]]
       - //label[text()]
       - //span[text() and not(./*)]
+      - //div[contains(@class, 'small') and not(./*) and text()]
+      - //footer/*[text() and not(./*)]
     ignore:
       - //p[a[contains(@class, 'btn')]]
       - //strong[ancestor::p[text()]]
@@ -34,10 +38,12 @@ elements:
       - //a[*[name()="svg"]]
       - //small[ancestor::h1[text()]]
       - //a[ancestor::h1 or ancestor::h2 or ancestor::h3 or ancestor::h4 or ancestor::h5 or ancestor::h6]
+      - //a[./h1 or ./h2 or ./h3 or ./h4 or ./h5 or ./h6 or ./i]
       - //ul/li[not(normalize-space(text())='') and ./*]/a
       - //ul/li[not(normalize-space(text())='') and ./*]/strong
       - //ul/li[text() and not(./*) and string-length(text()) < 2]
-      - //span[ancestor::button or ancestor::a or ancestor::label or string-length(text()) < 2]
+      - //span[ancestor::button or ancestor::a or ancestor::p[text()] or ancestor::label or string-length(text()) < 2]
+      - //figure//*
   - type: Title
     paths:
       - //h1[.//text()]
@@ -70,6 +76,7 @@ elements:
       - //*[name()='canvas']
       - //i
       - //div[contains(@style, 'background-image')]
+      - //figure[*]
   - type: Icon
     paths:
       - //*[name()="svg" and @width <= 50]

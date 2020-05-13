@@ -177,10 +177,8 @@ export class Inspector {
   }
 
   async setSize() {
-    const html = await this.browser.findElement("html");
-    const rect = await html.getRect();
-    this.size.height = rect.height;
-    this.size.width = rect.width;
+    this.size.height = await this.browser.getDocumentHeight();
+    this.size.width = await this.browser.getDocumentWidth();
   }
 
   async rectWithoutPadding(elem: WebElement): Promise<IRectangle> {
