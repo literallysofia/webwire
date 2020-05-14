@@ -1,9 +1,13 @@
 import { JsonConvert, OperationMode, ValueCheckingMode, JsonObject, JsonProperty } from "json2typescript";
 import { execSync } from "child_process";
 import { readFileSync } from "fs";
-import { green } from "colors";
+import { green, yellow, red } from "colors";
 import seedrandom from "seedrandom";
+import commandLineArgs from "command-line-args";
 import del from "del";
+
+const jsonDiff = require("json-diff");
+const args = commandLineArgs([{ name: "diff", type: Boolean }]);
 
 @JsonObject("Style")
 class Style {
@@ -81,8 +85,6 @@ function renderScript(id: number, seed: string, style: Style | undefined): strin
 
 function run() {
   try {
-    del.sync("./generated");
-
     const mainFile = readFileSync("./main.json", "utf8");
     const jsonData = JSON.parse(mainFile);
 
@@ -94,27 +96,45 @@ function run() {
     const data = jsonConvert.deserializeObject(jsonData, Data);
     seedrandom(data.randomSeed, { global: true });
 
-    let counter = 0;
-    data.websites.forEach((website) => {
-      execSync(`npm run inspector -- --id ${website.id} --src ${website.url}`, { stdio: "inherit" });
+    if (args.diff) {
+      data.websites.forEach((website) => {
+        execSync(`npm run inspector -- --id ${website.id} --src ${website.url}`, { stdio: "inherit" });
 
-      for (let i = 0; i < website.draws; i++) {
-        let style: Style | undefined;
+        const oldFile = readFileSync(`./generated/data/data_${website.id}.json`, "utf8");
+        const newFile = readFileSync(`./generated/data/data_${website.id}_new.json`, "utf8");
 
-        if (website.styles.length > 0) {
-          const index = Math.floor(Math.random() * Math.floor(website.styles.length));
-          const styleName = website.styles[index];
-          style = data.styles.find((s) => s.name === styleName);
+        const oldJson = JSON.parse(oldFile);
+        const newJson = JSON.parse(newFile);
+
+        const diff = jsonDiff.diffString(oldJson, newJson);
+        if (diff) console.log(yellow(`\n(!) Changes found at data_${website.id}.json\n\n`) + diff);
+        else console.log(green(`\nNo changes found at data_${website.id}.json\n`));
+      });
+    } else {
+      del.sync("./generated");
+
+      let counter = 0;
+      data.websites.forEach((website) => {
+        execSync(`npm run inspector -- --id ${website.id} --src ${website.url}`, { stdio: "inherit" });
+
+        for (let i = 0; i < website.draws; i++) {
+          let style: Style | undefined;
+
+          if (website.styles.length > 0) {
+            const index = Math.floor(Math.random() * Math.floor(website.styles.length));
+            const styleName = website.styles[index];
+            style = data.styles.find((s) => s.name === styleName);
+          }
+
+          const script = renderScript(website.id, data.randomSeed, style);
+          execSync(script, { stdio: "inherit" });
         }
 
-        const script = renderScript(website.id, data.randomSeed, style);
-        execSync(script, { stdio: "inherit" });
-      }
+        counter += website.draws;
+      });
 
-      counter += website.draws;
-    });
-
-    console.log(green("\nGeneration complete!\n") + `+ generated a total of ${counter} wireframes for ${data.websites.length} different websites\n`);
+      console.log(green("\nGeneration complete!\n") + `+ generated a total of ${counter} wireframes for ${data.websites.length} different websites\n`);
+    }
   } catch (e) {
     console.error(<Error>e);
   }

@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { SingleBar } from "cli-progress";
 import { green } from "colors";
+import { format } from "prettier";
 import SVGO from "svgo";
 import { Browser } from "./browser";
 import { Config } from "./config";
@@ -204,7 +205,7 @@ export class Inspector {
     const dir = "./generated/data";
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 
-    const filePath = `${dir}/data_${this.website.id}.json`;
+    let filePath = `${dir}/data_${this.website.id}.json`;
     const json = JSON.stringify({
       id: this.website.id,
       url: this.website.url,
@@ -212,8 +213,12 @@ export class Inspector {
       elements: this.data,
     });
 
+    if (existsSync(filePath)) {
+      filePath = `${dir}/data_${this.website.id}_new.json`;
+    }
+
     try {
-      writeFileSync(filePath, json);
+      writeFileSync(filePath, format(json, { parser: "json" }));
       console.log("\n> Data saved at " + green(filePath));
     } catch (e) {
       console.error(<Error>e);

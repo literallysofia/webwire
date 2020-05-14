@@ -35,7 +35,8 @@ elements:
       - //a[ancestor::p[text()]]
       - //a[contains(@class, 'dropdown-toggle')]
       - //a[@role = 'button']
-      - //a[*[name()="svg"]]
+      - //a[*[name()="svg"] or img]
+      - //strong[ancestor::h1 or ancestor::h2 or ancestor::h3 or ancestor::h4 or ancestor::h5 or ancestor::h6]
       - //small[ancestor::h1[text()]]
       - //a[ancestor::h1 or ancestor::h2 or ancestor::h3 or ancestor::h4 or ancestor::h5 or ancestor::h6]
       - //a[./h1 or ./h2 or ./h3 or ./h4 or ./h5 or ./h6 or ./i]
@@ -77,6 +78,8 @@ elements:
       - //i
       - //div[contains(@style, 'background-image')]
       - //figure[*]
+    ignore:
+      - //i[ancestor::p[text()]]
   - type: Icon
     paths:
       - //*[name()="svg" and @width <= 50]

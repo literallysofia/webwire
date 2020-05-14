@@ -1,7 +1,7 @@
 import commandLineArgs from "command-line-args";
 import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
 import { SingleBar, Presets } from "cli-progress";
-import { green, underline } from "colors";
+import { green } from "colors";
 import { safeLoad } from "js-yaml";
 import { readFileSync } from "fs";
 import seedrandom from "seedrandom";
