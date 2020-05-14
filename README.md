@@ -46,6 +46,12 @@ Examples of websites:
 * https://getbootstrap.com/docs/4.5/examples/carousel/
 * https://getbootstrap.com/docs/4.5/examples/pricing/
 
+When making changes to the Inspector's config file, mainly on the xpaths, you can see what changes in the ```data.json``` of the previous tested websites. A new file named ```data_new.json``` will be generated and compared to the original one.
+
+```bash
+$ npm run diff
+```
+
 ## Step By Step
 
 If you want to run WebWire the old fashion way.
