@@ -40,12 +40,82 @@ $ npm start
 
 Examples of websites:
 
-* https://getbootstrap.com/docs/4.4/examples/album/
-* https://getbootstrap.com/docs/4.4/examples/jumbotron/
-* https://getbootstrap.com/docs/4.4/examples/checkout/
-* https://getbootstrap.com/docs/4.4/examples/blog/
-* https://getbootstrap.com/docs/4.4/examples/cover/
-* https://getbootstrap.com/docs/4.4/examples/sign-in/
-* https://getbootstrap.com/docs/4.4/examples/carousel/
-* https://getbootstrap.com/docs/4.4/examples/pricing/
-* https://getbootstrap.com/docs/4.4/examples/product/
+* https://getbootstrap.com/docs/4.5/examples/album/
+* https://getbootstrap.com/docs/4.5/examples/jumbotron/
+* https://getbootstrap.com/docs/4.5/examples/checkout/
+* https://getbootstrap.com/docs/4.5/examples/carousel/
+* https://getbootstrap.com/docs/4.5/examples/pricing/
+
+## Step By Step
+
+If you want to run WebWire the old fashion way.
+
+### Inspector
+
+```bash
+$ npm run build
+$ npm run inspector -- --id <website id> --src <website url>
+```
+
+### Render
+
+```bash
+$ npm run build
+$ npm run render -- --src <json file> --seed <random seed> [options]
+```
+
+#### --font
+
+When you want to set the font of the wireframe, you can run with the ```--font``` flag (or ```-f```). Keep it mind that it has to be a Google font.
+
+```bash
+$ npm run render -- --src generated/data.json --seed 2837465 --font "Indie Flower"
+```
+
+#### --textblock
+
+When you want to set the style for all text blocks present in the wireframe, you can run with the ```--textblock``` flag (or ```-t```). The style can be **Text** or **Paragraph**.
+
+```bash
+$ npm run render -- --src generated/data.json --seed 2837465 --textblock "Paragraph"
+```
+
+#### --realtext
+
+When you want the wireframe to display the website's real text for titles and links, you can run with the ```--realtext``` flag.
+
+```bash
+$ npm run render -- --src generated/data.json --seed 2837465 --realtext
+```
+
+#### --random
+
+When you want to set the random offset of the wireframe, you can run with the ```--random``` flag.
+
+```bash
+$ npm run render -- --src generated/data.json --seed 2837465 --random 5
+```
+
+#### --roughness
+
+When you want to set the roughness of the wireframe, you can run with the ```--roughness``` flag (or ```-r```).
+
+```bash
+$ npm run render -- --src generated/data.json --seed 2837465 --roughness 1.5
+```
+
+#### --bowing
+
+When you want to set the bowing (how curvy the lines are when drawing) of the wireframe, you can run with the ```--bowing``` flag (or ```-b```).
+
+```bash
+$ npm run render -- --src generated/data.json --seed 2837465 --bowing 4
+```
+
+#### --stroke
+
+When you want to set the width of the strokes of the wireframe, you can run with the ```--stroke``` flag (or ```-s```).
+
+```bash
+$ npm run render -- --src generated/data.json --seed 2837465 --stroke 2
+```
