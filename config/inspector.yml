@@ -1,8 +1,4 @@
 elements:
-  - type: Container
-    paths:
-      - //div[text()]
-    css: css.border_bottom_width > 0 && css.border_left_width > 0 && css.border_right_width > 0 && css.border_top_width > 0
   - type: Header
     paths:
       - //header
@@ -16,7 +12,7 @@ elements:
     paths:
       - //div[text() and not(./*)]
       - //p[text()]
-      - //a[text()]
+      - //a[text()[normalize-space()]]
       - //strong[text() and not(ancestor::p[text()])]
       - //small[text() and not(./*)]
       - //div[contains(@class, 'text-muted') and not(./*) and text()]
@@ -27,12 +23,13 @@ elements:
       - //span[text() and not(./*)]
       - //div[contains(@class, 'small') and not(./*) and text()]
       - //footer/*[text() and not(./*)]
+      - //dd[text()[normalize-space()] and not(./*)]
     ignore:
       - //p[a[contains(@class, 'btn')]]
       - //strong[ancestor::p[text()]]
       - //small[ancestor::p[text()]]
       - //a[contains(@class, 'btn')]
-      - //a[ancestor::p[text()]]
+      - //a[ancestor::p[text()] or ancestor::label[text()]]
       - //a[contains(@class, 'dropdown-toggle')]
       - //a[@role = 'button']
       - //a[*[name()="svg"] or img]
@@ -43,7 +40,8 @@ elements:
       - //ul/li[not(normalize-space(text())='') and ./*]/a
       - //ul/li[not(normalize-space(text())='') and ./*]/strong
       - //ul/li[text() and not(./*) and string-length(text()) < 2]
-      - //span[ancestor::button or ancestor::a or ancestor::p[text()] or ancestor::label or string-length(text()) < 2]
+      - //span[ancestor::button or ancestor::a[text()[normalize-space()]] or ancestor::p[text()] or ancestor::label or string-length(text()) < 2]
+      - //*[contains(@class, 'sr-only') or ancestor::*[contains(@class, 'sr-only') ]]
       - //figure//*
   - type: Title
     paths:
@@ -80,9 +78,15 @@ elements:
       - //figure[*]
     ignore:
       - //i[ancestor::p[text()]]
+      - //img[ancestor::input]
   - type: Icon
     paths:
-      - //*[name()="svg" and @width <= 50]
+      - //*[name()="svg" and @width <= 40 and count(*[not(name()="use")]) > 0]
+  - type: Container
+    paths:
+      - //div[text() and ./*]
+      - //a[text() and ./*]
+    css: css.border_bottom_width > 0 && css.border_left_width > 0 && css.border_right_width > 0 && css.border_top_width > 0
   - type: TextField
     paths:
       - //input[@type = 'text']
@@ -102,13 +106,15 @@ elements:
     paths:
       - //button
       - //a[contains(@class, 'btn')]
+      - //input[contains(@class, 'btn')]
   - type: Burguer
     paths:
       - //button[@aria-label = 'Toggle navigation' and contains(@class, 'navbar-toggler')]
   - type: Dropdown
     paths:
       - //select
-      - //a[contains(@class, 'dropdown-toggle')]
+      - //a[contains(@class, 'dropdown-toggle') and not(ancestor::li)]
+      - //li[.//*[contains(@class, 'dropdown-menu')]]
 browser: chrome
 headless: true
 window:

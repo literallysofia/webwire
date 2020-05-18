@@ -135,6 +135,7 @@ export class Inspector {
     const textAlign = await elem.getCssValue("text-align");
     let text = await elem.getText();
     text = text.split("\n")[0];
+    if (text === "") text = await elem.getAttribute("value");
     let lineHeight = parseInt(await elem.getCssValue("line-height"), 10);
 
     if (isNaN(lineHeight)) lineHeight = Math.round(fontSize * 1.2);
@@ -167,8 +168,13 @@ export class Inspector {
       plugins: [
         { cleanupAttrs: true },
         {
+          addAttributesToSVGElement: {
+            attributes: [`xmlns="http://www.w3.org/2000/svg"`],
+          },
+        },
+        {
           removeAttrs: {
-            attrs: "(stroke|fill|fill-opacity|data-type|fill-rule|class|stroke-linecap|stroke-linejoin|stroke-width|aria-hidden|rx|ry|preserveAspectRatio|aria-label)",
+            attrs: "(stroke|fill|fill-opacity|data-type|fill-rule|class|stroke-linecap|stroke-linejoin|stroke-width|aria-hidden|rx|ry|preserveAspectRatio|aria-label|xmlns)",
           },
         },
       ],
