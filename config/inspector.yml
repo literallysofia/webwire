@@ -19,6 +19,9 @@ elements:
       - //ul/li[text() and not(./*)]
       - //ul/li[not(normalize-space(text())='') and ./*]
       - //ul/li[i/following-sibling::text()[not(normalize-space(.)='')]]
+      - //ol/li[text() and not(./*)]
+      - //ol/li[not(normalize-space(text())='') and ./*]
+      - //ol/li[i/following-sibling::text()[not(normalize-space(.)='')]]
       - //label[text()]
       - //span[text() and not(./*)]
       - //div[contains(@class, 'small') and not(./*) and text()]
@@ -40,6 +43,9 @@ elements:
       - //ul/li[not(normalize-space(text())='') and ./*]/a
       - //ul/li[not(normalize-space(text())='') and ./*]/strong
       - //ul/li[text() and not(./*) and string-length(text()) < 2]
+      - //ol/li[not(normalize-space(text())='') and ./*]/a
+      - //ol/li[not(normalize-space(text())='') and ./*]/strong
+      - //ol/li[text() and not(./*) and string-length(text()) < 2]
       - //span[ancestor::button or ancestor::a[text()[normalize-space()]] or ancestor::p[text()] or ancestor::label or string-length(text()) < 2]
       - //*[contains(@class, 'sr-only') or ancestor::*[contains(@class, 'sr-only') ]]
       - //figure//*
@@ -63,11 +69,13 @@ elements:
   - type: Link
     paths:
       - //ul/li[normalize-space(text())='' and count(*)=1]/a[text()]
+      - //ol/li[normalize-space(text())='' and count(*)=1]/a[text()]
       - //nav//a[text()]
       - //nav//a[contains(@class, 'nav-link') and text()]
       - //header//a[text() and not(./*)]
     ignore:
       - //ul/li/a[contains(@class, 'dropdown-toggle')]
+      - //ol/li/a[contains(@class, 'dropdown-toggle')]
   - type: Image
     paths:
       - //img
@@ -76,12 +84,16 @@ elements:
       - //i
       - //div[contains(@style, 'background-image')]
       - //figure[*]
+      - //iframe
     ignore:
       - //i[ancestor::p[text()]]
       - //img[ancestor::input]
+      - //*[ancestor::iframe]
   - type: Icon
     paths:
       - //*[name()="svg" and @width <= 40 and count(*[not(name()="use")]) > 0]
+    ignore:
+      - //*[name() = 'svg' and (ancestor::h1[text()] or ancestor::h2[text()] or ancestor::h3[text()] or ancestor::h4[text()] or ancestor::h5[text()] or ancestor::h6[text()])]
   - type: Container
     paths:
       - //div[text() and ./*]
@@ -107,6 +119,9 @@ elements:
       - //button
       - //a[contains(@class, 'btn')]
       - //input[contains(@class, 'btn')]
+      - //span[contains(@class, 'btn')]
+    ignore:
+      - //*[contains(@class, 'btn-group')]
   - type: Burguer
     paths:
       - //button[@aria-label = 'Toggle navigation' and contains(@class, 'navbar-toggler')]
