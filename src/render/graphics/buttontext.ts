@@ -19,7 +19,6 @@ export class ButtonText extends DrawableText {
     this.lines.push([points[3], points[0]]);
 
     this.mutateCoords(randomOffset);
-    //this.mutateSize(randomOffset);
     const x = this.x + this.width / 2;
     const y = this.y + this.height / 2;
 

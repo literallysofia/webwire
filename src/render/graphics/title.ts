@@ -8,9 +8,8 @@ export class Title extends DrawableText {
 
   generate(randomOffset: number) {
     this.mutateCoords(randomOffset);
-    //this.mutateSize(randomOffset);
 
-    const y = this.y + this.height / 2;
+    const y = this.y + this.lheight / 2;
     let anchor = Anchor.Start;
     let x = this.x;
     if (this.align === "center") {

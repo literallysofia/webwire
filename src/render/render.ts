@@ -131,9 +131,13 @@ export class Render {
 
     if (title.textBlock) {
       let lines = this.getTextLines(title.textBlock.words, title.width, title.fsize);
-      while (lines.length > title.height / title.lheight) {
-        lines.pop();
+
+      if (!this.config.keepOriginalText) {
+        while (lines.length > title.height / title.lheight) {
+          lines.pop();
+        }
       }
+
       this.createText(title.textBlock, lines);
     }
   }
@@ -267,10 +271,7 @@ export class Render {
     for (let i = 0; i < svg.children.length; i++) {
       const path = svg.children[i].getAttribute("d");
       if (path) {
-        const svgPath = svgpath(path)
-          .abs()
-          .round(1)
-          .toString();
+        const svgPath = svgpath(path).abs().round(1).toString();
 
         drawnPaths.push(
           this.roughCanvas

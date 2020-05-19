@@ -15,8 +15,4 @@ export abstract class DrawableText extends Drawable {
     this.fsize = props.fsize;
     this.lheight = props.lheight;
   }
-
-  mutateSize(offset: number) {
-    this.fsize += Math.random() * offset;
-  }
 }
