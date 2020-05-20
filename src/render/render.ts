@@ -66,8 +66,8 @@ export class Render {
 
   private measureWidth(text: string, fsize: number) {
     const context = document.createElement("canvas").getContext("2d") as CanvasRenderingContext2D;
-    context.font = fsize - 1 + "px Arial";
-    return context.measureText(text).width;
+    context.font = fsize - 2 + "px Arial";
+    return context.measureText(text.toLowerCase()).width;
   }
 
   private getTextLines(words: string[], targetWidth: number, fsize: number): TextLine[] {
@@ -132,10 +132,8 @@ export class Render {
     if (title.textBlock) {
       let lines = this.getTextLines(title.textBlock.words, title.width, title.fsize);
 
-      if (!this.config.keepOriginalText) {
-        while (lines.length > title.height / title.lheight) {
-          lines.pop();
-        }
+      while (lines.length > title.height / title.lheight) {
+        lines.pop();
       }
 
       this.createText(title.textBlock, lines);
