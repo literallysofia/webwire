@@ -38,7 +38,7 @@ export class Browser {
     const svgs = await this.findElements("//*[name()='svg']");
     for (let svg of svgs) {
       const rect = await svg.getRect();
-      const scriptH = `arguments[0].setAttribute('heigth', '${rect.height}')`;
+      const scriptH = `arguments[0].setAttribute('height', '${rect.height}')`;
       const scriptW = `arguments[0].setAttribute('width', '${rect.width}')`;
       await this.driver.executeScript(scriptH, svg);
       await this.driver.executeScript(scriptW, svg);

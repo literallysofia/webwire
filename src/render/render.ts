@@ -133,6 +133,7 @@ export class Render {
       let lines = this.getTextLines(title.textBlock.words, title.width, title.fsize);
 
       while (lines.length > title.height / title.lheight) {
+        if (lines.length === 1) break;
         lines.pop();
       }
 
@@ -155,7 +156,16 @@ export class Render {
     if (this.config.keepOriginalText) {
       const link = new Title(elem, elem);
       link.generate(this.config.randomOffset.value);
-      if (link.textBlock) this.createText(link.textBlock);
+      if (link.textBlock) {
+        let lines = this.getTextLines(link.textBlock.words, link.width, link.fsize);
+
+        while (lines.length > link.height / link.lheight) {
+          if (lines.length === 1) break;
+          lines.pop();
+        }
+
+        this.createText(link.textBlock, lines);
+      }
     } else this.drawText(elem);
   }
 

@@ -18,13 +18,10 @@ elements:
       - //div[contains(@class, 'text-muted') and not(./*) and text()]
       - //ul/li[text() and not(./*)]
       - //ul/li[not(normalize-space(text())='') and ./*]
-      - //ul/li[i/following-sibling::text()[not(normalize-space(.)='')]]
-      - //ul/li[a/following-sibling::text()[not(normalize-space(.)='')]]
-      - //ul/li[*[name() = 'svg']/following-sibling::text()[not(normalize-space(.)='')]]
+      - //ul/li[*/following-sibling::text()[not(normalize-space(.)='')]]
       - //ol/li[text() and not(./*)]
       - //ol/li[not(normalize-space(text())='') and ./*]
-      - //ol/li[i/following-sibling::text()[not(normalize-space(.)='')]]
-      - //ol/li[*[name() = 'svg']/following-sibling::text()[not(normalize-space(.)='')]]
+      - //ol/li[*/following-sibling::text()[not(normalize-space(.)='')]]
       - //label[text()]
       - //span[text() and not(./*)]
       - //span[text()[normalize-space()] and span and count(span) = count(*)]
@@ -46,7 +43,7 @@ elements:
       - //a[ancestor::p[text()] or ancestor::label[text()] or ancestor::span[text()] or ancestor::strong[text()]]/span
       - //a[contains(@class, 'dropdown-toggle')]
       - //a[@role = 'button']
-      - //a[*[name()="svg"] or img]
+      - //a[not(text()[normalize-space()]) and (*[name()="svg"] or img)]
       - //strong[ancestor::h1 or ancestor::h2 or ancestor::h3 or ancestor::h4 or ancestor::h5 or ancestor::h6]
       - //small[ancestor::h1[text()]]
       - //a[ancestor::h1 or ancestor::h2 or ancestor::h3 or ancestor::h4 or ancestor::h5 or ancestor::h6]
@@ -72,19 +69,19 @@ elements:
       - //h4[.//text()]
       - //h5[.//text()]
       - //h6[.//text()]
-      - //span[text() and not(./*) and (ancestor::h1 or ancestor::h2 or ancestor::h3 or ancestor::h4 or ancestor::h5 or ancestor::h6)]
+      - //span[text() and (not(./*) or *[not(text())]) and (ancestor::h1 or ancestor::h2 or ancestor::h3 or ancestor::h4 or ancestor::h5 or ancestor::h6)]
     ignore:
-      - //h1[not(text()) and span[text() and not(./*)]]
-      - //h2[not(text()) and span[text() and not(./*)]]
-      - //h3[not(text()) and span[text() and not(./*)]]
-      - //h4[not(text()) and span[text() and not(./*)]]
-      - //h5[not(text()) and span[text() and not(./*)]]
-      - //h6[not(text()) and span[text() and not(./*)]]
+      - //h1[not(text()) and span[text() and (not(./*) or *[not(text())])]]
+      - //h2[not(text()) and span[text() and (not(./*) or *[not(text())])]]
+      - //h3[not(text()) and span[text() and (not(./*) or *[not(text())])]]
+      - //h4[not(text()) and span[text() and (not(./*) or *[not(text())])]]
+      - //h5[not(text()) and span[text() and (not(./*) or *[not(text())])]]
+      - //h6[not(text()) and span[text() and (not(./*) or *[not(text())])]]
       - //span[ancestor::h1[text()] or ancestor::h2[text()] or ancestor::h3[text()] or ancestor::h4[text()] or ancestor::h5[text()] or ancestor::h6[text()]]
   - type: Link
     paths:
-      - //ul/li[normalize-space(text())='' and count(*)=1]/a[text() and not(./*)]
-      - //ol/li[normalize-space(text())='' and count(*)=1]/a[text() and not(./*)]
+      - //ul/li[normalize-space(text())='' and count(*)=1]/a[text() and (not(./*) or *[not(text())])]
+      - //ol/li[normalize-space(text())='' and count(*)=1]/a[text() and (not(./*) or *[not(text())])]
       - //nav//a[text()]
       - //nav//a[contains(@class, 'nav-link') and text()]
       - //header//a[text() and not(./*)]
@@ -110,13 +107,14 @@ elements:
       - //img[ancestor::h1[text()] or ancestor::h2[text()] or ancestor::h3[text()] or ancestor::h4[text()] or ancestor::h5[text()] or ancestor::h6[text()]]
   - type: Icon
     paths:
-      - //*[name()="svg" and @width <= 40 and count(*[not(name()="use")]) > 0]
+      - //*[name()="svg" and @width <= 40 and @height <= 40 and count(*[not(name()="use")]) > 0]
     ignore:
       - //*[name() = 'svg' and (ancestor::h1[text()] or ancestor::h2[text()] or ancestor::h3[text()] or ancestor::h4[text()] or ancestor::h5[text()] or ancestor::h6[text()])]
       - //*[name() = 'svg' and ancestor::span[text()]]
+      - //*[(name() = 'svg' or img) and ancestor::a[text()[normalize-space()]]]
   - type: Container
     paths:
-      - //div[text() and ./*]
+      - //div[.//text() and ./*]
       - //a[text() and ./*]
     css: css.border_bottom_width > 0 && css.border_left_width > 0 && css.border_right_width > 0 && css.border_top_width > 0
   - type: TextField
@@ -153,7 +151,7 @@ elements:
       - //a[contains(@class, 'dropdown-toggle') and not(ancestor::li)]
       - //li[.//*[contains(@class, 'dropdown-menu')]]
 browser: chrome
-headless: false
+headless: true
 window:
   height: 960
   width: 1536
