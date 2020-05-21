@@ -11,7 +11,7 @@ elements:
   - type: Text
     paths:
       - //div[text() and not(./*)]
-      - //p[text()]
+      - //p[text()[normalize-space()]]
       - //a[text()[normalize-space()]]
       - //strong[text() and not(ancestor::p[text()])]
       - //small[text() and not(./*)]
@@ -22,7 +22,7 @@ elements:
       - //ol/li[text() and not(./*)]
       - //ol/li[not(normalize-space(text())='') and ./*]
       - //ol/li[*/following-sibling::text()[not(normalize-space(.)='')]]
-      - //label[text()]
+      - //label[text()[normalize-space()]]
       - //span[text() and not(./*)]
       - //span[text()[normalize-space()] and span and count(span) = count(*)]
       - //span[text()[normalize-space()] and a and count(a) = count(*)]
@@ -41,7 +41,8 @@ elements:
       - //a[contains(@class, 'btn')]
       - //a[ancestor::p[text()] or ancestor::label[text()] or ancestor::span[text()] or ancestor::strong[text()]]
       - //a[ancestor::p[text()] or ancestor::label[text()] or ancestor::span[text()] or ancestor::strong[text()]]/span
-      - //a[contains(@class, 'dropdown-toggle')]
+      - //a[contains(@class, 'dropdown-toggle') or @data-toggle="dropdown"]
+      - //a[contains(@class, 'dropdown-toggle') or @data-toggle="dropdown"]/*
       - //a[@role = 'button']
       - //a[not(text()[normalize-space()]) and (*[name()="svg"] or img)]
       - //strong[ancestor::h1 or ancestor::h2 or ancestor::h3 or ancestor::h4 or ancestor::h5 or ancestor::h6]
@@ -54,7 +55,7 @@ elements:
       - //ol/li[not(normalize-space(text())='') and ./*]/a
       - //ol/li[not(normalize-space(text())='') and ./*]/strong
       - //ol/li[text() and not(./*) and string-length(text()) < 2]
-      - //span[ancestor::button or ancestor::a[text()[normalize-space()]] or ancestor::p[text()] or ancestor::label or (string-length(text()) < 2 and not(number(text())))]
+      - //span[ancestor::button or ancestor::a[text()[normalize-space()]] or ancestor::p[text()[normalize-space()]] or ancestor::label[text()] or (string-length(text()) < 2 and not(number(text())))]
       - //*[contains(@class, 'sr-only') or ancestor::*[contains(@class, 'sr-only') ]]
       - //figure//*
       - //p[button and count(button) = count(*)]
@@ -99,6 +100,7 @@ elements:
       - //section[contains(@style, 'background-image')]
       - //figure[*]
       - //iframe
+      - //video
     ignore:
       - //i[ancestor::p[text()]]
       - //img[ancestor::input]
@@ -116,6 +118,8 @@ elements:
     paths:
       - //div[.//text() and ./*]
       - //a[text() and ./*]
+    ignore:
+      - //a[contains(@class, 'dropdown-toggle') or @data-toggle="dropdown"]
     css: css.border_bottom_width > 0 && css.border_left_width > 0 && css.border_right_width > 0 && css.border_top_width > 0
   - type: TextField
     paths:
