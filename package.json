@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "A tool for automatic wireframe generation from websites.",
   "scripts": {
-    "prebuild": "rm -rf dist && mkdir dist",
+    "prebuild": "rimraf dist",
     "build": "tsc",
     "start": "npm run clean && node dist/run.js",
-    "start:inspector": "rm -rf generated/data && node dist/run.js --inspector",
-    "start:render": "rm -rf generated/images && node dist/run.js --render",
+    "start:inspector": "rimraf generated/data && node dist/run.js --inspector",
+    "start:render": "rimraf generated/images && node dist/run.js --render",
     "start:diff": "node dist/run.js --diff",
-    "clean": "rm -rf generated && mkdir generated",
+    "clean": "rimraf generated",
     "inspector": "node dist/inspector/index.js",
     "render": "node dist/render/index.js"
   },
@@ -37,6 +37,7 @@
     "@types/svgo": "^1.3.3",
     "@types/xmlserializer": "^0.6.0",
     "npm": "^6.14.5",
+    "rimraf": "^3.0.2",
     "typescript": "^3.9.3"
   },
   "dependencies": {
