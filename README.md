@@ -45,7 +45,9 @@ Dissertation project for the Master in Informatics and Computer Engineering (MIE
 
 ## Status
 
-[![BCH compliance](https://bettercodehub.com/edge/badge/literallysofia/feup-diss?branch=master&token=fe9608ed80cf9ba6a124bf6fe3c5f8eff18316c5)](https://bettercodehub.com/)
+[![Build Status](https://travis-ci.com/literallysofia/webwire.svg?token=7Dxk8WEiEdhDmmz21QEU&branch=master)](https://travis-ci.com/literallysofia/webwire)
+[![BCH compliance](https://bettercodehub.com/edge/badge/literallysofia/webwire?branch=master&token=6240a7cb7e9aeec1e9e74cdea140f2cdc07bf083)](https://bettercodehub.com/)
+![David](https://img.shields.io/david/literallysofia/webwire)
 
 ## Quick Start
 
