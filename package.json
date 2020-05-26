@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "A tool for automatic wireframe generation from websites.",
   "scripts": {
-    "prebuild": "rm -r dist && mkdir dist",
+    "prebuild": "rm -rf dist && mkdir dist",
     "build": "tsc",
     "start": "npm run clean && node dist/run.js",
-    "start:inspector": "rm -r generated/data && node dist/run.js --inspector",
-    "start:render": "rm -r generated/images && node dist/run.js --render",
+    "start:inspector": "rm -rf generated/data && node dist/run.js --inspector",
+    "start:render": "rm -rf generated/images && node dist/run.js --render",
     "start:diff": "node dist/run.js --diff",
-    "clean": "rm -r generated && mkdir generated",
+    "clean": "rm -rf generated && mkdir generated",
     "inspector": "node dist/inspector/index.js",
     "render": "node dist/render/index.js"
   },
