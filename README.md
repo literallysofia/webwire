@@ -1,40 +1,59 @@
+<p align="center">
+  <img src="https://getbootstrap.com/docs/4.5/assets/brand/bootstrap-solid.svg" alt="Webwire logo" width="72" height="72">
+</p>
 <h1 align="center">
   WebWire
 </h1>
 <p align="center">
-A tool capable of generating images of hand-drawn wireframes from real websites.<br/>Built with <a href="https://www.typescriptlang.org" target="_blank">TypeScript</a>, <a href="https://www.selenium.dev" target="_blank">Selenium</a>, <a href="https://pptr.dev" target="_blank">Puppeteer</a>, and <a href="https://roughjs.com" target="_blank">RoughJS</a>
+  A tool capable of generating images of hand-drawn wireframes from real websites.
+  <br>
+  <strong>Developed by <a href="https://github.com/literallysofia">Sofia Silva</a></strong>
+  <br>
+  <br>
+  <a href="https://www.typescriptlang.org">TypeScript</a>
+  ·
+  <a href="https://www.selenium.dev">Selenium</a>
+  ·
+  <a href="https://pptr.dev">Puppeteer</a>
+  ·
+  <a href="https://roughjs.com">RoughJS</a>
 </p>
-<p align="center">
-  <strong>Developed by
-  <a href="https://github.com/literallysofia" target="_blank">Sofia Silva</a>
-  </strong>
-</p>
-<p align="center">
-  <a href="https://bettercodehub.com/" target="_blank">
-    <img src="https://bettercodehub.com/edge/badge/literallysofia/feup-diss?branch=master&token=fe9608ed80cf9ba6a124bf6fe3c5f8eff18316c5" alt="BCH compliance" />
-  </a>
-</p>
+
+## Table of contents
+
+- [Table of contents](#table-of-contents)
+- [About](#about)
+- [Status](#status)
+- [Quick Start](#quick-start)
+- [Run Individually](#run-individually)
+  - [Inspector](#inspector)
+  - [Render](#render)
+    - [--font](#font)
+    - [--textblock](#textblock)
+    - [--realtext](#realtext)
+    - [--random](#random)
+    - [--roughness](#roughness)
+    - [--bowing](#bowing)
+    - [--stroke](#stroke)
+- [Structure](#structure)
 
 ## About
 
 Dissertation project for the Master in Informatics and Computer Engineering (MIEIC) at the Faculty of Engineering of the University of Porto (FEUP).
 
-**Concluded on:** July 2020
+**Concluded on:** July 31, 2020
 
-## Configuration
+## Status
 
-There are three files you can customize according to your needs:
+[![BCH compliance](https://bettercodehub.com/edge/badge/literallysofia/feup-diss?branch=master&token=fe9608ed80cf9ba6a124bf6fe3c5f8eff18316c5)](https://bettercodehub.com/)
 
-* ```main.json``` is where you set the websites, for which the tool generates wireframes.
-* ```config/inspector.json``` is where you set which web elements you want to collect and the **Inspector** options.
-* ```config/render.json``` is where you set the **Render** default options.
-
-## Installation
+## Quick Start
 
 First, you must install Node, NPM, and TypeScript. Then, simply run the commands bellow to start WebWire.
 
 ```bash
 $ npm install
+$ npm run build
 $ npm start
 ```
 
@@ -49,12 +68,12 @@ Examples of websites:
 When making changes to the Inspector's config file, mainly on the xpaths, you can see what changes in the ```data.json``` of the previous tested websites. A new file named ```data_new.json``` will be generated and compared to the original one.
 
 ```bash
-$ npm run diff
+$ npm run start:diff
 ```
 
-## Step By Step
+## Run Individually
 
-If you want to run WebWire the old fashion way.
+If you want to run WebWire the old fashion way, you can run each part individually. Keep in mind that this approach is per website and you must assing an ```id``` yourself.
 
 ### Inspector
 
@@ -124,4 +143,53 @@ When you want to set the width of the strokes of the wireframe, you can run with
 
 ```bash
 $ npm run render -- --src generated/data.json --seed 2837465 --stroke 2
+```
+
+## Structure
+
+There are three files you can customize according to your needs:
+
+* ```main.json``` is where you set the websites, for which the tool generates wireframes.
+* ```config/inspector.yml``` is where you set which web elements you want to collect and the **Inspector** options.
+* ```config/render.yml``` is where you set the **Render** default options.
+
+Within the download you'll find the following directories and files. You'll see something like this:
+
+```text
+webwire/
+├── main.json
+├── config/
+│   ├── inspector.yml
+│   └── render.yml
+└── src/
+    ├── inspector/
+    │   ├── browser.ts
+    │   ├── config.ts
+    │   ├── ielement.ts
+    │   ├── index.ts
+    │   ├── inspector.ts
+    │   └── utils.ts
+    └── render/
+        ├── graphics/
+        │   ├── burguer.ts
+        │   ├── button.ts
+        │   ├── buttontext.ts
+        │   ├── checkbox.ts
+        │   ├── container.ts
+        │   ├── drawable.ts
+        │   ├── drawabletext.ts
+        │   ├── dropdown.ts
+        │   ├── icon.ts
+        │   ├── image.ts
+        │   ├── paragraph.ts
+        │   ├── radio.ts
+        │   ├── text.ts
+        │   ├── textfield.ts
+        │   └── title.ts
+        ├── config.ts
+        ├── data.ts
+        ├── export.ts
+        ├── index.ts
+        ├── render.ts
+        └── utils.ts
 ```
