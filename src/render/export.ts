@@ -1,6 +1,6 @@
 import { serializeToString } from "xmlserializer";
 import { existsSync, mkdirSync, writeFileSync } from "fs";
-import { green, red } from "colors";
+import { green } from "colors";
 import puppeteer from "puppeteer";
 
 export class Export {

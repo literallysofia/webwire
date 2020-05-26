@@ -1,5 +1,5 @@
 import commandLineArgs from "command-line-args";
-import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript";
+import { JsonConvert, ValueCheckingMode } from "json2typescript";
 import { SingleBar, Presets } from "cli-progress";
 import { green } from "colors";
 import { safeLoad } from "js-yaml";
@@ -31,9 +31,8 @@ async function render() {
   const jsonConfig = safeLoad(configFile);
 
   const jsonConvert = new JsonConvert();
-  //jsonConvert.operationMode = OperationMode.LOGGING;
-  jsonConvert.ignorePrimitiveChecks = false; // don't allow assigning number to string etc.
-  jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL; // never allow null
+  jsonConvert.ignorePrimitiveChecks = false;
+  jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL;
 
   try {
     const data = jsonConvert.deserializeObject(jsonData, Data);
