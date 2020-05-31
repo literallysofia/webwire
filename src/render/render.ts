@@ -16,7 +16,7 @@ import { Text } from "./graphics/text";
 import { Paragraph } from "./graphics/paragraph";
 import { Image } from "./graphics/image";
 import { Icon } from "./graphics/icon";
-import { Burguer } from "./graphics/burguer";
+import { Burger } from "./graphics/burger";
 import { TextField } from "./graphics/textfield";
 import { Radio } from "./graphics/radio";
 import { Dropdown } from "./graphics/dropdown";
@@ -195,10 +195,10 @@ export class Render {
     }
   }
 
-  drawBurguer(elem: UIElement) {
-    const burguer = new Burguer(elem);
-    burguer.generate(this.config.randomOffset.value);
-    if (burguer.lines) this.createLines(burguer.lines);
+  drawBurger(elem: UIElement) {
+    const burger = new Burger(elem);
+    burger.generate(this.config.randomOffset.value);
+    if (burger.lines) this.createLines(burger.lines);
   }
 
   drawTextField(elem: UIElement) {

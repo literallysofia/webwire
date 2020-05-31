@@ -146,7 +146,7 @@ elements:
     ignore:
       - //*[contains(@class, 'btn-group')]
       - //button[count(*[not(name() = 'svg' or img or i)]) > 0]
-  - type: Burguer
+  - type: Burger
     paths:
       - //button[@aria-label = 'Toggle navigation' and contains(@class, 'navbar-toggler')]
   - type: Dropdown

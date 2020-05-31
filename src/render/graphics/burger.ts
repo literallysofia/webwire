@@ -1,7 +1,7 @@
 import { Drawable } from "./drawable";
 import { Line, Point, IRectangle } from "../utils";
 
-export class Burguer extends Drawable {
+export class Burger extends Drawable {
   lines?: Line[] | undefined;
 
   constructor(rect: IRectangle) {

@@ -101,8 +101,8 @@ export class Inspector {
     await this.addElement("Radio", elem);
   }
 
-  async createBurguer(elem: WebElement) {
-    await this.addElement("Burguer", elem);
+  async createBurger(elem: WebElement) {
+    await this.addElement("Burger", elem);
   }
 
   async createDropdown(elem: WebElement) {
