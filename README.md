@@ -28,13 +28,13 @@
 - [Run Individually](#run-individually)
   - [Inspector](#inspector)
   - [Render](#render)
-    - [--font](#font)
-    - [--textblock](#textblock)
-    - [--realtext](#realtext)
-    - [--random](#random)
-    - [--roughness](#roughness)
-    - [--bowing](#bowing)
-    - [--stroke](#stroke)
+    - [--font](#--font)
+    - [--textblock](#--textblock)
+    - [--realtext](#--realtext)
+    - [--random](#--random)
+    - [--roughness](#--roughness)
+    - [--bowing](#--bowing)
+    - [--stroke](#--stroke)
 - [Structure](#structure)
 
 ## About
@@ -88,7 +88,7 @@ $ npm run inspector -- --id <website id> --src <website url>
 
 ```bash
 $ npm run build
-$ npm run render -- --src <json file> --seed <random seed> [options]
+$ npm run render -- --src <json file> [options]
 ```
 
 #### --font

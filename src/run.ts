@@ -70,8 +70,8 @@ class Data {
   websites: Website[] = [];
 }
 
-function renderScript(id: number, seed: string, style: Style | undefined): string {
-  let script = `npm run render -- --src ./generated/data/data_${id}.json --seed ${seed}`;
+function renderScript(id: number, style: Style | undefined): string {
+  let script = `npm run render -- --src ./generated/data/data_${id}.json`;
 
   if (style) {
     if (style.font !== undefined) script += ` -f "${style.font}"`;
@@ -96,7 +96,7 @@ function render(website: Website, data: Data) {
       style = data.styles.find((s) => s.name === styleName);
     }
 
-    const script = renderScript(website.id, data.randomSeed, style);
+    const script = renderScript(website.id, style);
     execSync(script, { stdio: "inherit" });
   }
 }

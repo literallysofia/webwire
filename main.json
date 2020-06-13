@@ -10,25 +10,62 @@
     {
       "name": "style2",
       "keepOriginalText": false,
-      "randomOffset": 0
+      "randomOffset": 3
     },
     {
       "name": "style3",
       "roughness": 1.5,
       "bowing": 5,
       "strokeWidth": 2
+    },
+    {
+      "name": "style4",
+      "font": "Caveat Brush",
+      "roughness": 1.5,
+      "keepOriginalText": false,
+      "strokeWidth": 1.5
+    },
+    {
+      "name": "style5",
+      "randomOffset": 2,
+      "textblock": "Text"
     }
   ],
   "websites": [
-    { "url": "https://getbootstrap.com/docs/4.4/examples/album/", "draws": 1 },
-    { "url": "https://getbootstrap.com/docs/4.4/examples/jumbotron/", "styles": ["style1", "style2"], "draws": 2 },
-    { "url": "https://getbootstrap.com/docs/4.4/examples/checkout/", "styles": ["style3"], "draws": 1 },
-    { "url": "https://getbootstrap.com/docs/4.4/examples/blog/", "styles": ["style1"], "draws": 2 },
-    { "url": "https://getbootstrap.com/docs/4.4/examples/cover/", "styles": ["style1"], "draws": 1 },
-    { "url": "https://getbootstrap.com/docs/4.4/examples/sign-in/", "styles": ["style1", "style2", "style3"], "draws": 6 },
-    { "url": "https://getbootstrap.com/docs/4.4/examples/carousel/", "styles": ["style1", "style3"], "draws": 4 },
-    { "url": "https://getbootstrap.com/docs/4.4/examples/pricing/", "styles": ["style1"], "draws": 2 },
-    { "url": "https://getbootstrap.com/docs/4.4/examples/product/", "draws": 1 },
-    { "url": "https://getbootstrap.com", "styles": ["style1", "style2", "style3"], "draws": 4 }
+    { "url": "https://blackrockdigital.github.io/startbootstrap-landing-page/", "styles": ["style1", "style2", "style3"], "draws": 5 },
+    { "url": "https://getbootstrap.com/docs/4.5/examples/album/", "draws": 6 },
+    { "url": "https://getbootstrap.com/docs/4.5/examples/pricing/", "draws": 5 },
+    { "url": "https://getbootstrap.com/docs/4.5/examples/checkout/", "draws": 4 },
+    { "url": "https://getbootstrap.com/docs/4.5/examples/cover/", "styles": ["style1", "style2"], "draws": 3 },
+    { "url": "https://getbootstrap.com/docs/4.5/examples/carousel/", "draws": 2 },
+    { "url": "https://getbootstrap.com/docs/4.5/examples/blog/", "styles": ["style1", "style2", "style4"], "draws": 1 },
+    { "url": "https://getbootstrap.com/docs/4.5/examples/sign-in/", "draws": 1 },
+    { "url": "https://getbootstrap.com/docs/4.5/examples/sticky-footer-navbar/", "styles": ["style2", "style3"], "draws": 3 },
+    { "url": "https://getbootstrap.com/docs/4.5/examples/jumbotron/", "draws": 5 },
+    { "url": "https://getbootstrap.com/docs/4.5/examples/starter-template/", "styles": ["style1", "style5"], "draws": 1 },
+    { "url": "https://blackrockdigital.github.io/startbootstrap-freelancer/", "draws": 4 },
+    { "url": "https://blackrockdigital.github.io/startbootstrap-clean-blog-jekyll/", "styles": ["style3", "style4", "style5"], "draws": 2 },
+    { "url": "https://blackrockdigital.github.io/startbootstrap-grayscale/", "draws": 6 },
+    { "url": "https://blackrockdigital.github.io/startbootstrap-creative/", "styles": ["style1", "style4"], "draws": 5 },
+    { "url": "https://getbootstrap.com", "draws": 4 },
+    { "url": "https://blackrockdigital.github.io/startbootstrap-stylish-portfolio/", "styles": ["style3"], "draws": 1 },
+    { "url": "https://blackrockdigital.github.io/startbootstrap-one-page-wonder/", "draws": 1 },
+    { "url": "https://getbootstrap.com/docs/4.5/examples/", "draws": 6 },
+    { "url": "https://github.com/login", "draws": 4 },
+    { "url": "https://github.com/join", "styles": ["style1", "style2", "style3", "style4", "style5"], "draws": 3 },
+    { "url": "https://github.com", "draws": 2 },
+    { "url": "https://education.github.com/students", "draws": 5 },
+    { "url": "https://education.github.com/teachers", "draws": 4 },
+    { "url": "https://help.github.com/en", "styles": ["style3", "style4"], "draws": 1 },
+    { "url": "https://support.github.com", "draws": 1 },
+    { "url": "https://github.com/security/team", "styles": ["style1", "style4", "style5"], "draws": 2 },
+    { "url": "https://github.com/features", "draws": 1 },
+    { "url": "https://github.community", "styles": ["style2", "style5"], "draws": 2 },
+    { "url": "https://github.community/t5/forums/recentpostspage/post-type/thread", "draws": 1 },
+    { "url": "https://zoom.us/signin", "styles": ["style1", "style2"], "draws": 2 },
+    { "url": "https://themes.getbootstrap.com/official-themes/", "draws": 1 },
+    { "url": "https://themes.getbootstrap.com/product-category/specialty/", "styles": ["style1", "style2", "style3", "style4", "style5"], "draws": 2 },
+    { "url": "https://themes.getbootstrap.com/sell/", "draws": 2 },
+    { "url": "https://themes.getbootstrap.com/my-account/", "draws": 2 }
   ]
 }
