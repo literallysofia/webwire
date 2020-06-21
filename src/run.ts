@@ -76,7 +76,8 @@ function renderScript(id: number, style: Style | undefined): string {
   if (style) {
     if (style.font !== undefined) script += ` -f "${style.font}"`;
     if (style.textblock !== undefined) script += ` -t ${style.textblock}`;
-    if (style.keepOriginalText !== undefined) script += ` --realtext`;
+    if (style.keepOriginalText === true) script += ` --realtext`;
+    if (style.keepOriginalText === false) script += ` --dummytext`;
     if (style.randomOffset !== undefined) script += ` --random ${style.randomOffset}`;
     if (style.roughness !== undefined) script += ` -r ${style.roughness}`;
     if (style.bowing !== undefined) script += ` -b ${style.bowing}`;
