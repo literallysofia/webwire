@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="Webwire logo" width="72" height="72">
+  <img src="logo.png" alt="Webwire logo" width="130" height="130">
 </p>
 <h1 align="center">
   WebWire
